@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pro Diagnostic - Multi Step Booking</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<style>
+/* ================= CSS STYLES ================= */
+body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#f0f2f5;padding-bottom:120px; -webkit-tap-highlight-color: transparent;}
+
+/* HEADER & UTILS */
+.summary{position:sticky;top:0;background:#fff;padding:10px 15px;box-shadow:0 2px 6px rgba(0,0,0,.05);z-index:900;border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;}
+.summary-total { font-size:18px; font-weight:800; color:#0a73c0; }
+.top-proceed-btn { background: #ccc; color: white; padding: 8px 20px; border-radius: 25px; font-weight: bold; font-size: 13px; border: none; cursor: not-allowed; transition: 0.3s; }
+.top-proceed-btn.active { background: linear-gradient(135deg, #2e7d32, #1b5e20); cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); animation: popIn 0.3s ease; }
+@keyframes popIn { from{transform:scale(0.8);} to{transform:scale(1);} }
+
+/* ACTION BUTTONS */
+.action-buttons{display:flex;gap:8px;padding:10px;background:#fff;}
+.action-buttons button{flex:1;border:none;padding:10px 5px;border-radius:8px;color:#fff;font-size:11px;cursor:pointer;font-weight:700;letter-spacing:0.3px;white-space:nowrap;}
+.upload-rx{background:linear-gradient(45deg, #9c27b0, #673ab7)}
+.view-cart{background:#333}
+.my-info-btn { background: #0a73c0; transition: 0.3s; }
+.my-info-btn.logged-in { background: #4caf50; }
+
+/* NAVIGATION */
+.nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; background: #fff; margin-bottom: 10px; }
+.nav-btn { padding: 10px 5px; border: none; border-radius: 12px; background: #f8f9fa; font-weight: 600; cursor: pointer; font-size: 11px; color: #444; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); height: 55px; border: 1px solid #eee; }
+.nav-btn.active { background: #e3f2fd; color: #0a73c0; border-color: #0a73c0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(10, 115, 192, 0.2); }
+
+/* SECTIONS & CARDS */
+.section{display:none;padding:10px}
+.section.active{display:block}
+.mobile-box{padding:15px;background:#fff;margin:10px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.mobile-box input, .search{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:15px;box-sizing:border-box;outline:none;transition:0.3s}
+.search{margin-bottom:15px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 95% center; }
+
+.plan-row{display:flex;gap:10px;margin-bottom:20px;background:#fff;padding:10px;border-radius:12px;}
+.plan{flex:1;background:#f8f9fa;border:2px solid transparent;border-radius:10px;padding:12px 5px;text-align:center;font-size:12px;cursor:pointer;position:relative;font-weight:600;color:#555;transition:0.2s}
+.plan.active{border-color:#0a73c0;background:#e8f3ff;color:#0a73c0;}
+.tag{position:absolute;top:-10px;right:-5px;background:linear-gradient(45deg, #ff9800, #ff5722);color:#fff;font-size:9px;padding:3px 8px;border-radius:10px;font-weight:bold;}
+.tag.green{background:linear-gradient(45deg, #43a047, #1b5e20); color:#fff;}
+
+.card, .pkg-card { background: #fff; border-radius: 16px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: grid; grid-template-columns: 1fr 90px; gap: 10px; align-items: center; border: 1px solid #f0f0f0; transition: transform 0.2s; position: relative; }
+.card.selected, .pkg-card.selected { border-color: #0a73c0; background: #fbfdff; transform: scale(1.01); }
+.card-info, .pkg-name { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 4px; line-height: 1.3; }
+.final-price, .pkg-rate { font-size: 15px; color: #2e7d32; font-weight: 800; }
+.add-btn { background: linear-gradient(135deg, #0a73c0, #005b9f); color: white; border: none; padding: 8px 0; width:100%; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
+.qty-control { display: none; align-items: center; background: #e3f2fd; border-radius: 25px; padding: 2px; border: 1px solid #0a73c0; width:100%; justify-content: space-between; }
+.qty-control button { background: transparent; border: none; color: #0a73c0; font-weight: bold; font-size: 18px; width: 30px; }
+.doc-card { display:flex; flex-direction: row; gap: 15px; align-items: center; background:#fff; padding:10px; border-radius:12px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
+.doc-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: #eee; border: 2px solid #fff; }
+.book-btn { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; margin-left:auto;}
+
+/* POPUPS & OVERLAY */
+.popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:2100;backdrop-filter:blur(4px)}
+.popup-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:95%; max-width:350px; background:#fff; border-radius:16px; padding:20px; z-index:2200; max-height:85vh; overflow-y:auto; box-sizing:border-box}
+
+/* BOTTOM SHEET (Cart & Booking) */
+#mainCartBox, #stepModal { top: auto; bottom: 0; left: 0; transform: none; width: 100%; max-width: 100%; border-radius: 20px 20px 0 0; padding: 0; display: none; flex-direction: column; max-height: 85vh; animation: slideUp 0.3s ease-out; z-index: 3000 !important; }
+@keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+.sheet-header { padding: 15px; background: #fff; border-bottom: 1px solid #eee; text-align: center; border-radius: 20px 20px 0 0; }
+.sheet-header h3 { margin: 0; color: #0a73c0; font-size: 18px; }
+.sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 80px; } /* Added padding bottom for fixed footer */
+.sheet-footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); box-sizing: border-box; }
+
+/* === BOOKING FORM ELEMENTS === */
+.booking-label { font-size: 13px; font-weight: 700; color: #444; margin: 15px 0 8px 0; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+.med-input { width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #fafafa; font-size: 14px; }
+.time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
+.time-slot { padding: 10px 2px; border: 1px solid #ddd; text-align: center; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; color: #555; background: #fff; }
+.time-slot.selected { background: #0a73c0; color: white; border-color: #0a73c0; }
+
+/* OPTION TOGGLES (New) */
+.option-group { display: flex; gap: 10px; margin-bottom: 10px; }
+.option-btn { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
+.option-btn.selected { background: #e3f2fd; color: #0a73c0; border-color: #0a73c0; box-shadow: 0 2px 5px rgba(10,115,192,0.2); }
+
+/* BUTTONS */
+.whatsapp-btn { background: linear-gradient(45deg, #25D366, #128C7E); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.next-btn { background: linear-gradient(135deg, #0a73c0, #005b9f); color: white; padding: 14px; width: 100%; border: none; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; }
+
+/* LOGIN & ALERTS */
+.custom-alert-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:80%; background:#fff; border-radius:15px; padding:20px; z-index:9999; text-align:center; }
+.login-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
+.login-btn { width: 100%; padding: 12px; background: #0a73c0; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
+
+/* CART SPECIFICS */
+#finalCartItems { padding: 15px; }
+.cart-group-header { background: #f0f2f5; padding: 8px 15px; font-size: 12px; font-weight: bold; color: #666; margin-top: 10px; border-radius: 4px; }
+.cart-item-row { display: flex; justify-content: space-between; padding: 8px 15px; font-size: 13px; border-bottom: 1px solid #eee; }
+.cart-details-row { padding: 5px 15px; font-size: 11px; color: #2e7d32; background: #f9f9f9; border-bottom: 1px solid #eee; font-style: italic; }
+</style>
+</head>
+
+<body>
+
+<div class="popup-overlay" id="overlay" onclick="closeAllPopups()"></div>
+<div id="customAlert" class="custom-alert-box"><div class="alert-title">Notice</div><div id="customAlertMsg" class="alert-msg"></div><button class="alert-btn" onclick="closeCustomAlert()">OK</button></div>
+
+<div class="summary">
+    <div><div class="summary-info">Your Cart</div><div class="summary-total">₹<span id="headerTotal">0</span> <span style="font-size:12px;color:#666;font-weight:normal">(<span id="finalCount">0</span>)</span></div></div>
+    <button class="top-proceed-btn" id="topProceedBtn" onclick="startBookingQueue()">Cart Empty</button>
+</div>
+
+<div class="action-buttons">
+  <button class="view-cart" onclick="toggleMainCart()">🛒 Cart</button>
+  <button class="upload-rx" onclick="requestMedicine()">📄 Upload Rx</button>
+  <button class="my-info-btn" id="btnMyInfo" onclick="handleMyInfoClick()">👤 Login</button> 
+</div>
+
+<div id="dashboardSection" class="dashboard-container" style="display:none">
+    <div class="dash-header">
+        <div class="dash-points"><div style="font-size:10px; opacity:0.8;">WALLET</div><div style="font-size:24px;" id="dashPoints">0</div></div>
+        <div class="dash-details"><div class="dash-label">Plan</div><div class="dash-val" id="dashPlan">Basic</div><div class="dash-label">Referral Code</div><div class="dash-val" id="dashRef" style="color:#e91e63">---</div></div>
+    </div>
+    <div class="dash-report-btn" onclick="handleMyInfoClick()"><span style="font-weight:bold; color:#2e7d32;">📂 Reports & History</span><span style="font-size:11px; background:white; padding:3px 10px; border-radius:15px; border:1px solid #ddd;">Open ➔</span></div>
+</div>
+
+<div class="mobile-box" id="mobileInputBox"><b>Patient Mobile Number</b><input id="mobile" type="tel" maxlength="10" placeholder="Enter 10 digit number" onkeyup="applyPlanByMobile()"></div>
+
+<div class="nav-grid">
+    <button class="nav-btn active" onclick="show('test',this)">🩸 Blood Test</button>
+    <button class="nav-btn" onclick="show('package',this)">📦 Packages</button>
+    <button class="nav-btn" onclick="show('medicine',this)">💊 Medicine</button>
+    <button class="nav-btn" onclick="show('usg',this)">🖥️ USG</button>
+    <button class="nav-btn" onclick="show('xray',this)">🦴 X-Ray</button>
+    <button class="nav-btn" onclick="show('ct',this)">🧠 CT Scan</button>
+    <button class="nav-btn" onclick="show('mri',this)">🧲 MRI</button>
+    <button class="nav-btn" onclick="show('ecg',this)">💓 ECG</button>
+    <button class="nav-btn" onclick="show('echo',this)">🫀 ECHO</button>
+    <button class="nav-btn" onclick="show('doctor',this)">👨‍⚕️ Doctor</button>
+    <button class="nav-btn" onclick="show('hospital',this)" style="grid-column: span 2; background:#ffebee; color:#d32f2f">🏥 Hospital Admission</button>
+</div>
+
+<div id="test" class="section active">
+    <input class="search" placeholder="Search Blood Tests..." onkeyup="filter(this,'test')">
+    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>20%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>35%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>50%<div class="tag green">VIP</div></div></div>
+    <div id="loadingMsg" style="text-align:center;padding:20px;color:#999">Loading Tests...</div>
+</div>
+<div id="package" class="section"><div class="pkg-grid" id="pkgGrid"></div></div>
+<div id="medicine" class="section"><div class="med-box"><span class="med-icon">💊</span><h3>Upload Prescription</h3><input id="medName" class="med-input" placeholder="💊 Medicine Name"><input id="medDuration" class="med-input" placeholder="📅 Duration"><button class="confirm-btn" onclick="sendMedRequest()" style="background: linear-gradient(135deg, #43a047, #1b5e20); color:white; padding:10px; border:none; border-radius:20px; width:100%;">📷 Upload & Order</button></div></div>
+<div id="usg" class="section"><div id="usgContainer"></div></div>
+<div id="xray" class="section"><div id="xrayContainer"></div></div>
+<div id="ct" class="section"><div id="ctContainer"></div></div>
+<div id="mri" class="section"><div id="mriContainer"></div></div>
+<div id="ecg" class="section"><div id="ecgContainer"></div></div>
+<div id="echo" class="section"><div id="echoContainer"></div></div>
+<div id="doctor" class="section"><div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%</div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%</div></div><div id="docContainer"></div></div>
+<div id="hospital" class="section"><div style="background:#fff; padding:20px; border-radius:12px; border-left:5px solid #e91e63;"><h3 style="margin-top:0">🏥 Hospital Admission</h3><button class="confirm-btn" onclick="sendHospRequest()" style="background:#e91e63; color:white; border:none; padding:10px; border-radius:20px; width:100%;">Send Enquiry</button></div></div>
+
+<div class="popup-box" id="stepModal">
+    <div class="sheet-header">
+        <h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking Details</h3>
+        <div id="stepSubtitle" style="font-size:12px; color:#666;"></div>
+    </div>
+    <div class="sheet-body" id="dynamicFormBody">
+        </div>
+    <div class="sheet-footer">
+        <button class="next-btn" onclick="nextQueueStep()">Next ➔</button>
+    </div>
+</div>
+
+<div class="popup-box" id="mainCartBox">
+    <div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div>
+    <div class="sheet-body" id="finalCartItems"></div>
+    <div class="sheet-footer">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div>
+        <button onclick="bookWithPayment('ONLINE')" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button>
+        <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button>
+    </div>
+</div>
+
+<div class="popup-box" id="loginModal">
+    <h3 style="text-align:center; color:#0a73c0">Login</h3>
+    <input type="tel" id="loginMob" class="login-input" placeholder="Mobile">
+    <input type="password" id="loginPass" class="login-input" placeholder="Password">
+    <button class="login-btn" onclick="checkLogin()">Login</button>
+    <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button>
+</div>
+
+<div class="popup-box" id="infoModal">
+    <h3 style="color:#0a73c0">My Profile</h3>
+    <div id="patientDataList"></div>
+    <div class="list-header"><h4>🔔 History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div>
+    <div id="notifyContainer" style="max-height:150px; overflow-y:auto; border:1px solid #eee; padding:5px;"></div>
+    <button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button>
+</div>
+
+<script>
+/* --- CONFIGURATION --- */
+const RATE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
+const PATIENT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
+const NOTIFY_API_URL = "https://script.google.com/macros/s/AKfycbwVykNZTm3wE--gF2qDPQsR25vUK2K_bFOTxx2aRT8hVw4rsM51bseKL-eREahIzBg2/exec";
+const WA_NUMBER = "918397985922"; 
+
+/* --- GLOBAL VARIABLES --- */
+let tempSelection = []; 
+let bookingQueue = []; // Holds 'test', 'usg', 'doctor' etc.
+let currentQueueIndex = 0;
+let masterBookingData = {}; // Stores details for each category: { test: {...}, usg: {...} }
+let currentUser = null; 
+let patientsDB = {};
+const discountMap = { basic: 0.20, gold: 0.35, platinum: 0.50, pkg_basic: 0.10, pkg_gold: 0.20, pkg_platinum: 0.30 };
+
+window.onload = function(){ loadGoogleSheetData(); };
+
+/* --- QUEUE LOGIC (The Brain) --- */
+function startBookingQueue() {
+    if(tempSelection.length === 0) return;
+    
+    // 1. Identify distinct categories in cart
+    const categories = [...new Set(tempSelection.map(item => item.type))];
+    
+    // 2. Build Queue (Order matters)
+    bookingQueue = [];
+    if(categories.includes('test')) bookingQueue.push('test');
+    if(categories.includes('package')) bookingQueue.push('package');
+    // Group all centers based services
+    const centerServices = ['usg', 'xray', 'ct', 'mri', 'ecg', 'echo', 'doctor'];
+    centerServices.forEach(s => {
+        if(categories.includes(s)) bookingQueue.push(s);
+    });
+
+    currentQueueIndex = 0;
+    masterBookingData = {}; // Reset data
+    
+    // 3. Start Flow
+    renderQueueStep();
+}
+
+function renderQueueStep() {
+    const type = bookingQueue[currentQueueIndex];
+    if(!type) {
+        // Queue Finished -> Show Final Cart
+        closeAllPopups();
+        toggleMainCart();
+        return;
+    }
+
+    // Open Modal
+    document.getElementById("overlay").style.display = "block";
+    const modal = document.getElementById("stepModal");
+    modal.style.display = "flex";
+
+    // Setup Header
+    const titleMap = {
+        'test': '🩸 Blood Test Details',
+        'package': '📦 Health Package Details',
+        'usg': '🖥️ USG Booking',
+        'xray': '🦴 X-Ray Booking',
+        'ct': '🧠 CT Scan Booking',
+        'ecg': '💓 ECG Booking',
+        'echo': '🫀 ECHO Booking',
+        'doctor': '👨‍⚕️ Doctor Appointment'
+    };
+    document.getElementById("stepTitle").innerText = titleMap[type] || 'Booking Details';
+    document.getElementById("stepSubtitle").innerText = `Step ${currentQueueIndex + 1} of ${bookingQueue.length}`;
+
+    // Auto-fill Data (if available from previous steps or login)
+    const savedName = masterBookingData[Object.keys(masterBookingData)[0]]?.name || (currentUser ? currentUser.name : "") || "";
+    const savedCity = masterBookingData[Object.keys(masterBookingData)[0]]?.city || "Bahadurgarh";
+    const savedAddr = masterBookingData[Object.keys(masterBookingData)[0]]?.address || (currentUser ? currentUser.address : "") || "";
+
+    // Build Form HTML based on Type
+    let html = '';
+
+    // --- 1. OPTION TOGGLES (Specific to Type) ---
+    if(type === 'test') {
+        html += `
+        <span class="booking-label">Report Type</span>
+        <div class="option-group">
+            <div class="option-btn selected" onclick="selectOpt(this, 'reportType', 'Normal')">Normal (24hrs)</div>
+            <div class="option-btn" onclick="selectOpt(this, 'reportType', 'Urgent')">Urgent / NABL</div>
+        </div>
+        <span class="booking-label">Location</span>
+        <div class="option-group">
+            <div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this, 'locType', 'Home')">Home Visit</div>
+            <div class="option-btn" onclick="toggleAddress(false); selectOpt(this, 'locType', 'Center')">Lab Center</div>
+        </div>`;
+    } else if (type === 'package') {
+        html += `
+        <span class="booking-label">Location</span>
+        <div class="option-group">
+            <div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this, 'locType', 'Home')">Home Visit</div>
+            <div class="option-btn" onclick="toggleAddress(false); selectOpt(this, 'locType', 'Center')">Collection Center</div>
+        </div>`;
+    } else if (['usg', 'xray', 'ecg'].includes(type)) {
+        html += `
+        <span class="booking-label">Select Center</span>
+        <div class="option-group">
+            <div class="option-btn selected" onclick="selectOpt(this, 'center', 'Shree Diagnostic')">Shree Diagnostic</div>
+            <div class="option-btn" onclick="selectOpt(this, 'center', 'SS Care')">SS Care</div>
+        </div>`;
+    } else if (['ct', 'echo', 'mri'].includes(type)) {
+        html += `<div style="background:#e3f2fd; padding:10px; border-radius:8px; text-align:center; color:#0a73c0; font-weight:bold; margin-bottom:10px;">Center: Shree Diagnostic</div>`;
+    }
+
+    // --- 2. STANDARD FIELDS (Name, City, Address) ---
+    html += `
+    <span class="booking-label">Patient Details</span>
+    <input id="qName" class="med-input" placeholder="Patient Name" value="${savedName}">
+    
+    <div id="qAddressBox">
+        <span class="booking-label">Address</span>
+        <select id="qCity" class="med-input">
+            <option ${savedCity==='Bahadurgarh'?'selected':''}>Bahadurgarh</option>
+            <option ${savedCity==='Jhajjar'?'selected':''}>Jhajjar</option>
+            <option ${savedCity==='Rohtak'?'selected':''}>Rohtak</option>
+        </select>
+        <textarea id="qAddr" class="med-input" rows="2" placeholder="House No, Street...">${savedAddr}</textarea>
+    </div>
+
+    <span class="booking-label">Preferred Time</span>
+    <input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}">
+    <div class="time-grid" id="qTimeSlots"></div>
+    `;
+
+    document.getElementById("dynamicFormBody").innerHTML = html;
+    
+    // Render Time Slots & Init Toggles
+    renderQTimeSlots();
+    // Default hidden inputs if needed
+    document.getElementById("stepModal").dataset.currentType = type;
+}
+
+function nextQueueStep() {
+    const type = document.getElementById("stepModal").dataset.currentType;
+    const name = document.getElementById("qName").value;
+    const date = document.getElementById("qDate").value;
+    const timeEl = document.querySelector(".time-slot.selected");
+    
+    if(!name || !date || !timeEl) { showAlert("Please fill Name, Date & Time"); return; }
+
+    // Collect Data
+    let details = {
+        name: name,
+        date: date,
+        time: timeEl.innerText,
+        city: document.getElementById("qCity") ? document.getElementById("qCity").value : "N/A",
+        address: document.getElementById("qAddr") ? document.getElementById("qAddr").value : "N/A"
+    };
+
+    // Specific Options
+    if(type === 'test') {
+        details.report = document.querySelector(".option-btn[onclick*='reportType'].selected")?.innerText || "Normal";
+        details.mode = document.querySelector(".option-btn[onclick*='locType'].selected")?.innerText || "Home";
+    } else if (type === 'package') {
+        details.mode = document.querySelector(".option-btn[onclick*='locType'].selected")?.innerText || "Home";
+    } else if (['usg', 'xray', 'ecg'].includes(type)) {
+        details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree Diagnostic";
+        details.mode = "Center Visit"; // Implicit
+    } else {
+        details.center = "Shree Diagnostic";
+        details.mode = "Center Visit";
+    }
+
+    // Save to Master Data
+    masterBookingData[type] = details;
+
+    // Proceed
+    currentQueueIndex++;
+    renderQueueStep();
+}
+
+/* --- UI HELPERS --- */
+function selectOpt(btn, group, val) {
+    // Deselect all in this group (identified by onclick string)
+    const siblings = btn.parentElement.querySelectorAll('.option-btn');
+    siblings.forEach(s => s.classList.remove('selected'));
+    btn.classList.add('selected');
+}
+
+function toggleAddress(show) {
+    const box = document.getElementById("qAddressBox");
+    if(box) box.style.display = show ? "block" : "none";
+}
+
+function renderQTimeSlots() {
+    let h="", c=document.getElementById("qTimeSlots");
+    for(let i=8;i<=20;i++){ 
+        let s=i>=12?"PM":"AM"; let hr=i>12?i-12:i; 
+        h+=`<div class="time-slot" onclick="selectTime(this)">${hr}:00 ${s}</div>`; 
+    } 
+    c.innerHTML=h;
+}
+
+function toggleMainCart() {
+    document.getElementById("overlay").style.display="block"; 
+    document.getElementById("mainCartBox").style.display="flex";
+    
+    let html = "";
+    let grandTotal = 0;
+
+    // Group items by category to match booking data
+    // Iterate queue order to show summary nicely
+    // If user skipped queue (e.g. direct cart click without proceed), show simple list
+    // BUT 'proceed' logic fills masterBookingData. If empty, warn? No, just show simple.
+    
+    const categories = [...new Set(tempSelection.map(item => item.type))];
+    
+    categories.forEach(cat => {
+        const items = tempSelection.filter(i => i.type === cat);
+        const booking = masterBookingData[cat];
+        
+        if(items.length > 0) {
+            // Category Header
+            html += `<div class="cart-group-header">${cat.toUpperCase()} ${booking ? `(${booking.mode||booking.center})` : ''}</div>`;
+            
+            // Items
+            items.forEach(i => {
+                let total = i.price * i.qty;
+                grandTotal += total;
+                html += `
+                <div class="cart-item-row">
+                    <span>${i.name} x${i.qty}</span>
+                    <span>₹${total}</span>
+                </div>`;
+            });
+
+            // Booking Detail Summary
+            if(booking) {
+                html += `<div class="cart-details-row">
+                    👤 ${booking.name} | 📅 ${booking.date}, ${booking.time} <br>
+                    ${booking.mode === 'Home' || booking.mode === 'Home Visit' ? `🏠 ${booking.address}` : ''}
+                </div>`;
+            }
+        }
+    });
+
+    document.getElementById("finalCartItems").innerHTML = html;
+    document.getElementById("payAmount").innerText = grandTotal;
+}
+
+/* --- OTHER STANDARD FUNCTIONS (Same as before) --- */
+function selectTime(el){ document.querySelectorAll('.time-slot').forEach(t=>t.classList.remove('selected')); el.classList.add('selected'); }
+function closeAllPopups(){ document.querySelectorAll('.popup-box').forEach(b=>b.style.display="none"); document.getElementById("overlay").style.display="none"; document.getElementById("customAlert").style.display="none"; }
+function showAlert(msg) { document.getElementById("customAlertMsg").innerText = msg; document.getElementById("overlay").style.display = "block"; document.getElementById("customAlert").style.display = "block"; }
+function closeCustomAlert() { document.getElementById("customAlert").style.display = "none"; if(document.querySelectorAll('.popup-box[style*="display: block"]').length === 0 && document.querySelectorAll('.popup-box[style*="display: flex"]').length === 0) document.getElementById("overlay").style.display = "none"; }
+
+/* --- DATA & LOGIC --- */
+async function loadGoogleSheetData() { try { const rRes=await fetch(RATE_SHEET_URL); parseProducts(await rRes.text()); } catch(e){} try { const pRes=await fetch(PATIENT_SHEET_URL); parsePatients(await pRes.text()); } catch(e){} }
+function parsePatients(csvText) { const rows = csvText.split('\n').slice(1); rows.forEach(row => { const cols = row.split(',').map(c => c.replace(/"/g, '').trim()); if(cols.length < 3) return; const mob = cols[2]; if(mob && mob.length >= 10) { let plan = cols[5] && cols[5].length > 2 ? cols[5] : 'Basic'; let cleanName = cols[1].split(" ")[0].toUpperCase(); if (patientsDB[mob]) { if(cols[7] && cols[7].length > 5) patientsDB[mob].reports.push({ link: cols[7], date: cols[0] || "Date N/A" }); } else { patientsDB[mob] = { mobile: mob, name: cols[1], password: cols[3], address: cols[4]||"", plan: plan, points: parseInt(cols[6])||0, reports: [], referral: cleanName+mob.substring(mob.length-3) }; if(cols[7] && cols[7].length > 5) patientsDB[mob].reports.push({ link: cols[7], date: cols[0] || "Date N/A" }); } } }); }
+function parseProducts(csvText) { const loadMsg = document.getElementById("loadingMsg"); if(loadMsg) loadMsg.style.display = 'none'; const rows = csvText.split('\n').slice(1); rows.forEach(row => { const cols = row.split(',').map(c => c.replace(/"/g, '').trim()); if(cols.length < 3) return; createCard({ name: cols[0], price: parseInt(cols[1]), category: cols[2].toLowerCase(), discount: cols[3] === 'yes', image: cols[4]||"", details: cols[5]||"" }); }); }
+function createCard(item) { if (item.category === 'doctor') { const div = document.createElement('div'); div.className = 'doc-card'; div.dataset.price = item.price; div.dataset.type = 'doctor'; div.innerHTML = `<img src="${item.image || 'https://via.placeholder.com/60'}" class="doc-img"><div class="doc-info"><div class="doc-name">${item.name}</div><div class="doc-deg">${item.details}</div><div class="doc-fee">₹<span class="final-price"><b>${item.price}</b></span></div></div><button class="book-btn" onclick="bookDoctor('${item.name}', ${item.price}, this)">Book</button>`; document.getElementById("docContainer").appendChild(div); return; } if (item.category === 'package') { const div = document.createElement('div'); div.className = 'pkg-card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = 'package'; let badge = ""; if(item.details.toLowerCase().includes("gold")) badge = `<div class="unlock-badge">🏆 UNLOCKS GOLD</div>`; if(item.details.toLowerCase().includes("platinum")) badge = `<div class="unlock-badge platinum-badge">💎 UNLOCKS PLATINUM</div>`; div.innerHTML = `${badge}<div class="pkg-header"><div class="pkg-name">${item.name}</div></div><div class="pkg-body"><span class="mrp-price">₹${item.price}</span><span class="pkg-rate">₹<b>${item.price}</b></span><button class="view-details-btn" onclick="showIncludedTests('${item.name}', '${item.details.replace(/'/g, "\\'")}')">ℹ️ View Details</button></div><div class="pkg-footer"><div class="qty-wrapper"><button class="add-btn" onclick="updateQty(this, 1)">Add</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div></div>`; document.getElementById("pkgGrid").appendChild(div); return; } let container = document.getElementById(item.category); if (!container && item.category === 'test') container = document.getElementById("test"); if (!container && item.category === 'usg') container = document.getElementById("usgContainer"); if (!container && item.category === 'xray') container = document.getElementById("xrayContainer"); if (!container && item.category === 'ct') container = document.getElementById("ctContainer"); if (!container && item.category === 'mri') container = document.getElementById("mriContainer"); if (!container && item.category === 'ecg') container = document.getElementById("ecgContainer"); if (!container && item.category === 'echo') container = document.getElementById("echoContainer"); if (container) { if(container.id.includes('Container') === false && item.category !== 'test') { let innerCon = container.querySelector('[id$="Container"]'); if(innerCon) container = innerCon; } const div = document.createElement('div'); div.className = 'card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = item.category; div.innerHTML = `<div><div class="card-info">${item.name}</div><div class="card-price-box"><span class="mrp-price">₹${item.price}</span><span class="final-price">₹<b>${item.price}</b></span></div></div><div class="qty-wrapper"><button class="add-btn" onclick="updateQty(this, 1)">ADD +</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div>`; container.appendChild(div); } }
+
+function checkLogin() { const u = patientsDB[document.getElementById("loginMob").value]; if(u && u.password === document.getElementById("loginPass").value) { currentUser=u; document.getElementById("btnMyInfo").innerText="👤 "+u.name.split(" ")[0]; document.getElementById("btnMyInfo").classList.add("logged-in"); document.getElementById("dashPoints").innerText = u.points; document.getElementById("dashPlan").innerText = u.plan; document.getElementById("dashRef").innerText = u.referral; document.getElementById("dashPlan").className = "dash-val highlight-plan"; document.getElementById("dashboardSection").style.display = "block"; document.getElementById("mobileInputBox").style.display = "none"; document.getElementById("mobile").value = u.mobile; document.getElementById("bookName").value = u.name; const reportDiv = document.getElementById("reportContainer"); reportDiv.innerHTML = ""; if(u.reports && u.reports.length > 0) { u.reports.forEach(rep => { reportDiv.innerHTML += `<div class="list-item"><div><div class="list-title">📄 Lab Report</div><div class="list-date">${rep.date}</div></div><a href="${rep.link}" target="_blank" class="action-icon icon-green">⬇ Download</a></div>`; }); } else { reportDiv.innerHTML = `<div style="font-size:12px; color:#999; text-align:center; padding:10px;">No reports available yet.</div>`; } const p = u.plan ? u.plan.toLowerCase() : 'basic'; const bG = document.getElementById("topBannerGold"), bP = document.getElementById("topBannerPlat"), vB = document.getElementById("topVipBadge"); const dG = document.getElementById("dashCardGold"), dP = document.getElementById("dashCardPlat"); const pG = document.getElementById("popOfferGold"), pP = document.getElementById("popOfferPlat"); bG.style.display="flex"; bP.style.display="flex"; vB.style.display="none"; dG.style.display="block"; dP.style.display="block"; pG.style.display="block"; pP.style.display="block"; if(p==='gold'){ bG.style.display="none"; dG.style.display="none"; pG.style.display="none"; } else if(p==='platinum'){ bG.style.display="none"; bP.style.display="none"; dG.style.display="none"; dP.style.display="none"; pG.style.display="none"; pP.style.display="none"; vB.style.display="block"; } fetchHistory(u.mobile); closeAllPopups(); applyPlanByMobile(); } else showAlert("Invalid Credentials"); }
+
+/* FUNCTIONS FOR BUTTONS */
+function show(id,btn){ document.querySelectorAll('.section').forEach(s=>s.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
+function updateQty(btn,change){ const m=document.getElementById("mobile").value; if(m.length!==10){showAlert("Enter Mobile");return;} const card=btn.closest('.card')||btn.closest('.pkg-card'); const name=card.dataset.name; const type=card.dataset.type; const price=parseInt(card.querySelector(".final-price b,.pkg-rate b").innerText.replace('₹','')); let item=tempSelection.find(i=>i.name===name); if(item){item.qty+=change;if(item.qty<=0)tempSelection=tempSelection.filter(i=>i.name!==name);}else if(change>0)tempSelection.push({name,price,type,qty:1}); const w=card.querySelector('.qty-wrapper'); if(change>0||(item&&item.qty>0)){w.querySelector('.add-btn').style.display='none'; w.querySelector('.qty-control').style.display='flex'; w.querySelector('span').innerText=item?item.qty:1; card.classList.add('selected');}else{w.querySelector('.add-btn').style.display='block'; w.querySelector('.qty-control').style.display='none'; card.classList.remove('selected');} let count=tempSelection.reduce((s,i)=>s+i.qty,0); document.getElementById("finalCount").innerText=count; const tBtn=document.getElementById("topProceedBtn"); if(count>0){tBtn.innerText=`Proceed (${count}) ➔`; tBtn.classList.add("active"); tBtn.disabled=false;}else{tBtn.innerText="Cart Empty"; tBtn.classList.remove("active"); tBtn.disabled=true;} }
+function bookWithPayment(){ 
+    const id="B-"+Math.floor(10000+Math.random()*90000); 
+    // Construct Detailed Message
+    let msg = `🌟 *New Booking ${id}*\n`;
+    let categories = Object.keys(masterBookingData);
+    
+    categories.forEach(cat => {
+        let d = masterBookingData[cat];
+        let items = tempSelection.filter(i => i.type === cat).map(i => `${i.name} x${i.qty}`).join(', ');
+        
+        msg += `\n📌 *${cat.toUpperCase()}*\n`;
+        msg += `Items: ${items}\n`;
+        msg += `Patient: ${d.name}\n`;
+        msg += `Time: ${d.date}, ${d.time}\n`;
+        if(d.mode) msg += `Mode: ${d.mode}\n`;
+        if(d.center) msg += `Center: ${d.center}\n`;
+        if(d.report) msg += `Report: ${d.report}\n`;
+        if(d.mode === 'Home' || d.mode === 'Home Visit') msg += `Addr: ${d.address}\n`;
+        msg += `----------------`;
+    });
+    
+    msg += `\n💰 *Payable: ${document.getElementById("payAmount").innerText}*`;
+
+    logNotification(document.getElementById("mobile").value, `Booking Confirmed: ${id}\nAmount: ${document.getElementById("payAmount").innerText}`, "Booking"); 
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,"_blank"); 
+}
+
+/* OTHER UTILS */
+function handleMyInfoClick(){ if(currentUser){document.getElementById("overlay").style.display="block"; document.getElementById("infoModal").style.display="block";}else openLoginModal(); }
+function openLoginModal(){ document.getElementById("overlay").style.display="block"; document.getElementById("loginModal").style.display="block"; }
+function openCompareModal(){ document.getElementById("overlay").style.display="block"; document.getElementById("compareModal").style.display="block"; }
+function openForgotPassModal(){ document.getElementById("loginModal").style.display="none"; document.getElementById("forgotPassModal").style.display="block"; }
+function logoutUser(){ location.reload(); }
+function applyPlanByMobile(){ const m=document.getElementById("mobile").value; refreshPrices(currentUser&&currentUser.mobile===m?currentUser.plan.toLowerCase():'basic'); }
+function manualPlan(el){ if(!currentUser) refreshPrices(el.dataset.plan); }
+function refreshPrices(plan){ document.querySelectorAll('.plan').forEach(p=>{p.classList.remove('active');if(p.dataset.plan===plan)p.classList.add('active');}); document.querySelectorAll('.card,.pkg-card').forEach(c=>{const op=parseInt(c.dataset.price); const t=c.dataset.type; let d=discountMap[plan]; if(t==='package')d=discountMap['pkg_'+plan]; if(['usg','xray','ct','mri','ecg','echo','doctor'].includes(t))d=(plan==='platinum'?0.20:(plan==='gold'?0.10:0.05)); c.querySelector('.final-price b,.pkg-rate b').innerText="₹"+Math.round(op-(op*d));}); document.querySelectorAll('.doc-card').forEach(c=>{ const op = parseInt(c.dataset.price); let d = (plan==='platinum'?0.20 : (plan==='gold'?0.10 : 0.05)); c.querySelector('.final-price b').innerText = Math.round(op - (op*d)); }); }
+function filter(i,id){ let v=i.value.toLowerCase(); document.querySelectorAll(`#${id} .card`).forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
+function filterDocs(i){ let v=i.value.toLowerCase(); document.querySelectorAll('.doc-card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
+function applyCoupon(){ if(document.getElementById("couponCode").value.length>4){ activeCoupon={code:document.getElementById("couponCode").value,amount:50}; document.getElementById("couponMsg").innerText="Coupon Applied: ₹50 OFF"; document.getElementById("couponMsg").style.color="green"; document.getElementById("removeCpnBtn").style.display="inline-block"; toggleMainCart(); } }
+function clearMainCart(){ mainCart=[]; tempSelection=[]; toggleMainCart(); document.getElementById("topProceedBtn").innerText="Cart Empty"; document.getElementById("topProceedBtn").classList.remove("active"); document.getElementById("finalCount").innerText="0"; }
+function togglePass(){ var x=document.getElementById("loginPass"); x.type=x.type==="password"?"text":"password"; }
+function openFormModal(url, title) { document.querySelectorAll('.popup-box').forEach(b => b.style.display = "none"); document.getElementById("overlay").style.display = "block"; const modal = document.getElementById("universalFormModal"); modal.style.display = "block"; document.getElementById("formTitle").innerText = title; document.getElementById("formFrame").src = url; }
+function openPartnerModal() { document.getElementById("overlay").style.display = "block"; document.getElementById("partnerModal").style.display = "block"; }
+function verifyPartner() { const id = document.getElementById("partnerId").value.toUpperCase().trim(); const pass = document.getElementById("partnerPass").value.trim(); if (partnersDB[id] && partnersDB[id].pass === pass) { document.getElementById("partnerLoginForm").style.display = "none"; document.getElementById("partnerCancelBtn").style.display = "none"; document.getElementById("partnerDashboard").style.display = "block"; document.getElementById("partnerWelcomeMsg").innerHTML = `Welcome, <b>${partnersDB[id].name}</b>`; } else { showAlert("❌ Wrong ID or Password!"); } }
+function showIncludedTests(t,d){ document.getElementById("detailsTitle").innerText=t; const l=document.getElementById("detailsList"); l.innerHTML=""; d.split(',').forEach(i=>{if(i.trim()){const x=document.createElement("li"); x.innerText=i.trim(); l.appendChild(x);}}); document.getElementById("overlay").style.display="block"; document.getElementById("detailsModal").style.display="block"; }
+</script>
+</body>
+</html>
