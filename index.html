@@ -85,12 +85,31 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:5000;backdrop-filter:blur(4px)}
 .popup-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:95%; max-width:350px; background:#fff; border-radius:16px; padding:20px; z-index:5100; max-height:85vh; overflow-y:auto; box-sizing:border-box}
 
-/* BOTTOM SHEET */
-#mainCartBox, #stepModal { top: auto; bottom: 0; left: 0; transform: none; width: 100%; max-width: 100%; border-radius: 20px 20px 0 0; padding: 0; display: none; flex-direction: column; max-height: 85vh; animation: slideUp 0.3s ease-out; z-index: 5200 !important; }
+/* 🔥 BIGGER CART POPUP (FIXED HEIGHT) */
+#mainCartBox { 
+    top: auto; bottom: 0; left: 0; transform: none; 
+    width: 100%; max-width: 100%; 
+    border-radius: 20px 20px 0 0; padding: 0; 
+    display: none; flex-direction: column; 
+    height: 90vh; /* INCREASED HEIGHT */
+    max-height: 90vh; 
+    animation: slideUp 0.3s ease-out; 
+    z-index: 5200 !important; 
+}
+#stepModal { 
+    top: auto; bottom: 0; left: 0; transform: none; 
+    width: 100%; max-width: 100%; 
+    border-radius: 20px 20px 0 0; padding: 0; 
+    display: none; flex-direction: column; 
+    max-height: 85vh; 
+    animation: slideUp 0.3s ease-out; 
+    z-index: 5200 !important; 
+}
+
 @keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
 .sheet-header { padding: 15px; background: #fff; border-bottom: 1px solid #eee; text-align: center; border-radius: 20px 20px 0 0; }
 .sheet-header h3 { margin: 0; color: #0a73c0; font-size: 18px; }
-.sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 80px; }
+.sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 150px; } /* Added bottom padding */
 .sheet-footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); box-sizing: border-box; }
 
 /* FORM ELEMENTS */
@@ -211,13 +230,16 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     </div>
     
     <div style="margin-top:10px; margin-bottom:15px;">
-        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient for Booking</div>
+        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient</div>
         <div id="dashFamilyContainer" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px;"></div>
     </div>
     <div class="dash-report-btn" onclick="handleMyInfoClick()"><span style="font-weight:bold; color:#2e7d32;">📂 Reports & History</span><span style="font-size:11px; background:white; padding:3px 10px; border-radius:15px; color:#333; border:1px solid #ddd;">Open ➔</span></div>
 </div>
 
-<div class="mobile-box" id="mobileInputBox"><b>Patient Mobile Number</b><input id="mobile" type="tel" maxlength="10" placeholder="Enter 10 digit number" onkeyup="applyPlanByMobile()"></div>
+<div class="mobile-box" id="mobileInputBox">
+    <b style="font-size:13px; color:#555;">Patient Mobile Number</b>
+    <input id="mobile" type="tel" maxlength="10" placeholder="Enter 10 digit number" onkeyup="applyPlanByMobile()" style="font-size:18px; letter-spacing:1px; font-weight:bold; margin-top:5px;">
+</div>
 
 <div class="nav-grid">
     <button class="nav-btn active" onclick="show('test',this)">🩸 Blood Test</button>
@@ -278,12 +300,68 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 </div>
 <div id="hospital" class="section"><div style="background:#fff; padding:20px; border-radius:12px; border-left:5px solid #e91e63;"><h3 style="margin-top:0">🏥 Hospital Admission</h3><button class="confirm-btn" onclick="sendHospRequest()" style="background:#e91e63; color:white; border:none; padding:10px; border-radius:20px; width:100%;">Send Enquiry</button></div></div>
 
-<div class="popup-box" id="stepModal"><div class="sheet-header"><h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking</h3><div id="stepSubtitle" style="font-size:12px; color:#666;"></div></div><div class="sheet-body" id="dynamicFormBody"></div><div class="sheet-footer"><button class="next-btn" onclick="nextQueueStep()">Next ➔</button></div></div>
-<div class="popup-box" id="mainCartBox"><div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div><div class="sheet-body" id="finalCartItems"></div><div class="sheet-footer"><div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div><div id="couponMsg" style="font-size:11px;margin-top:5px;"></div><div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div><div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div><button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button><button onclick="bookWithPayment()" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button></div></div>
-<div class="popup-box" id="loginModal"><h3 style="text-align:center; color:#0a73c0">Login</h3><input type="tel" id="loginMob" class="login-input" placeholder="Mobile"><input type="password" id="loginPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="checkLogin()">Login</button><div class="signup-section"><button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button></div>
-<div class="popup-box" id="infoModal"><h3 style="margin-top:0; color:#0a73c0;">My Profile</h3><div id="patientDataList" style="margin-bottom:10px"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div><div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div><div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button></div>
+<div class="partner-link" onclick="openPartnerModal()">🏥 Partner/Lab Login (Secure Area)</div>
+
+<div class="popup-box" id="stepModal">
+    <div class="sheet-header">
+        <h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking Details</h3>
+        <div id="stepSubtitle" style="font-size:12px; color:#666;"></div>
+    </div>
+    <div class="sheet-body" id="dynamicFormBody"></div>
+    <div class="sheet-footer">
+        <button class="next-btn" onclick="nextQueueStep()">Next ➔</button>
+    </div>
+</div>
+
+<div class="popup-box" id="mainCartBox">
+    <div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div>
+    <div class="sheet-body" id="finalCartItems"></div>
+    <div class="sheet-footer">
+        <div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div>
+        <div id="couponMsg" style="font-size:11px;margin-top:5px;"></div>
+        <div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div>
+        
+        <div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div>
+        
+        <button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button>
+        <button onclick="bookViaWhatsapp()" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button>
+        <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button>
+    </div>
+</div>
+
+<div class="popup-box" id="loginModal">
+    <h3 style="text-align:center; color:#0a73c0">Login</h3>
+    <input type="tel" id="loginMob" class="login-input" placeholder="Mobile">
+    <input type="password" id="loginPass" class="login-input" placeholder="Password">
+    <button class="login-btn" onclick="checkLogin()">Login</button>
+    <div class="signup-section">
+        <button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button>
+    </div>
+    <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button>
+</div>
+
+<div class="popup-box" id="infoModal">
+    <h3 style="margin-top:0; color:#0a73c0;">My Profile</h3>
+    <div id="patientDataList" style="margin-bottom:10px"></div>
+    <div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div>
+    <div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div>
+    <div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div>
+    <div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div>
+    <button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button>
+</div>
+
 <div class="popup-box form-popup" id="universalFormModal"><div class="form-header"><b id="formTitle" style="color:#0a73c0">Form</b><button onclick="closeAllPopups()" style="background:transparent;border:none;font-size:20px;color:#666;cursor:pointer;">&times;</button></div><iframe id="formFrame" class="form-iframe" src=""></iframe></div>
-<div class="popup-box" id="partnerModal"><h3 style="margin-top:0;color:#d32f2f;text-align:center">🔒 Partner Access</h3><div id="partnerLoginForm"><input id="partnerId" class="login-input" placeholder="Partner ID"><input type="password" id="partnerPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="verifyPartner()" style="background:#333">Login to Dashboard</button></div><div id="partnerDashboard" style="display:none; text-align:center;"><div style="font-size:50px;">✅</div><h2 style="color:#2e7d32; margin:10px 0;">Login Successful!</h2><p id="partnerWelcomeMsg" style="color:#555;"></p><div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:10px; border:1px dashed #ccc;"><button onclick="openFormModal(PARTNER_FORM_URL, 'Partner Portal')" style="background:#0a73c0; color:white; border:none; padding:12px 25px; border-radius:25px; font-weight:bold;">🚀 Open Portal</button></div><button onclick="location.reload()" style="margin-top:20px; background:transparent; border:none; color:#999; text-decoration:underline;">Logout</button></div><button id="partnerCancelBtn" onclick="closeAllPopups()" style="width:100%;padding:10px;background:transparent;border:none;color:#999;margin-top:5px">Cancel</button></div>
+<div class="popup-box" id="partnerModal">
+    <h3 style="margin-top:0;color:#d32f2f;text-align:center">🔒 Partner Access</h3>
+    <div id="partnerLoginForm"><input id="partnerId" class="login-input" placeholder="Partner ID"><input type="password" id="partnerPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="verifyPartner()" style="background:#333">Login to Dashboard</button></div>
+    <div id="partnerDashboard" style="display:none; text-align:center;"><div style="font-size:50px;">✅</div><h2 style="color:#2e7d32; margin:10px 0;">Login Successful!</h2><p id="partnerWelcomeMsg" style="color:#555;"></p><div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:10px; border:1px dashed #ccc;"><button onclick="openFormModal(PARTNER_FORM_URL, 'Partner Portal')" style="background:#0a73c0; color:white; border:none; padding:12px 25px; border-radius:25px; font-weight:bold;">🚀 Open Portal</button></div><button onclick="location.reload()" style="margin-top:20px; background:transparent; border:none; color:#999; text-decoration:underline;">Logout</button></div>
+    <button id="partnerCancelBtn" onclick="closeAllPopups()" style="width:100%;padding:10px;background:transparent;border:none;color:#999;margin-top:5px">Cancel</button></div>
+
+<div class="popup-box" id="upgradeListModal"><h3 id="upgradeTitle" style="margin-top:0;color:#0a73c0;text-align:center;"></h3><div id="upgradeGrid" class="pkg-grid"></div><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
+<div class="popup-box" id="detailsModal"><h3 id="detailsTitle" style="margin-top:0;color:#0a73c0;"></h3><ul id="detailsList" style="padding-left:20px;font-size:13px;color:#555;line-height:1.6"></ul><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
+<div class="popup-box" id="compareModal"><h3 style="margin-top:0;color:#0a73c0;text-align:center">✨ Membership Benefits</h3><table class="comp-table"><thead><tr><th style="text-align:left; background:#eee; color:#333;">Feature</th><th style="background:#eee; color:#666;">Basic</th><th style="background:#fff8e1; color:#f57f17;">Gold</th><th style="background:#eceff1; color:#37474f;">Plat.</th></tr></thead><tbody><tr><td style="text-align:left; font-weight:bold;">🩸 Blood Test</td><td>20%</td><td style="font-weight:bold; color:#f57f17">35%</td><td style="font-weight:bold; color:#37474f">50%</td></tr><tr><td style="text-align:left; font-weight:bold;">🦴 X-Ray/USG</td><td>5%</td><td style="font-weight:bold; color:#f57f17">10%</td><td style="font-weight:bold; color:#37474f">20%</td></tr><tr><td style="text-align:left; font-weight:bold;">🏠 Home Coll.</td><td>Paid</td><td style="font-weight:bold; color:#f57f17">₹50</td><td style="font-weight:bold; color:#37474f">FREE</td></tr><tr><td style="text-align:left; font-weight:bold;">👨‍⚕️ Doctor Fees</td><td>Full</td><td style="font-weight:bold; color:#f57f17">10% Off</td><td style="font-weight:bold; color:#37474f">20% Off</td></tr></tbody></table><button onclick="closeAllPopups()" style="width:100%;padding:12px;background:#333;color:white;font-weight:bold;border:none;border-radius:8px;margin-top:10px">Close</button></div>
+<div class="popup-box" id="forgotPassModal"><h3 style="margin-top:0; color:#0a73c0;">Reset Password</h3><input type="text" id="newPassInput" class="login-input" placeholder="New Password"><button class="login-btn" onclick="sendForgotPassReq()" style="margin-top:10px;">Send Request</button><button onclick="closeAllPopups()" style="width:100%; padding:10px; background:transparent; border:none; color:#999;">Cancel</button></div>
+
 <div class="popup-box" id="termsModal"><h3 style="margin-top:0; color:#0a73c0">Terms & Conditions</h3><div style="max-height:60vh; overflow-y:auto; font-size:12px; color:#555;"><p><b>1. General Role:</b> Bhavya Diagnostics connects patients with NABL Labs.</p><p><b>2. Booking:</b> Confirmation via WhatsApp.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 <div class="popup-box" id="privacyModal"><h3 style="margin-top:0; color:#0a73c0">Privacy Policy</h3><div style="font-size:12px; color:#555;"><p>We collect your Name, Mobile, and Health Data only for services.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 <div class="popup-box" id="helpModal"><h3 style="margin-top:0; color:#0a73c0">Help & Contact</h3><div style="text-align:center;"><p>📞 +91 83979 85922</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
@@ -459,11 +537,11 @@ function renderQueueStep() {
     const savedAddr = currentUser ? currentUser.address : "";
     let html = '';
     
-    // 🔥 UPDATED LABS
+    // 🔥 UPDATED LABS: Wellness, CRL, Accuprobe
     if(type === 'test' || type === 'package') {
         html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
     } else if (['usg', 'xray'].includes(type)) {
-        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree</div></div>`;
+        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
     } else if (['ct', 'mri', 'echo'].includes(type)) {
         html += `<span class="booking-label">Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
     } else if (type === 'ecg') {
@@ -487,8 +565,11 @@ function nextQueueStep() {
     if(type === 'test' || type === 'package') {
         details.lab = document.querySelector(".option-btn[onclick*='lab'].selected")?.innerText || "Wellness";
         details.mode = document.querySelector(".option-btn[onclick*='mode'].selected")?.innerText || "Home";
-    } else if (['usg', 'xray', 'ct', 'mri', 'echo', 'ecg'].includes(type)) {
+    } else if (['usg', 'xray', 'ecg'].includes(type)) {
         details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree Diagnostic";
+        details.mode = "Center";
+    } else if (['ct', 'mri', 'echo'].includes(type)) {
+        details.center = "Shree Diagnostic";
         details.mode = "Center";
     }
     
@@ -505,7 +586,7 @@ function toggleMainCart() {
         const items = tempSelection.filter(i => i.type === cat);
         const booking = masterBookingData[cat];
         if(items.length > 0) {
-            html += `<div class="cart-group-header">${cat.toUpperCase()} ${booking ? `(${booking.mode||booking.center})` : ''}</div>`;
+            html += `<div class="cart-group-header">${cat.toUpperCase()} ${booking ? `(${booking.mode||booking.center||booking.lab})` : ''}</div>`;
             items.forEach(i => {
                 let total = i.price * i.qty;
                 grandTotal += total;
@@ -593,7 +674,6 @@ function checkLogin() {
 /* 🔥 AUTO-LOCK LOGIC */
 function applyPlanByMobile() {
     const m = document.getElementById("mobile").value;
-    const status = document.getElementById("planStatus"); // Needs status element in HTML if available, else ignored
     if (m.length === 10) {
         if (patientsDB[m]) {
             let plan = patientsDB[m].plan.toLowerCase();
@@ -650,7 +730,44 @@ function sendForgotPassReq(){ const m=document.getElementById("loginMob").value;
 function clearMainCart(){ mainCart=[]; tempSelection=[]; toggleMainCart(); document.getElementById("topProceedBtn").innerText="Cart Empty"; document.getElementById("topProceedBtn").classList.remove("active"); document.getElementById("finalCount").innerText="0"; }
 function payOnline() { const amt = document.getElementById("payAmount").innerText; if(amt == 0) return; window.location.href = `upi://pay?pa=${UPI_ID}&pn=BhavyaDiagnostics&am=${amt}&cu=INR`; }
 
-/* 🔥 VERIFY PARTNER USING GOOGLE SHEET */
+/* 🔥 BOOK VIA WHATSAPP (FIXED FUNCTION) */
+function bookViaWhatsapp() { 
+    const mobile = document.getElementById("mobile").value;
+    if(mobile.length !== 10) { showAlert("Enter 10-digit Mobile Number first!"); return; }
+    
+    const amt = document.getElementById("payAmount").innerText; 
+    let msg = `🌟 *New Booking Request*\n`; 
+    
+    Object.keys(masterBookingData).forEach(cat => { 
+        let d = masterBookingData[cat]; 
+        let items = tempSelection.filter(i => i.type === cat); 
+        msg += `\n📌 *${cat.toUpperCase()}*\n`;
+        // UPDATED WHATSAPP MSG FORMAT
+        msg += `Patient: ${d.name} (Mob: ${mobile})\n`;
+        if(d.mode) msg += `Location: ${d.mode}\n`;
+        if(d.lab) msg += `Lab: ${d.lab}\n`; 
+        if(d.center) msg += `Center: ${d.center}\n`;
+        
+        msg += `Items:\n`;
+        items.forEach(i => { 
+            msg += `- ${i.name} x${i.qty} (₹${i.price})`; 
+            if(i.contrast) msg += ` (+Contrast)`; 
+            msg += `\n`; 
+        }); 
+        msg += `Date/Time: ${d.date} at ${d.time}\n`; 
+    }); 
+    msg += `\n💰 Total Amount: ₹${amt}`; 
+    
+    // Log to Google Sheet (Optional)
+    logNotification(mobile, `WhatsApp Booking Initiated\nAmount: ${amt}`, "WhatsApp"); 
+    
+    // Open WhatsApp
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank"); 
+    closeAllPopups(); 
+    clearMainCart(); 
+}
+
+/* 🔥 PARTNER VERIFICATION USING GOOGLE SHEET */
 function verifyPartner() { 
     const id = document.getElementById("partnerId").value.toUpperCase().trim(); 
     const pass = document.getElementById("partnerPass").value.trim(); 
