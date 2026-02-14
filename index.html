@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Bhavya Diagnostics - One Stop All Diagnostic Services</title>
+<title>Bhavya Diagnostics</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <style>
@@ -10,27 +10,46 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#f0f2f5;padding-bottom:120px;}
 
-/* HEADER (Fixed Z-Index to prevent overlap) */
+/* HEADER */
 .summary{position:sticky;top:0;background:#fff;padding:12px 15px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:900;border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; width: 100%; height: 60px;}
 .header-left { display: flex; align-items: center; gap: 10px; }
 .menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; color: #333; line-height: 1; }
 .summary-info { font-size:12px; color:#666; margin-bottom: 2px; }
 .summary-total { font-size:18px; font-weight:800; color:#0a73c0; }
 
-/* TOP PROCEED BUTTON */
+/* PROCEED BUTTON */
 .top-proceed-btn { background: #ccc; color: white; padding: 8px 15px; border-radius: 25px; font-weight: bold; font-size: 13px; border: none; cursor: not-allowed; transition: 0.3s; white-space: nowrap; flex-shrink: 0; }
 .top-proceed-btn.active { background: linear-gradient(135deg, #2e7d32, #1b5e20); cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); }
 
-/* ACTION BUTTONS (Increased Z-Index to fix clicking issue) */
+/* ACTION BUTTONS */
 .action-buttons { display:flex; gap:8px; padding:10px; background:#fff; position: relative; z-index: 950; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .action-buttons button { flex:1; border:none; padding:12px 5px; border-radius:8px; color:#fff; font-size:12px; cursor:pointer; font-weight:700; letter-spacing:0.3px; white-space:nowrap; transition: 0.2s; }
-.action-buttons button:active { transform: scale(0.98); }
 .upload-rx { background:linear-gradient(45deg, #9c27b0, #673ab7); }
 .view-cart { background:#333; }
 .my-info-btn { background: #0a73c0; }
 .my-info-btn.logged-in { background: #4caf50; }
 
-/* UPGRADE BANNERS */
+/* 🔥 NEW: MOBILE INPUT DESIGN */
+.check-plan-box { 
+    background: #fff; margin: 10px; padding: 15px; border-radius: 12px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e0e0e0;
+    display: flex; flex-direction: column; gap: 8px;
+}
+.check-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #555; }
+.status-indicator { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #999; }
+.status-indicator.active { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+.mobile-input-row { display: flex; gap: 10px; }
+.big-input { 
+    flex: 1; padding: 12px; font-size: 16px; border: 2px solid #eee; 
+    border-radius: 8px; outline: none; font-weight: bold; letter-spacing: 1px; transition: 0.3s;
+}
+.big-input:focus { border-color: #0a73c0; background: #fbfdff; }
+
+/* PLAN LOCKING STYLES */
+.plan.locked { opacity: 0.5; pointer-events: none; filter: grayscale(1); position: relative; }
+.plan.locked::after { content: "🔒"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; }
+
+/* BANNERS */
 .top-banner { display: none; margin: 10px; padding: 15px; border-radius: 12px; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .tb-gold { background: linear-gradient(to right, #fff8e1, #fff); border-left: 5px solid #ffb300; }
 .tb-plat { background: linear-gradient(to right, #eceff1, #fff); border-left: 5px solid #607d8b; }
@@ -39,7 +58,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .tb-btn { background: #333; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; }
 .vip-badge { display:none; margin:10px; background:linear-gradient(45deg, #333, #000); color:gold; padding:15px; border-radius:12px; text-align:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
 
-/* SIDEBAR MENU */
+/* SIDEBAR */
 .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 4000; display: none; backdrop-filter: blur(2px); }
 .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 4100; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
 .sidebar.open { left: 0; }
@@ -57,9 +76,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 /* SECTIONS & CARDS */
 .section{display:none;padding:10px}
 .section.active{display:block !important;}
-.mobile-box{padding:15px;background:#fff;margin:10px;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.mobile-box input, .search{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:15px;box-sizing:border-box;outline:none;transition:0.3s}
-.search{margin-bottom:15px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 95% center; }
+.search{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:15px;box-sizing:border-box;outline:none;transition:0.3s; margin-bottom:15px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 95% center; }
 
 .plan-row{display:flex;gap:10px;margin-bottom:20px;background:#fff;padding:10px;border-radius:12px;}
 .plan{flex:1;background:#f8f9fa;border:2px solid transparent;border-radius:10px;padding:12px 5px;text-align:center;font-size:12px;cursor:pointer;position:relative;font-weight:600;color:#555;transition:0.2s}
@@ -73,8 +90,6 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .mrp-price { font-size: 11px; color: #aaa; text-decoration: line-through; margin-right: 5px; }
 .final-price, .pkg-rate { font-size: 15px; color: #2e7d32; font-weight: 800; }
 .unlock-badge { font-size:10px; font-weight:bold; background:#fff8e1; color:#ff8f00; padding:2px 5px; border-radius:4px; display:inline-block; margin-bottom:5px; border:1px solid #ffb300; }
-.platinum-badge { background:#eceff1; color:#455a64; border-color:#607d8b; }
-
 .add-btn { background: linear-gradient(135deg, #0a73c0, #005b9f); color: white; border: none; padding: 8px 0; width:100%; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
 .qty-control { display: none; align-items: center; background: #e3f2fd; border-radius: 25px; padding: 2px; border: 1px solid #0a73c0; width:100%; justify-content: space-between; }
 .qty-control button { background: transparent; border: none; color: #0a73c0; font-weight: bold; font-size: 18px; width: 30px; }
@@ -105,6 +120,12 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .option-btn { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
 .option-btn.selected { background: #e3f2fd; color: #0a73c0; border-color: #0a73c0; box-shadow: 0 2px 5px rgba(10,115,192,0.2); }
 
+/* BUTTONS */
+.whatsapp-btn { background: linear-gradient(45deg, #25D366, #128C7E); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.pay-btn { background: linear-gradient(135deg, #673ab7, #512da8); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
+.next-btn { background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s; }
+.next-btn:active { transform: scale(0.98); }
+
 /* CART & LOGIN */
 .custom-alert-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:80%; background:#fff; border-radius:15px; padding:20px; z-index:9999; text-align:center; }
 .login-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
@@ -117,7 +138,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .signup-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
 .signup-btn-large { width: 100%; padding: 12px; background: #ff9800; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; box-sizing: border-box; }
 
-/* DASHBOARD & FAMILY */
+/* DASHBOARD */
 .dashboard-container { display: none; padding: 10px; background: #fff; margin-bottom: 10px; border-bottom: 1px solid #eee; }
 .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .dash-points { background: linear-gradient(45deg, #FFD700, #FFA500); color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; flex: 1; margin-right: 10px; box-shadow: 0 4px 10px rgba(255, 165, 0, 0.3); }
@@ -130,9 +151,6 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .dash-fam-add { color: #0a73c0; border: 1px dashed #0a73c0; }
 .dash-report-btn { margin-top:10px; padding:12px; background:#e8f5e9; border:1px dashed #2e7d32; border-radius:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; width:100%; box-sizing:border-box; }
 .partner-link { text-align: center; padding: 20px; color: #999; font-size: 12px; margin-top: 30px; cursor: pointer; text-decoration: underline; }
-.admin-row { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-.status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: white; }
-.status-pending { background: #ff9800; }
 </style>
 </head>
 
@@ -185,34 +203,23 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 
 <div id="dashboardSection" class="dashboard-container">
     <div class="dash-header">
-        <div class="dash-points">
-            <div style="font-size:10px; opacity:0.8;">WALLET</div>
-            <div style="font-size:24px;" id="dashPoints">0</div>
-        </div>
-        <div class="dash-details">
-            <div class="dash-label">Plan</div>
-            <div class="dash-val" id="dashPlan">Basic</div>
-            <div class="dash-label">Referral Code</div>
-            <div class="dash-val">
-                <span id="dashRef" style="color:#e91e63">---</span>
-                <button class="share-btn" onclick="shareReferral()">📢 Share</button>
-            </div>
-        </div>
+        <div class="dash-points"><div style="font-size:10px; opacity:0.8;">WALLET</div><div style="font-size:24px;" id="dashPoints">0</div></div>
+        <div class="dash-details"><div class="dash-label">Plan</div><div class="dash-val" id="dashPlan">Basic</div><div class="dash-label">Referral Code</div><div class="dash-val"><span id="dashRef" style="color:#e91e63">---</span> <button class="share-btn" onclick="shareReferral()">📢</button></div></div>
     </div>
-    
     <div style="margin-top:10px; margin-bottom:15px;">
-        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient for Booking</div>
-        <div id="dashFamilyContainer" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px;">
-            </div>
+        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient</div>
+        <div id="dashFamilyContainer" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px;"></div>
     </div>
-
-    <div class="dash-report-btn" onclick="handleMyInfoClick()">
-        <span style="font-weight:bold; color:#2e7d32; display:flex; align-items:center; gap:5px;">📂 Reports & History</span>
-        <span style="font-size:11px; background:white; padding:3px 10px; border-radius:15px; color:#333; border:1px solid #ddd;">Open ➔</span>
-    </div>
+    <div class="dash-report-btn" onclick="handleMyInfoClick()"><span style="font-weight:bold; color:#2e7d32;">📂 Reports & History</span><span style="font-size:11px; background:white; padding:3px 10px; border-radius:15px; color:#333; border:1px solid #ddd;">Open ➔</span></div>
 </div>
 
-<div class="mobile-box" id="mobileInputBox"><b>Patient Mobile Number</b><input id="mobile" type="tel" maxlength="10" placeholder="Enter 10 digit number" onkeyup="applyPlanByMobile()"></div>
+<div class="check-plan-box">
+    <div class="check-header"><span>Enter Patient Mobile</span><span id="planStatus" class="status-indicator">Pending</span></div>
+    <div class="mobile-input-row">
+        <input id="mobile" class="big-input" type="tel" maxlength="10" placeholder="10 Digit Mobile" onkeyup="applyPlanByMobile()">
+    </div>
+    <div style="font-size:10px; color:#999;">*Rates will update automatically based on plan.</div>
+</div>
 
 <div class="nav-grid">
     <button class="nav-btn active" onclick="show('test',this)">🩸 Blood Test</button>
@@ -273,90 +280,146 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 </div>
 <div id="hospital" class="section"><div style="background:#fff; padding:20px; border-radius:12px; border-left:5px solid #e91e63;"><h3 style="margin-top:0">🏥 Hospital Admission</h3><button class="confirm-btn" onclick="sendHospRequest()" style="background:#e91e63; color:white; border:none; padding:10px; border-radius:20px; width:100%;">Send Enquiry</button></div></div>
 
-<div class="partner-link" onclick="openPartnerModal()">🏥 Partner/Lab Login (Secure Area)</div>
-
-<div class="popup-box" id="stepModal">
-    <div class="sheet-header">
-        <h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking Details</h3>
-        <div id="stepSubtitle" style="font-size:12px; color:#666;"></div>
-    </div>
-    <div class="sheet-body" id="dynamicFormBody"></div>
-    <div class="sheet-footer">
-        <button class="next-btn" onclick="nextQueueStep()">Next ➔</button>
-    </div>
-</div>
-
-<div class="popup-box" id="mainCartBox">
-    <div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div>
-    <div class="sheet-body" id="finalCartItems"></div>
-    <div class="sheet-footer">
-        <div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div>
-        <div id="couponMsg" style="font-size:11px;margin-top:5px;"></div>
-        <div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div>
-        
-        <div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div>
-        
-        <button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button>
-        <button onclick="bookWithPayment('ONLINE')" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button>
-        <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button>
-    </div>
-</div>
-
-<div class="popup-box" id="loginModal">
-    <h3 style="text-align:center; color:#0a73c0">Login</h3>
-    <input type="tel" id="loginMob" class="login-input" placeholder="Mobile">
-    <input type="password" id="loginPass" class="login-input" placeholder="Password">
-    <button class="login-btn" onclick="checkLogin()">Login</button>
-    <div class="signup-section">
-        <button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button>
-    </div>
-    <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button>
-</div>
-
-<div class="popup-box" id="infoModal">
-    <h3 style="margin-top:0; color:#0a73c0;">My Profile</h3>
-    <div id="patientDataList" style="margin-bottom:10px"></div>
-    <div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div>
-    <div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div>
-    <div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div>
-    <div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div>
-    <button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button>
-</div>
-
+<div class="popup-box" id="stepModal"><div class="sheet-header"><h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking</h3><div id="stepSubtitle" style="font-size:12px; color:#666;"></div></div><div class="sheet-body" id="dynamicFormBody"></div><div class="sheet-footer"><button class="next-btn" onclick="nextQueueStep()">Next ➔</button></div></div>
+<div class="popup-box" id="mainCartBox"><div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div><div class="sheet-body" id="finalCartItems"></div><div class="sheet-footer"><div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div><div id="couponMsg" style="font-size:11px;margin-top:5px;"></div><div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div><div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div><button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button><button onclick="bookWithPayment('ONLINE')" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button></div></div>
+<div class="popup-box" id="loginModal"><h3 style="text-align:center; color:#0a73c0">Login</h3><input type="tel" id="loginMob" class="login-input" placeholder="Mobile"><input type="password" id="loginPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="checkLogin()">Login</button><div class="signup-section"><button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button></div>
+<div class="popup-box" id="infoModal"><h3 style="margin-top:0; color:#0a73c0;">My Profile</h3><div id="patientDataList" style="margin-bottom:10px"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div><div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div><div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button></div>
 <div class="popup-box form-popup" id="universalFormModal"><div class="form-header"><b id="formTitle" style="color:#0a73c0">Form</b><button onclick="closeAllPopups()" style="background:transparent;border:none;font-size:20px;color:#666;cursor:pointer;">&times;</button></div><iframe id="formFrame" class="form-iframe" src=""></iframe></div>
-<div class="popup-box" id="partnerModal">
-    <h3 style="margin-top:0;color:#d32f2f;text-align:center">🔒 Partner Access</h3>
-    <div id="partnerLoginForm"><input id="partnerId" class="login-input" placeholder="Partner ID"><input type="password" id="partnerPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="verifyPartner()" style="background:#333">Login to Dashboard</button></div>
-    <div id="partnerDashboard" style="display:none; text-align:center;"><div style="font-size:50px;">✅</div><h2 style="color:#2e7d32; margin:10px 0;">Login Successful!</h2><p id="partnerWelcomeMsg" style="color:#555;"></p><div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:10px; border:1px dashed #ccc;"><button onclick="openFormModal(PARTNER_FORM_URL, 'Partner Portal')" style="background:#0a73c0; color:white; border:none; padding:12px 25px; border-radius:25px; font-weight:bold;">🚀 Open Portal</button></div><button onclick="location.reload()" style="margin-top:20px; background:transparent; border:none; color:#999; text-decoration:underline;">Logout</button></div>
-    <button id="partnerCancelBtn" onclick="closeAllPopups()" style="width:100%;padding:10px;background:transparent;border:none;color:#999;margin-top:5px">Cancel</button>
-</div>
-
-<div class="popup-box" id="upgradeListModal"><h3 id="upgradeTitle" style="margin-top:0;color:#0a73c0;text-align:center;"></h3><div id="upgradeGrid" class="pkg-grid"></div><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
-<div class="popup-box" id="detailsModal"><h3 id="detailsTitle" style="margin-top:0;color:#0a73c0;"></h3><ul id="detailsList" style="padding-left:20px;font-size:13px;color:#555;line-height:1.6"></ul><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
-<div class="popup-box" id="compareModal"><h3 style="margin-top:0;color:#0a73c0;text-align:center">✨ Membership Benefits</h3><table class="comp-table"><thead><tr><th style="text-align:left; background:#eee; color:#333;">Feature</th><th style="background:#eee; color:#666;">Basic</th><th style="background:#fff8e1; color:#f57f17;">Gold</th><th style="background:#eceff1; color:#37474f;">Plat.</th></tr></thead><tbody><tr><td style="text-align:left; font-weight:bold;">🩸 Blood Test</td><td>20%</td><td style="font-weight:bold; color:#f57f17">35%</td><td style="font-weight:bold; color:#37474f">50%</td></tr><tr><td style="text-align:left; font-weight:bold;">🦴 X-Ray/USG</td><td>5%</td><td style="font-weight:bold; color:#f57f17">10%</td><td style="font-weight:bold; color:#37474f">20%</td></tr><tr><td style="text-align:left; font-weight:bold;">🏠 Home Coll.</td><td>Paid</td><td style="font-weight:bold; color:#f57f17">₹50</td><td style="font-weight:bold; color:#37474f">FREE</td></tr><tr><td style="text-align:left; font-weight:bold;">👨‍⚕️ Doctor Fees</td><td>Full</td><td style="font-weight:bold; color:#f57f17">10% Off</td><td style="font-weight:bold; color:#37474f">20% Off</td></tr></tbody></table><button onclick="closeAllPopups()" style="width:100%;padding:12px;background:#333;color:white;font-weight:bold;border:none;border-radius:8px;margin-top:10px">Close</button></div>
-<div class="popup-box" id="forgotPassModal"><h3 style="margin-top:0; color:#0a73c0;">Reset Password</h3><input type="text" id="newPassInput" class="login-input" placeholder="New Password"><button class="login-btn" onclick="sendForgotPassReq()" style="margin-top:10px;">Send Request</button><button onclick="closeAllPopups()" style="width:100%; padding:10px; background:transparent; border:none; color:#999;">Cancel</button></div>
-
+<div class="popup-box" id="partnerModal"><h3 style="margin-top:0;color:#d32f2f;text-align:center">🔒 Partner Access</h3><div id="partnerLoginForm"><input id="partnerId" class="login-input" placeholder="Partner ID"><input type="password" id="partnerPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="verifyPartner()" style="background:#333">Login to Dashboard</button></div><div id="partnerDashboard" style="display:none; text-align:center;"><div style="font-size:50px;">✅</div><h2 style="color:#2e7d32; margin:10px 0;">Login Successful!</h2><p id="partnerWelcomeMsg" style="color:#555;"></p><div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:10px; border:1px dashed #ccc;"><button onclick="openFormModal(PARTNER_FORM_URL, 'Partner Portal')" style="background:#0a73c0; color:white; border:none; padding:12px 25px; border-radius:25px; font-weight:bold;">🚀 Open Portal</button></div><button onclick="location.reload()" style="margin-top:20px; background:transparent; border:none; color:#999; text-decoration:underline;">Logout</button></div><button id="partnerCancelBtn" onclick="closeAllPopups()" style="width:100%;padding:10px;background:transparent;border:none;color:#999;margin-top:5px">Cancel</button></div>
 <div class="popup-box" id="termsModal"><h3 style="margin-top:0; color:#0a73c0">Terms & Conditions</h3><div style="max-height:60vh; overflow-y:auto; font-size:12px; color:#555;"><p><b>1. General Role:</b> Bhavya Diagnostics connects patients with NABL Labs.</p><p><b>2. Booking:</b> Confirmation via WhatsApp.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 <div class="popup-box" id="privacyModal"><h3 style="margin-top:0; color:#0a73c0">Privacy Policy</h3><div style="font-size:12px; color:#555;"><p>We collect your Name, Mobile, and Health Data only for services.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 <div class="popup-box" id="helpModal"><h3 style="margin-top:0; color:#0a73c0">Help & Contact</h3><div style="text-align:center;"><p>📞 +91 83979 85922</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
+<div class="popup-box" id="detailsModal"><h3 id="detailsTitle" style="margin-top:0;color:#0a73c0;"></h3><ul id="detailsList" style="padding-left:20px;font-size:13px;color:#555;line-height:1.6"></ul><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
 
 <script>
-/* CONFIG */
-const RATE_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
-const PATIENT_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
+/* 🔴 CONFIGURATION */
+const RAW_RATE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
+const RAW_PATIENT_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
+const RAW_PARTNER_DB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=988786822&single=true&output=csv";
+
+/* PROXIES (FOR 100% LOADING) */
+const RATE_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_RATE_URL)}`;
+const PATIENT_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PATIENT_URL)}`;
+const PARTNER_DB_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PARTNER_DB_URL)}`;
+
+/* FORMS */
 const PARTNER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSOZbFl-dKDA4jy5cBCQav3zpMXjgtsUReIS9itHDRdHBEMg/viewform?embedded=true";
 const SIGNUP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdix2-jvF-Fr7OK0S7A514oTVXjQgmgWp4CvPUm9pEg8Y_x6w/viewform?embedded=true";
+
 const NOTIFY_API_URL = "https://script.google.com/macros/s/AKfycbwVykNZTm3wE--gF2qDPQsR25vUK2K_bFOTxx2aRT8hVw4rsM51bseKL-eREahIzBg2/exec";
 const WA_NUMBER = "918397985922"; 
 const UPI_ID = "8397985922@ptsbi"; 
 
-let tempSelection = [], bookingQueue = [], currentQueueIndex = 0, masterBookingData = {}, currentUser = null, patientsDB = {}, usePoints = false, activeCoupon = null, selectedPatientName = ""; 
+let tempSelection = [], bookingQueue = [], currentQueueIndex = 0, masterBookingData = {}, currentUser = null, patientsDB = {}, partnersDB = {}, usePoints = false, activeCoupon = null, selectedPatientName = ""; 
 const discountMap = { basic: 0.20, gold: 0.35, platinum: 0.50, pkg_basic: 0.10, pkg_gold: 0.20, pkg_platinum: 0.30 };
-const partnersDB = { 'LAB01': { pass: '1234', name: 'Shree Diagnostic' }, 'DOC01': { pass: '5678', name: 'Dr. Sharma' }, 'PHARM01': { pass: '4321', name: 'City Pharmacy' }, 'ADMIN': { pass: 'admin', name: 'Main Admin' } };
 
-window.onload = function(){ loadGoogleSheetData(); };
+window.onload = function(){ loadGoogleSheetData(); loadPatientData(); loadPartnerData(); };
 
-/* MENU & MODALS */
+/* DATA LOADERS */
+async function loadGoogleSheetData() {
+    try {
+        let res = await fetch(RAW_RATE_URL);
+        if(!res.ok) res = await fetch(RATE_SHEET_URL); 
+        const text = await res.text();
+        parseProducts(text);
+    } catch(e) { document.getElementById("loadingMsg").innerHTML = "Error loading tests.<br>Check connection."; document.getElementById("loadingMsg").style.color="red"; }
+}
+
+async function loadPatientData() {
+    try {
+        let res = await fetch(RAW_PATIENT_URL);
+        if(!res.ok) res = await fetch(PATIENT_SHEET_URL);
+        const text = await res.text();
+        parsePatients(text);
+    } catch(e) {}
+}
+
+async function loadPartnerData() {
+    try {
+        let res = await fetch(RAW_PARTNER_DB_URL);
+        if(!res.ok) res = await fetch(PARTNER_DB_URL);
+        const text = await res.text();
+        parsePartners(text);
+    } catch(e) {}
+}
+
+function parsePartners(csv) {
+    const rows = csv.split('\n').slice(1);
+    rows.forEach(row => {
+        const cols = row.split(',').map(c=>c.replace(/"/g,'').trim());
+        if(cols.length >= 2) {
+            partnersDB[cols[0].toUpperCase()] = { pass: cols[1], name: cols[2] || "Partner" };
+        }
+    });
+}
+
+function parsePatients(csvText) { 
+    const rows = csvText.split('\n').slice(1); 
+    rows.forEach(row => { 
+        const cols = row.split(',').map(c => c.replace(/"/g, '').trim()); 
+        if(cols.length < 3) return; 
+        const mob = cols[2]; 
+        if(mob && mob.length >= 10) { 
+            let plan = cols[5] && cols[5].length > 2 ? cols[5] : 'Basic'; 
+            if (patientsDB[mob]) { if(cols[7]) patientsDB[mob].reports.push({ link: cols[7], date: cols[0] }); } 
+            else { patientsDB[mob] = { mobile: mob, name: cols[1], password: cols[3], address: cols[4]||"", plan: plan, points: parseInt(cols[6])||0, reports: [], referral: cols[1].split(" ")[0].toUpperCase()+mob.slice(-3), family: [] }; if(cols[7]) patientsDB[mob].reports.push({ link: cols[7], date: cols[0] }); } 
+        } 
+    }); 
+}
+
+function parseProducts(csvText) { 
+    const rows = [];
+    let currentRow = "";
+    let insideQuotes = false;
+    for (let i = 0; i < csvText.length; i++) {
+        const char = csvText[i];
+        if (char === '"') insideQuotes = !insideQuotes;
+        if (char === '\n' && !insideQuotes) { rows.push(currentRow); currentRow = ""; } else { currentRow += char; }
+    }
+    if (currentRow) rows.push(currentRow);
+
+    rows.slice(1).forEach(row => { 
+        if(!row.trim()) return;
+        const cols = [];
+        let col = "";
+        let quotes = false;
+        for(let i=0; i<row.length; i++){
+            if(row[i] === '"') { quotes = !quotes; continue; }
+            if(row[i] === ',' && !quotes) { cols.push(col.trim()); col = ""; }
+            else { col += row[i]; }
+        }
+        cols.push(col.trim());
+
+        if(cols.length < 3) return; 
+        
+        let cat = cols[2].toLowerCase();
+        if(cat.includes('blood') || cat.includes('test') || cat.includes('pathology') || cat.includes('lab')) cat = 'test';
+        else if(cat.includes('sound') || cat.includes('usg')) cat = 'usg';
+        else if(cat.includes('x-ray') || cat.includes('x ray') || cat.includes('xray')) cat = 'xray';
+        else if(cat.includes('ct scan') || cat === 'scan' || cat === 'ct') cat = 'ct';
+        else if(cat.includes('mri')) cat = 'mri';
+        else if(cat.includes('doctor') || cat.includes('dr')) cat = 'doctor';
+        else if(cat.includes('package') || cat.includes('checkup')) cat = 'package';
+        
+        let cleanPrice = cols[1].replace(/[^0-9]/g, '');
+        createCard({ 
+            name: cols[0].replace(/"/g, ''), 
+            price: parseInt(cleanPrice) || 0, 
+            category: cat, 
+            discount: cols[3] && cols[3].toLowerCase() === 'yes', 
+            image: cols[4]||"", 
+            details: cols[5]||"" 
+        }); 
+    }); 
+    
+    if(document.querySelectorAll('.card, .doc-card, .pkg-card').length > 0) {
+        document.getElementById("loadingMsg").style.display = 'none';
+    } else {
+        document.getElementById("loadingMsg").innerHTML = "No tests found.<br>Check Sheet.";
+    }
+}
+
+/* UI FUNCTIONS */
 function openMenu() { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").style.display = "block"; }
 function closeMenu() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").style.display = "none"; }
 function openTerms() { closeMenu(); document.getElementById("overlay").style.display="block"; document.getElementById("termsModal").style.display="block"; }
@@ -364,7 +427,6 @@ function openPrivacy() { closeMenu(); document.getElementById("overlay").style.d
 function openHelp() { closeMenu(); document.getElementById("overlay").style.display="block"; document.getElementById("helpModal").style.display="block"; }
 function shareApp() { const msg = `Book Blood Tests & Doctors on Bhavya Diagnostics App! Link: https://dharmender.github.io/diagnostic-app`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank"); }
 
-/* SELECTION */
 function show(id, btn){ 
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); 
@@ -372,7 +434,6 @@ function show(id, btn){
     if(btn) btn.classList.add('active'); 
 }
 
-/* QUEUE */
 function startBookingQueue() {
     if(tempSelection.length === 0) return;
     const categories = [...new Set(tempSelection.map(item => item.type))];
@@ -397,9 +458,14 @@ function renderQueueStep() {
     const prefillName = selectedPatientName || (currentUser ? currentUser.name : "");
     const savedAddr = currentUser ? currentUser.address : "";
     let html = '';
-    if(type === 'test') html += `<span class="booking-label">Report</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'report','Normal')">Normal</div><div class="option-btn" onclick="selectOpt(this,'report','Urgent')">Urgent</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
-    else if (type === 'package') html += `<span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
-    else if (['usg', 'xray', 'ecg'].includes(type)) html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div></div>`;
+    
+    // 🔥 UPDATED LABS: Wellness, CRL, Accuprobe
+    if(type === 'test' || type === 'package') {
+        html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
+    } else if (['usg', 'xray', 'ecg'].includes(type)) {
+        html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div></div>`;
+    }
+    
     html += `<span class="booking-label">Patient</span><input id="qName" class="med-input" placeholder="Patient Name" value="${prefillName}"><div id="qAddressBox"><span class="booking-label">Address</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Address">${savedAddr}</textarea></div><span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots"></div>`;
     document.getElementById("dynamicFormBody").innerHTML = html;
     renderQTimeSlots();
@@ -413,13 +479,15 @@ function nextQueueStep() {
     const timeEl = document.querySelector(".time-slot.selected");
     if(!name || !date || !timeEl) { showAlert("Fill Name & Time"); return; }
     let details = { name, date, time: timeEl.innerText, city: document.getElementById("qCity")?.value || "N/A", address: document.getElementById("qAddr")?.value || "N/A" };
-    if(type === 'test') {
-        details.report = document.querySelector(".option-btn[onclick*='report'].selected")?.innerText || "Normal";
+    
+    if(type === 'test' || type === 'package') {
+        details.lab = document.querySelector(".option-btn[onclick*='lab'].selected")?.innerText || "Wellness";
         details.mode = document.querySelector(".option-btn[onclick*='mode'].selected")?.innerText || "Home";
     } else if (['usg', 'xray', 'ecg'].includes(type)) {
         details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree";
         details.mode = "Center";
     } else { details.center = "Shree"; details.mode = "Center"; }
+    
     masterBookingData[type] = details;
     currentQueueIndex++;
     renderQueueStep();
@@ -451,32 +519,6 @@ function toggleMainCart() {
     document.getElementById("finalCartItems").innerHTML = html;
     document.getElementById("payAmount").innerText = (grandTotal - disc) > 0 ? (grandTotal - disc) : 0;
     document.getElementById("redeemBox").style.display = (currentUser && discountableTotal > 0) ? "flex" : "none";
-}
-
-function updateDashFamily() {
-    const container = document.getElementById("dashFamilyContainer");
-    if(!currentUser) return;
-    let html = `<div class="dash-fam-btn ${selectedPatientName===currentUser.name ? 'active' : ''}" onclick="selectDashPatient('${currentUser.name}')">Self</div>`;
-    if(currentUser.family) currentUser.family.forEach(f => { html += `<div class="dash-fam-btn ${selectedPatientName===f.name ? 'active' : ''}" onclick="selectDashPatient('${f.name}')">${f.rel}</div>`; });
-    html += `<div class="dash-fam-btn dash-fam-add" onclick="addFamilyMember()">+ Add</div>`;
-    container.innerHTML = html;
-}
-function selectDashPatient(name) { selectedPatientName = name; updateDashFamily(); }
-function addFamilyMember() { const name = prompt("Name:"); const rel = prompt("Relation:"); if(name && rel) { if(!currentUser.family) currentUser.family = []; currentUser.family.push({name, rel}); updateDashFamily(); } }
-
-async function loadGoogleSheetData() { try { const rRes=await fetch(RATE_SHEET_URL); parseProducts(await rRes.text()); } catch(e){} try { const pRes=await fetch(PATIENT_SHEET_URL); parsePatients(await pRes.text()); } catch(e){} }
-function parsePatients(csvText) { const rows = csvText.split('\n').slice(1); rows.forEach(row => { const cols = row.split(',').map(c => c.replace(/"/g, '').trim()); if(cols.length < 3) return; const mob = cols[2]; if(mob && mob.length >= 10) { let plan = cols[5] && cols[5].length > 2 ? cols[5] : 'Basic'; if (patientsDB[mob]) { if(cols[7]) patientsDB[mob].reports.push({ link: cols[7], date: cols[0] }); } else { patientsDB[mob] = { mobile: mob, name: cols[1], password: cols[3], address: cols[4]||"", plan: plan, points: parseInt(cols[6])||0, reports: [], referral: cols[1].split(" ")[0].toUpperCase()+mob.slice(-3), family: [] }; if(cols[7]) patientsDB[mob].reports.push({ link: cols[7], date: cols[0] }); } } }); }
-function parseProducts(csvText) { document.getElementById("loadingMsg").style.display = 'none'; const rows = csvText.split('\n').slice(1); rows.forEach(row => { const cols = row.split(',').map(c => c.replace(/"/g, '').trim()); if(cols.length < 3) return; createCard({ name: cols[0], price: parseInt(cols[1]), category: cols[2].toLowerCase(), discount: cols[3] === 'yes', image: cols[4]||"", details: cols[5]||"" }); }); }
-function createCard(item) { 
-    if (item.category === 'doctor') { const div = document.createElement('div'); div.className = 'doc-card'; div.dataset.price = item.price; div.dataset.type = 'doctor'; div.innerHTML = `<img src="${item.image || 'https://via.placeholder.com/60'}" class="doc-img"><div class="doc-info"><div class="doc-name">${item.name}</div><div class="doc-deg">${item.details}</div><div class="doc-fee">₹<span class="final-price"><b>${item.price}</b></span></div></div><button class="book-btn" onclick="bookDoctor('${item.name}', ${item.price}, this)">Book</button>`; document.getElementById("docContainer").appendChild(div); return; } 
-    if (item.category === 'package') { const div = document.createElement('div'); div.className = 'pkg-card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = 'package'; let badge = ""; if(item.details.toLowerCase().includes("gold")) badge = `<div class="unlock-badge">🏆 UNLOCKS GOLD</div>`; if(item.details.toLowerCase().includes("platinum")) badge = `<div class="unlock-badge platinum-badge">💎 UNLOCKS PLATINUM</div>`; div.innerHTML = `${badge}<div class="pkg-header"><div class="pkg-name">${item.name}</div></div><div class="pkg-body"><span class="mrp-price">₹${item.price}</span><span class="pkg-rate">₹<b>${item.price}</b></span><button class="view-details-btn" onclick="showIncludedTests('${item.name}', '${item.details.replace(/'/g, "\\'")}')">ℹ️ View Details</button></div><div class="pkg-footer"><div class="qty-wrapper"><button class="add-btn" onclick="updateQty(this, 1)">Add</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div></div>`; document.getElementById("pkgGrid").appendChild(div); return; } 
-    let container = document.getElementById(item.category); if (!container && item.category === 'test') container = document.getElementById("test"); if (!container && item.category === 'usg') container = document.getElementById("usgContainer"); if (!container && item.category === 'xray') container = document.getElementById("xrayContainer"); if (!container && item.category === 'ct') container = document.getElementById("ctContainer"); if (!container && item.category === 'mri') container = document.getElementById("mriContainer"); if (!container && item.category === 'ecg') container = document.getElementById("ecgContainer"); if (!container && item.category === 'echo') container = document.getElementById("echoContainer"); 
-    if (container) { 
-        if(container.id.includes('Container') === false && item.category !== 'test') { let innerCon = container.querySelector('[id$="Container"]'); if(innerCon) container = innerCon; } 
-        const div = document.createElement('div'); div.className = 'card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = item.category; 
-        let contrastHtml = ""; if(item.category === 'ct' || item.category === 'mri') contrastHtml = `<label class="contrast-box"><input type="checkbox"> 💊 + Contrast (₹3000)</label>`;
-        div.innerHTML = `<div><div class="card-info">${item.name}</div><div class="card-price-box"><span class="mrp-price">₹${item.price}</span><span class="final-price">₹<b>${item.price}</b></span></div></div><div class="qty-wrapper">${contrastHtml}<button class="add-btn" onclick="updateQty(this, 1)">ADD +</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div>`; container.appendChild(div); 
-    } 
 }
 
 function updateQty(btn, change) { 
@@ -524,10 +566,8 @@ function checkLogin() {
         document.getElementById("dashboardSection").style.display = "block"; 
         document.getElementById("mobileInputBox").style.display = "none"; 
         document.getElementById("mobile").value = u.mobile; 
-        
         selectedPatientName = u.name;
         updateDashFamily(); 
-
         const reportDiv = document.getElementById("reportContainer"); 
         reportDiv.innerHTML = ""; 
         if(u.reports && u.reports.length > 0) { 
@@ -535,32 +575,59 @@ function checkLogin() {
                 reportDiv.innerHTML += `<div class="list-item"><div><div class="list-title">📄 Lab Report</div><div class="list-date">${rep.date}</div></div><a href="${rep.link}" target="_blank" class="action-icon icon-green">⬇ Download</a></div>`; 
             }); 
         } else { reportDiv.innerHTML = `<div style="font-size:12px; color:#999; text-align:center; padding:10px;">No reports available yet.</div>`; } 
-        
         const p = u.plan ? u.plan.toLowerCase() : 'basic'; 
         const bG = document.getElementById("topBannerGold"), bP = document.getElementById("topBannerPlat"), vB = document.getElementById("topVipBadge"); 
         const dG = document.getElementById("dashCardGold"), dP = document.getElementById("dashCardPlat"); 
-        
-        // Reset
         bG.style.display="flex"; bP.style.display="flex"; vB.style.display="none"; 
         dG.style.display="block"; dP.style.display="block"; 
-        
-        if(p==='gold'){ 
-            bG.style.display="none"; dG.style.display="none"; 
-        } 
-        else if(p==='platinum'){ 
-            bG.style.display="none"; bP.style.display="none"; 
-            dG.style.display="none"; dP.style.display="none"; 
-            vB.style.display="block"; 
-        } 
-        
-        fetchHistory(u.mobile); 
-        closeAllPopups(); 
-        applyPlanByMobile(); 
+        if(p==='gold'){ bG.style.display="none"; dG.style.display="none"; } 
+        else if(p==='platinum'){ bG.style.display="none"; bP.style.display="none"; dG.style.display="none"; dP.style.display="none"; vB.style.display="block"; } 
+        fetchHistory(u.mobile); closeAllPopups(); applyPlanByMobile(); 
     } else showAlert("Invalid Credentials"); 
 }
 
+/* 🔥 AUTO-LOCK LOGIC */
+function applyPlanByMobile() {
+    const m = document.getElementById("mobile").value;
+    const status = document.getElementById("planStatus");
+    
+    if (m.length === 10) {
+        if (patientsDB[m]) {
+            let plan = patientsDB[m].plan.toLowerCase();
+            status.innerText = "✅ " + plan.toUpperCase() + " APPLIED";
+            status.className = "status-indicator active";
+            refreshPrices(plan);
+            
+            // LOCK BUTTONS
+            document.querySelectorAll('.plan').forEach(p => {
+                if (p.dataset.plan !== plan) p.classList.add('locked');
+                else p.classList.remove('locked');
+            });
+        } else {
+            status.innerText = "👤 New User (Basic)";
+            status.className = "status-indicator";
+            refreshPrices('basic');
+            document.querySelectorAll('.plan').forEach(p => p.classList.remove('locked'));
+        }
+    } else {
+        status.innerText = "Pending";
+        status.className = "status-indicator";
+    }
+}
+
 /* UTILS */
-function manualPlan(el){ refreshPrices(el.dataset.plan); }
+function createCard(item) { 
+    if (item.category === 'doctor') { const div = document.createElement('div'); div.className = 'doc-card'; div.dataset.price = item.price; div.dataset.type = 'doctor'; div.innerHTML = `<img src="${item.image || 'https://via.placeholder.com/60'}" class="doc-img"><div class="doc-info"><div class="doc-name">${item.name}</div><div class="doc-deg">${item.details}</div><div class="doc-fee">₹<span class="final-price"><b>${item.price}</b></span></div></div><button class="book-btn" onclick="bookDoctor('${item.name}', ${item.price}, this)">Book</button>`; document.getElementById("docContainer").appendChild(div); return; } 
+    if (item.category === 'package') { const div = document.createElement('div'); div.className = 'pkg-card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = 'package'; let badge = ""; if(item.details.toLowerCase().includes("gold")) badge = `<div class="unlock-badge">🏆 UNLOCKS GOLD</div>`; if(item.details.toLowerCase().includes("platinum")) badge = `<div class="unlock-badge platinum-badge">💎 UNLOCKS PLATINUM</div>`; div.innerHTML = `${badge}<div class="pkg-header"><div class="pkg-name">${item.name}</div></div><div class="pkg-body"><span class="mrp-price">₹${item.price}</span><span class="pkg-rate">₹<b>${item.price}</b></span><button class="view-details-btn" onclick="showIncludedTests('${item.name}', '${item.details.replace(/'/g, "\\'")}')">ℹ️ View Details</button></div><div class="pkg-footer"><div class="qty-wrapper"><button class="add-btn" onclick="updateQty(this, 1)">Add</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div></div>`; document.getElementById("pkgGrid").appendChild(div); return; } 
+    let container = document.getElementById(item.category); if (!container && item.category === 'test') container = document.getElementById("test"); if (!container && item.category === 'usg') container = document.getElementById("usgContainer"); if (!container && item.category === 'xray') container = document.getElementById("xrayContainer"); if (!container && item.category === 'ct') container = document.getElementById("ctContainer"); if (!container && item.category === 'mri') container = document.getElementById("mriContainer"); if (!container && item.category === 'ecg') container = document.getElementById("ecgContainer"); if (!container && item.category === 'echo') container = document.getElementById("echoContainer"); 
+    if (container) { 
+        if(container.id.includes('Container') === false && item.category !== 'test') { let innerCon = container.querySelector('[id$="Container"]'); if(innerCon) container = innerCon; } 
+        const div = document.createElement('div'); div.className = 'card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = item.category; 
+        let contrastHtml = ""; if(item.category === 'ct' || item.category === 'mri') contrastHtml = `<label class="contrast-box"><input type="checkbox"> 💊 + Contrast (₹3000)</label>`;
+        div.innerHTML = `<div><div class="card-info">${item.name}</div><div class="card-price-box"><span class="mrp-price">₹${item.price}</span><span class="final-price">₹<b>${item.price}</b></span></div></div><div class="qty-wrapper">${contrastHtml}<button class="add-btn" onclick="updateQty(this, 1)">ADD +</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div>`; container.appendChild(div); 
+    } 
+}
+
 function refreshPrices(plan){ 
     document.querySelectorAll('.plan').forEach(p=>{p.classList.remove('active');if(p.dataset.plan===plan)p.classList.add('active');}); 
     document.querySelectorAll('.card,.pkg-card').forEach(c=>{
@@ -571,10 +638,12 @@ function refreshPrices(plan){
         if(['usg','xray','ct','mri','ecg','echo'].includes(t)) d=(plan==='platinum'?0.20:(plan==='gold'?0.10:0.05)); 
         c.querySelector('.final-price b,.pkg-rate b').innerText="₹"+Math.round(op-(op*d));
     }); 
+    // 🔥 UPDATED DOCTOR PRICE DISPLAY (MRP + FINAL)
     document.querySelectorAll('.doc-card').forEach(c=>{ 
         const op = parseInt(c.dataset.price); 
         let d = (plan==='platinum'?0.20 : (plan==='gold'?0.10 : 0.05)); 
-        c.querySelector('.final-price b').innerText = Math.round(op - (op*d)); 
+        let final = Math.round(op - (op*d));
+        c.querySelector('.doc-fee').innerHTML = `<span style="text-decoration:line-through;color:#999;font-size:11px;">₹${op}</span> ₹<span class="final-price"><b>${final}</b></span>`;
     }); 
 }
 function filter(i,id){ let v=i.value.toLowerCase(); document.querySelectorAll(`#${id} .card`).forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
@@ -591,8 +660,22 @@ function sendHospRequest(){ window.open(`https://wa.me/${WA_NUMBER}?text=${encod
 function sendForgotPassReq(){ const m=document.getElementById("loginMob").value; const p=document.getElementById("newPassInput").value; if(m.length<10){showAlert("Enter Mobile first");return;} if(!p){showAlert("Enter New Pass");return;} window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hey Bhavya Diagnostics, Reset Pass\nMob: ${m}\nNew Pass: ${p}`)}`,"_blank"); closeAllPopups(); }
 function clearMainCart(){ mainCart=[]; tempSelection=[]; toggleMainCart(); document.getElementById("topProceedBtn").innerText="Cart Empty"; document.getElementById("topProceedBtn").classList.remove("active"); document.getElementById("finalCount").innerText="0"; }
 function payOnline() { const amt = document.getElementById("payAmount").innerText; if(amt == 0) return; window.location.href = `upi://pay?pa=${UPI_ID}&pn=BhavyaDiagnostics&am=${amt}&cu=INR`; }
-function bookWithPayment(){ const id="B-"+Math.floor(10000+Math.random()*90000); const amt = document.getElementById("payAmount").innerText; let msg = `🌟 *New Booking ${id}*\n`; Object.keys(masterBookingData).forEach(cat => { let d = masterBookingData[cat]; let items = tempSelection.filter(i => i.type === cat); msg += `\n📌 *${cat.toUpperCase()}*: ${d.name}\n`; items.forEach(i => { msg += `- ${i.name} x${i.qty}`; if(i.contrast) msg += ` (+Contrast)`; msg += `\n`; }); msg += `Time: ${d.date}, ${d.time}\n`; }); msg += `\n💰 Payable: ${amt}`; logNotification(document.getElementById("mobile").value, `Booking Confirmed: ${id}\nAmount: ${amt}`, "Booking"); window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,"_blank"); closeAllPopups(); clearMainCart(); }
-function verifyPartner() { const id = document.getElementById("partnerId").value.toUpperCase().trim(); const pass = document.getElementById("partnerPass").value.trim(); if (partnersDB[id] && partnersDB[id].pass === pass) { document.getElementById("partnerLoginForm").style.display = "none"; document.getElementById("partnerCancelBtn").style.display = "none"; document.getElementById("partnerDashboard").style.display = "block"; document.getElementById("partnerWelcomeMsg").innerHTML = `Welcome, <b>${partnersDB[id].name}</b>`; } else { showAlert("❌ Wrong ID or Password!"); } }
+
+/* 🔥 PARTNER VERIFICATION USING GOOGLE SHEET */
+function verifyPartner() { 
+    const id = document.getElementById("partnerId").value.toUpperCase().trim(); 
+    const pass = document.getElementById("partnerPass").value.trim(); 
+    
+    if (partnersDB[id] && partnersDB[id].pass === pass) { 
+        document.getElementById("partnerLoginForm").style.display = "none"; 
+        document.getElementById("partnerCancelBtn").style.display = "none"; 
+        document.getElementById("partnerDashboard").style.display = "block"; 
+        document.getElementById("partnerWelcomeMsg").innerHTML = `Welcome, <b>${partnersDB[id].name}</b>`; 
+    } else { 
+        showAlert("❌ Wrong ID or Password!"); 
+    } 
+}
+
 function shareReferral() { const code = document.getElementById("dashRef").innerText; const msg = `Hey! Use my code *${code}* on Bhavya Diagnostics to get discounts on Blood Tests.`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank"); }
 function toggleAddress(show) { const b = document.getElementById("qAddressBox"); if(b) b.style.display = show?"block":"none"; }
 function selectOpt(btn, grp, val) { btn.parentElement.querySelectorAll('.option-btn').forEach(s => s.classList.remove('selected')); btn.classList.add('selected'); }
