@@ -17,39 +17,20 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .summary-info { font-size:12px; color:#666; margin-bottom: 2px; }
 .summary-total { font-size:18px; font-weight:800; color:#0a73c0; }
 
-/* PROCEED BUTTON */
+/* TOP PROCEED BUTTON */
 .top-proceed-btn { background: #ccc; color: white; padding: 8px 15px; border-radius: 25px; font-weight: bold; font-size: 13px; border: none; cursor: not-allowed; transition: 0.3s; white-space: nowrap; flex-shrink: 0; }
 .top-proceed-btn.active { background: linear-gradient(135deg, #2e7d32, #1b5e20); cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); }
 
 /* ACTION BUTTONS */
 .action-buttons { display:flex; gap:8px; padding:10px; background:#fff; position: relative; z-index: 950; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .action-buttons button { flex:1; border:none; padding:12px 5px; border-radius:8px; color:#fff; font-size:12px; cursor:pointer; font-weight:700; letter-spacing:0.3px; white-space:nowrap; transition: 0.2s; }
+.action-buttons button:active { transform: scale(0.98); }
 .upload-rx { background:linear-gradient(45deg, #9c27b0, #673ab7); }
 .view-cart { background:#333; }
 .my-info-btn { background: #0a73c0; }
 .my-info-btn.logged-in { background: #4caf50; }
 
-/* 🔥 NEW: MOBILE INPUT DESIGN */
-.check-plan-box { 
-    background: #fff; margin: 10px; padding: 15px; border-radius: 12px; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e0e0e0;
-    display: flex; flex-direction: column; gap: 8px;
-}
-.check-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #555; }
-.status-indicator { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #eee; color: #999; }
-.status-indicator.active { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-.mobile-input-row { display: flex; gap: 10px; }
-.big-input { 
-    flex: 1; padding: 12px; font-size: 16px; border: 2px solid #eee; 
-    border-radius: 8px; outline: none; font-weight: bold; letter-spacing: 1px; transition: 0.3s;
-}
-.big-input:focus { border-color: #0a73c0; background: #fbfdff; }
-
-/* PLAN LOCKING STYLES */
-.plan.locked { opacity: 0.5; pointer-events: none; filter: grayscale(1); position: relative; }
-.plan.locked::after { content: "🔒"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; }
-
-/* BANNERS */
+/* UPGRADE BANNERS */
 .top-banner { display: none; margin: 10px; padding: 15px; border-radius: 12px; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .tb-gold { background: linear-gradient(to right, #fff8e1, #fff); border-left: 5px solid #ffb300; }
 .tb-plat { background: linear-gradient(to right, #eceff1, #fff); border-left: 5px solid #607d8b; }
@@ -58,7 +39,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .tb-btn { background: #333; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; }
 .vip-badge { display:none; margin:10px; background:linear-gradient(45deg, #333, #000); color:gold; padding:15px; border-radius:12px; text-align:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
 
-/* SIDEBAR */
+/* SIDEBAR MENU */
 .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 4000; display: none; backdrop-filter: blur(2px); }
 .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 4100; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
 .sidebar.open { left: 0; }
@@ -90,6 +71,8 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .mrp-price { font-size: 11px; color: #aaa; text-decoration: line-through; margin-right: 5px; }
 .final-price, .pkg-rate { font-size: 15px; color: #2e7d32; font-weight: 800; }
 .unlock-badge { font-size:10px; font-weight:bold; background:#fff8e1; color:#ff8f00; padding:2px 5px; border-radius:4px; display:inline-block; margin-bottom:5px; border:1px solid #ffb300; }
+.platinum-badge { background:#eceff1; color:#455a64; border-color:#607d8b; }
+
 .add-btn { background: linear-gradient(135deg, #0a73c0, #005b9f); color: white; border: none; padding: 8px 0; width:100%; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
 .qty-control { display: none; align-items: center; background: #e3f2fd; border-radius: 25px; padding: 2px; border: 1px solid #0a73c0; width:100%; justify-content: space-between; }
 .qty-control button { background: transparent; border: none; color: #0a73c0; font-weight: bold; font-size: 18px; width: 30px; }
@@ -123,7 +106,13 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 /* BUTTONS */
 .whatsapp-btn { background: linear-gradient(45deg, #25D366, #128C7E); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .pay-btn { background: linear-gradient(135deg, #673ab7, #512da8); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
-.next-btn { background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s; }
+
+/* 🔥 NEW NEXT BUTTON DESIGN */
+.next-btn { 
+    background: linear-gradient(135deg, #43a047, #1b5e20); 
+    color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; 
+    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s;
+}
 .next-btn:active { transform: scale(0.98); }
 
 /* CART & LOGIN */
@@ -138,7 +127,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .signup-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
 .signup-btn-large { width: 100%; padding: 12px; background: #ff9800; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; box-sizing: border-box; }
 
-/* DASHBOARD */
+/* DASHBOARD & FAMILY */
 .dashboard-container { display: none; padding: 10px; background: #fff; margin-bottom: 10px; border-bottom: 1px solid #eee; }
 .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 .dash-points { background: linear-gradient(45deg, #FFD700, #FFA500); color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; flex: 1; margin-right: 10px; box-shadow: 0 4px 10px rgba(255, 165, 0, 0.3); }
@@ -151,6 +140,9 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .dash-fam-add { color: #0a73c0; border: 1px dashed #0a73c0; }
 .dash-report-btn { margin-top:10px; padding:12px; background:#e8f5e9; border:1px dashed #2e7d32; border-radius:12px; display:flex; justify-content:space-between; align-items:center; cursor:pointer; width:100%; box-sizing:border-box; }
 .partner-link { text-align: center; padding: 20px; color: #999; font-size: 12px; margin-top: 30px; cursor: pointer; text-decoration: underline; }
+.admin-row { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+.status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: white; }
+.status-pending { background: #ff9800; }
 </style>
 </head>
 
@@ -203,23 +195,29 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 
 <div id="dashboardSection" class="dashboard-container">
     <div class="dash-header">
-        <div class="dash-points"><div style="font-size:10px; opacity:0.8;">WALLET</div><div style="font-size:24px;" id="dashPoints">0</div></div>
-        <div class="dash-details"><div class="dash-label">Plan</div><div class="dash-val" id="dashPlan">Basic</div><div class="dash-label">Referral Code</div><div class="dash-val"><span id="dashRef" style="color:#e91e63">---</span> <button class="share-btn" onclick="shareReferral()">📢</button></div></div>
+        <div class="dash-points">
+            <div style="font-size:10px; opacity:0.8;">WALLET</div>
+            <div style="font-size:24px;" id="dashPoints">0</div>
+        </div>
+        <div class="dash-details">
+            <div class="dash-label">Plan</div>
+            <div class="dash-val" id="dashPlan">Basic</div>
+            <div class="dash-label">Referral Code</div>
+            <div class="dash-val">
+                <span id="dashRef" style="color:#e91e63">---</span>
+                <button class="share-btn" onclick="shareReferral()">📢 Share</button>
+            </div>
+        </div>
     </div>
+    
     <div style="margin-top:10px; margin-bottom:15px;">
-        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient</div>
+        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient for Booking</div>
         <div id="dashFamilyContainer" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px;"></div>
     </div>
     <div class="dash-report-btn" onclick="handleMyInfoClick()"><span style="font-weight:bold; color:#2e7d32;">📂 Reports & History</span><span style="font-size:11px; background:white; padding:3px 10px; border-radius:15px; color:#333; border:1px solid #ddd;">Open ➔</span></div>
 </div>
 
-<div class="check-plan-box">
-    <div class="check-header"><span>Enter Patient Mobile</span><span id="planStatus" class="status-indicator">Pending</span></div>
-    <div class="mobile-input-row">
-        <input id="mobile" class="big-input" type="tel" maxlength="10" placeholder="10 Digit Mobile" onkeyup="applyPlanByMobile()">
-    </div>
-    <div style="font-size:10px; color:#999;">*Rates will update automatically based on plan.</div>
-</div>
+<div class="mobile-box" id="mobileInputBox"><b>Patient Mobile Number</b><input id="mobile" type="tel" maxlength="10" placeholder="Enter 10 digit number" onkeyup="applyPlanByMobile()"></div>
 
 <div class="nav-grid">
     <button class="nav-btn active" onclick="show('test',this)">🩸 Blood Test</button>
@@ -281,7 +279,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 <div id="hospital" class="section"><div style="background:#fff; padding:20px; border-radius:12px; border-left:5px solid #e91e63;"><h3 style="margin-top:0">🏥 Hospital Admission</h3><button class="confirm-btn" onclick="sendHospRequest()" style="background:#e91e63; color:white; border:none; padding:10px; border-radius:20px; width:100%;">Send Enquiry</button></div></div>
 
 <div class="popup-box" id="stepModal"><div class="sheet-header"><h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking</h3><div id="stepSubtitle" style="font-size:12px; color:#666;"></div></div><div class="sheet-body" id="dynamicFormBody"></div><div class="sheet-footer"><button class="next-btn" onclick="nextQueueStep()">Next ➔</button></div></div>
-<div class="popup-box" id="mainCartBox"><div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div><div class="sheet-body" id="finalCartItems"></div><div class="sheet-footer"><div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div><div id="couponMsg" style="font-size:11px;margin-top:5px;"></div><div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div><div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div><button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button><button onclick="bookWithPayment('ONLINE')" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button></div></div>
+<div class="popup-box" id="mainCartBox"><div class="sheet-header"><h3 style="margin:0;color:#0a73c0">Final Cart</h3></div><div class="sheet-body" id="finalCartItems"></div><div class="sheet-footer"><div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div><div id="couponMsg" style="font-size:11px;margin-top:5px;"></div><div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div><div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div><button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button><button onclick="bookWithPayment()" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button></div></div>
 <div class="popup-box" id="loginModal"><h3 style="text-align:center; color:#0a73c0">Login</h3><input type="tel" id="loginMob" class="login-input" placeholder="Mobile"><input type="password" id="loginPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="checkLogin()">Login</button><div class="signup-section"><button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button></div>
 <div class="popup-box" id="infoModal"><h3 style="margin-top:0; color:#0a73c0;">My Profile</h3><div id="patientDataList" style="margin-bottom:10px"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div><div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div><div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button></div>
 <div class="popup-box form-popup" id="universalFormModal"><div class="form-header"><b id="formTitle" style="color:#0a73c0">Form</b><button onclick="closeAllPopups()" style="background:transparent;border:none;font-size:20px;color:#666;cursor:pointer;">&times;</button></div><iframe id="formFrame" class="form-iframe" src=""></iframe></div>
@@ -292,20 +290,19 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 <div class="popup-box" id="detailsModal"><h3 id="detailsTitle" style="margin-top:0;color:#0a73c0;"></h3><ul id="detailsList" style="padding-left:20px;font-size:13px;color:#555;line-height:1.6"></ul><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
 
 <script>
-/* 🔴 CONFIGURATION */
-const RAW_RATE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
-const RAW_PATIENT_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
-const RAW_PARTNER_DB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=988786822&single=true&output=csv";
+/* 🔴 FIXED URL (DIRECT + PROXY FOR DATA LOADING) */
+const RAW_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
+const RATE_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_SHEET_URL)}`;
 
-/* PROXIES (FOR 100% LOADING) */
-const RATE_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_RATE_URL)}`;
+/* REST OF CONFIG (UPDATED WITH YOUR LINKS) */
+const RAW_PATIENT_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
 const PATIENT_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PATIENT_URL)}`;
+
+const RAW_PARTNER_DB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=988786822&single=true&output=csv";
 const PARTNER_DB_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PARTNER_DB_URL)}`;
 
-/* FORMS */
 const PARTNER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSOZbFl-dKDA4jy5cBCQav3zpMXjgtsUReIS9itHDRdHBEMg/viewform?embedded=true";
 const SIGNUP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdix2-jvF-Fr7OK0S7A514oTVXjQgmgWp4CvPUm9pEg8Y_x6w/viewform?embedded=true";
-
 const NOTIFY_API_URL = "https://script.google.com/macros/s/AKfycbwVykNZTm3wE--gF2qDPQsR25vUK2K_bFOTxx2aRT8hVw4rsM51bseKL-eREahIzBg2/exec";
 const WA_NUMBER = "918397985922"; 
 const UPI_ID = "8397985922@ptsbi"; 
@@ -317,12 +314,13 @@ window.onload = function(){ loadGoogleSheetData(); loadPatientData(); loadPartne
 
 /* DATA LOADERS */
 async function loadGoogleSheetData() {
+    const msg = document.getElementById("loadingMsg");
     try {
-        let res = await fetch(RAW_RATE_URL);
+        let res = await fetch(RAW_SHEET_URL);
         if(!res.ok) res = await fetch(RATE_SHEET_URL); 
         const text = await res.text();
         parseProducts(text);
-    } catch(e) { document.getElementById("loadingMsg").innerHTML = "Error loading tests.<br>Check connection."; document.getElementById("loadingMsg").style.color="red"; }
+    } catch(e) { msg.innerHTML = "Error loading tests.<br>Check connection."; msg.style.color="red"; }
 }
 
 async function loadPatientData() {
@@ -400,6 +398,8 @@ function parseProducts(csvText) {
         else if(cat.includes('mri')) cat = 'mri';
         else if(cat.includes('doctor') || cat.includes('dr')) cat = 'doctor';
         else if(cat.includes('package') || cat.includes('checkup')) cat = 'package';
+        else if(cat.includes('ecg')) cat = 'ecg';
+        else if(cat.includes('echo')) cat = 'echo';
         
         let cleanPrice = cols[1].replace(/[^0-9]/g, '');
         createCard({ 
@@ -459,11 +459,15 @@ function renderQueueStep() {
     const savedAddr = currentUser ? currentUser.address : "";
     let html = '';
     
-    // 🔥 UPDATED LABS: Wellness, CRL, Accuprobe
+    // 🔥 UPDATED LABS
     if(type === 'test' || type === 'package') {
         html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
-    } else if (['usg', 'xray', 'ecg'].includes(type)) {
-        html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div></div>`;
+    } else if (['usg', 'xray'].includes(type)) {
+        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree</div></div>`;
+    } else if (['ct', 'mri', 'echo'].includes(type)) {
+        html += `<span class="booking-label">Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
+    } else if (type === 'ecg') {
+        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Ved Hospital')">Ved</div></div>`;
     }
     
     html += `<span class="booking-label">Patient</span><input id="qName" class="med-input" placeholder="Patient Name" value="${prefillName}"><div id="qAddressBox"><span class="booking-label">Address</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Address">${savedAddr}</textarea></div><span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots"></div>`;
@@ -483,10 +487,10 @@ function nextQueueStep() {
     if(type === 'test' || type === 'package') {
         details.lab = document.querySelector(".option-btn[onclick*='lab'].selected")?.innerText || "Wellness";
         details.mode = document.querySelector(".option-btn[onclick*='mode'].selected")?.innerText || "Home";
-    } else if (['usg', 'xray', 'ecg'].includes(type)) {
-        details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree";
+    } else if (['usg', 'xray', 'ct', 'mri', 'echo', 'ecg'].includes(type)) {
+        details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree Diagnostic";
         details.mode = "Center";
-    } else { details.center = "Shree"; details.mode = "Center"; }
+    }
     
     masterBookingData[type] = details;
     currentQueueIndex++;
@@ -589,29 +593,14 @@ function checkLogin() {
 /* 🔥 AUTO-LOCK LOGIC */
 function applyPlanByMobile() {
     const m = document.getElementById("mobile").value;
-    const status = document.getElementById("planStatus");
-    
+    const status = document.getElementById("planStatus"); // Needs status element in HTML if available, else ignored
     if (m.length === 10) {
         if (patientsDB[m]) {
             let plan = patientsDB[m].plan.toLowerCase();
-            status.innerText = "✅ " + plan.toUpperCase() + " APPLIED";
-            status.className = "status-indicator active";
             refreshPrices(plan);
-            
-            // LOCK BUTTONS
-            document.querySelectorAll('.plan').forEach(p => {
-                if (p.dataset.plan !== plan) p.classList.add('locked');
-                else p.classList.remove('locked');
-            });
         } else {
-            status.innerText = "👤 New User (Basic)";
-            status.className = "status-indicator";
             refreshPrices('basic');
-            document.querySelectorAll('.plan').forEach(p => p.classList.remove('locked'));
         }
-    } else {
-        status.innerText = "Pending";
-        status.className = "status-indicator";
     }
 }
 
@@ -661,7 +650,7 @@ function sendForgotPassReq(){ const m=document.getElementById("loginMob").value;
 function clearMainCart(){ mainCart=[]; tempSelection=[]; toggleMainCart(); document.getElementById("topProceedBtn").innerText="Cart Empty"; document.getElementById("topProceedBtn").classList.remove("active"); document.getElementById("finalCount").innerText="0"; }
 function payOnline() { const amt = document.getElementById("payAmount").innerText; if(amt == 0) return; window.location.href = `upi://pay?pa=${UPI_ID}&pn=BhavyaDiagnostics&am=${amt}&cu=INR`; }
 
-/* 🔥 PARTNER VERIFICATION USING GOOGLE SHEET */
+/* 🔥 VERIFY PARTNER USING GOOGLE SHEET */
 function verifyPartner() { 
     const id = document.getElementById("partnerId").value.toUpperCase().trim(); 
     const pass = document.getElementById("partnerPass").value.trim(); 
