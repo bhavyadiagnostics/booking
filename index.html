@@ -30,7 +30,15 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .my-info-btn { background: #0a73c0; }
 .my-info-btn.logged-in { background: #4caf50; }
 
-/* UPGRADE BANNERS */
+/* PLANS & LOCKING */
+.plan-row{display:flex;gap:10px;margin-bottom:20px;background:#fff;padding:10px;border-radius:12px;}
+.plan{flex:1;background:#f8f9fa;border:2px solid transparent;border-radius:10px;padding:12px 5px;text-align:center;font-size:12px;cursor:pointer;position:relative;font-weight:600;color:#555;transition:0.2s}
+.plan.active{border-color:#0a73c0;background:#e8f3ff;color:#0a73c0;}
+/* 🔒 LOCKED PLAN STYLE */
+.plan.locked { opacity: 0.4; pointer-events: none; filter: grayscale(1); position: relative; background: #eee; }
+.plan.locked::after { content: "🔒"; position: absolute; top: 5px; right: 5px; font-size: 14px; }
+
+/* BANNERS */
 .top-banner { display: none; margin: 10px; padding: 15px; border-radius: 12px; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 .tb-gold { background: linear-gradient(to right, #fff8e1, #fff); border-left: 5px solid #ffb300; }
 .tb-plat { background: linear-gradient(to right, #eceff1, #fff); border-left: 5px solid #607d8b; }
@@ -39,7 +47,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .tb-btn { background: #333; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; }
 .vip-badge { display:none; margin:10px; background:linear-gradient(45deg, #333, #000); color:gold; padding:15px; border-radius:12px; text-align:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
 
-/* SIDEBAR MENU */
+/* SIDEBAR */
 .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 4000; display: none; backdrop-filter: blur(2px); }
 .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 4100; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
 .sidebar.open { left: 0; }
@@ -59,9 +67,6 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .section.active{display:block !important;}
 .search{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:15px;box-sizing:border-box;outline:none;transition:0.3s; margin-bottom:15px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 95% center; }
 
-.plan-row{display:flex;gap:10px;margin-bottom:20px;background:#fff;padding:10px;border-radius:12px;}
-.plan{flex:1;background:#f8f9fa;border:2px solid transparent;border-radius:10px;padding:12px 5px;text-align:center;font-size:12px;cursor:pointer;position:relative;font-weight:600;color:#555;transition:0.2s}
-.plan.active{border-color:#0a73c0;background:#e8f3ff;color:#0a73c0;}
 .tag{position:absolute;top:-10px;right:-5px;background:linear-gradient(45deg, #ff9800, #ff5722);color:#fff;font-size:9px;padding:3px 8px;border-radius:10px;font-weight:bold;}
 .tag.green{background:linear-gradient(45deg, #43a047, #1b5e20); color:#fff;}
 
@@ -71,8 +76,6 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .mrp-price { font-size: 11px; color: #aaa; text-decoration: line-through; margin-right: 5px; }
 .final-price, .pkg-rate { font-size: 15px; color: #2e7d32; font-weight: 800; }
 .unlock-badge { font-size:10px; font-weight:bold; background:#fff8e1; color:#ff8f00; padding:2px 5px; border-radius:4px; display:inline-block; margin-bottom:5px; border:1px solid #ffb300; }
-.platinum-badge { background:#eceff1; color:#455a64; border-color:#607d8b; }
-
 .add-btn { background: linear-gradient(135deg, #0a73c0, #005b9f); color: white; border: none; padding: 8px 0; width:100%; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
 .qty-control { display: none; align-items: center; background: #e3f2fd; border-radius: 25px; padding: 2px; border: 1px solid #0a73c0; width:100%; justify-content: space-between; }
 .qty-control button { background: transparent; border: none; color: #0a73c0; font-weight: bold; font-size: 18px; width: 30px; }
@@ -81,17 +84,17 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .book-btn { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; margin-left:auto;}
 .contrast-box { font-size: 11px; font-weight: bold; color: #d32f2f; margin-bottom: 5px; display: block; background: #ffebee; padding: 5px; border-radius: 5px; border: 1px dashed #d32f2f; cursor: pointer; }
 
-/* POPUPS & OVERLAY */
+/* POPUPS */
 .popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:5000;backdrop-filter:blur(4px)}
 .popup-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:95%; max-width:350px; background:#fff; border-radius:16px; padding:20px; z-index:5100; max-height:85vh; overflow-y:auto; box-sizing:border-box}
 
-/* 🔥 BIGGER CART POPUP (FIXED HEIGHT) */
+/* BOTTOM SHEET */
 #mainCartBox { 
     top: auto; bottom: 0; left: 0; transform: none; 
     width: 100%; max-width: 100%; 
     border-radius: 20px 20px 0 0; padding: 0; 
     display: none; flex-direction: column; 
-    height: 90vh; /* INCREASED HEIGHT */
+    height: 90vh; 
     max-height: 90vh; 
     animation: slideUp 0.3s ease-out; 
     z-index: 5200 !important; 
@@ -109,10 +112,10 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 @keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
 .sheet-header { padding: 15px; background: #fff; border-bottom: 1px solid #eee; text-align: center; border-radius: 20px 20px 0 0; }
 .sheet-header h3 { margin: 0; color: #0a73c0; font-size: 18px; }
-.sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 150px; } /* Added bottom padding */
+.sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 150px; }
 .sheet-footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 15px; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); box-sizing: border-box; }
 
-/* FORM ELEMENTS */
+/* FORM */
 .booking-label { font-size: 13px; font-weight: 700; color: #444; margin: 15px 0 8px 0; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
 .med-input { width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #fafafa; font-size: 14px; }
 .time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
@@ -125,13 +128,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 /* BUTTONS */
 .whatsapp-btn { background: linear-gradient(45deg, #25D366, #128C7E); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .pay-btn { background: linear-gradient(135deg, #673ab7, #512da8); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
-
-/* 🔥 NEW NEXT BUTTON DESIGN */
-.next-btn { 
-    background: linear-gradient(135deg, #43a047, #1b5e20); 
-    color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; 
-    box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s;
-}
+.next-btn { background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s; }
 .next-btn:active { transform: scale(0.98); }
 
 /* CART & LOGIN */
@@ -237,7 +234,10 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 </div>
 
 <div class="mobile-box" id="mobileInputBox">
-    <b style="font-size:13px; color:#555;">Patient Mobile Number</b>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <b style="font-size:13px; color:#555;">Patient Mobile Number</b>
+        <span id="planStatus" style="font-size:10px; font-weight:bold; color:#999; text-transform:uppercase;">Pending</span>
+    </div>
     <input id="mobile" type="tel" maxlength="10" placeholder="Enter 10 digit number" onkeyup="applyPlanByMobile()" style="font-size:18px; letter-spacing:1px; font-weight:bold; margin-top:5px;">
 </div>
 
@@ -324,7 +324,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
         <div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div>
         
         <button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button>
-        <button onclick="bookViaWhatsapp()" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button>
+        <button onclick="bookWithPayment()" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button>
         <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button>
     </div>
 </div>
@@ -540,12 +540,8 @@ function renderQueueStep() {
     // 🔥 UPDATED LABS: Wellness, CRL, Accuprobe
     if(type === 'test' || type === 'package') {
         html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
-    } else if (['usg', 'xray'].includes(type)) {
-        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
-    } else if (['ct', 'mri', 'echo'].includes(type)) {
-        html += `<span class="booking-label">Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
-    } else if (type === 'ecg') {
-        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Ved Hospital')">Ved</div></div>`;
+    } else if (['usg', 'xray', 'ecg'].includes(type)) {
+        html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div></div>`;
     }
     
     html += `<span class="booking-label">Patient</span><input id="qName" class="med-input" placeholder="Patient Name" value="${prefillName}"><div id="qAddressBox"><span class="booking-label">Address</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Address">${savedAddr}</textarea></div><span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots"></div>`;
@@ -568,10 +564,7 @@ function nextQueueStep() {
     } else if (['usg', 'xray', 'ecg'].includes(type)) {
         details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree Diagnostic";
         details.mode = "Center";
-    } else if (['ct', 'mri', 'echo'].includes(type)) {
-        details.center = "Shree Diagnostic";
-        details.mode = "Center";
-    }
+    } else { details.center = "Shree"; details.mode = "Center"; }
     
     masterBookingData[type] = details;
     currentQueueIndex++;
@@ -586,7 +579,7 @@ function toggleMainCart() {
         const items = tempSelection.filter(i => i.type === cat);
         const booking = masterBookingData[cat];
         if(items.length > 0) {
-            html += `<div class="cart-group-header">${cat.toUpperCase()} ${booking ? `(${booking.mode||booking.center||booking.lab})` : ''}</div>`;
+            html += `<div class="cart-group-header">${cat.toUpperCase()} ${booking ? `(${booking.mode||booking.center})` : ''}</div>`;
             items.forEach(i => {
                 let total = i.price * i.qty;
                 grandTotal += total;
@@ -674,13 +667,29 @@ function checkLogin() {
 /* 🔥 AUTO-LOCK LOGIC */
 function applyPlanByMobile() {
     const m = document.getElementById("mobile").value;
+    const status = document.getElementById("planStatus");
+    
     if (m.length === 10) {
         if (patientsDB[m]) {
             let plan = patientsDB[m].plan.toLowerCase();
+            status.innerText = "✅ " + plan.toUpperCase() + " APPLIED";
+            status.className = "status-indicator active";
             refreshPrices(plan);
+            
+            // LOCK BUTTONS
+            document.querySelectorAll('.plan').forEach(p => {
+                if (p.dataset.plan !== plan) p.classList.add('locked');
+                else p.classList.remove('locked');
+            });
         } else {
+            status.innerText = "👤 New User (Basic)";
+            status.className = "status-indicator";
             refreshPrices('basic');
+            document.querySelectorAll('.plan').forEach(p => p.classList.remove('locked'));
         }
+    } else {
+        status.innerText = "Pending";
+        status.className = "status-indicator";
     }
 }
 
@@ -730,58 +739,36 @@ function sendForgotPassReq(){ const m=document.getElementById("loginMob").value;
 function clearMainCart(){ mainCart=[]; tempSelection=[]; toggleMainCart(); document.getElementById("topProceedBtn").innerText="Cart Empty"; document.getElementById("topProceedBtn").classList.remove("active"); document.getElementById("finalCount").innerText="0"; }
 function payOnline() { const amt = document.getElementById("payAmount").innerText; if(amt == 0) return; window.location.href = `upi://pay?pa=${UPI_ID}&pn=BhavyaDiagnostics&am=${amt}&cu=INR`; }
 
-/* 🔥 BOOK VIA WHATSAPP (FIXED FUNCTION) */
-function bookViaWhatsapp() { 
-    const mobile = document.getElementById("mobile").value;
-    if(mobile.length !== 10) { showAlert("Enter 10-digit Mobile Number first!"); return; }
-    
+function bookWithPayment(){ 
+    const id="B-"+Math.floor(10000+Math.random()*90000); 
     const amt = document.getElementById("payAmount").innerText; 
     let msg = `🌟 *New Booking Request*\n`; 
+    msg += `👤 Patient: ${document.getElementById("qName").value} \n`;
+    msg += `📱 Mobile: ${document.getElementById("mobile").value}\n`;
+    msg += `------------------\n`;
     
     Object.keys(masterBookingData).forEach(cat => { 
         let d = masterBookingData[cat]; 
         let items = tempSelection.filter(i => i.type === cat); 
-        msg += `\n📌 *${cat.toUpperCase()}*\n`;
-        // UPDATED WHATSAPP MSG FORMAT
-        msg += `Patient: ${d.name} (Mob: ${mobile})\n`;
-        if(d.mode) msg += `Location: ${d.mode}\n`;
-        if(d.lab) msg += `Lab: ${d.lab}\n`; 
-        if(d.center) msg += `Center: ${d.center}\n`;
+        msg += `📌 *${cat.toUpperCase()}* (${d.mode||d.center||d.lab})\n`;
         
-        msg += `Items:\n`;
-        items.forEach(i => { 
-            msg += `- ${i.name} x${i.qty} (₹${i.price})`; 
-            if(i.contrast) msg += ` (+Contrast)`; 
-            msg += `\n`; 
-        }); 
-        msg += `Date/Time: ${d.date} at ${d.time}\n`; 
+        items.forEach((i, idx) => { 
+            let finalPrice = Math.round(i.price - (i.price * (discountMap[document.querySelector('.plan.active').dataset.plan] || 0.2)));
+            msg += `${idx+1}. ${i.name}\n   MRP: ₹${i.price} | *Deal: ₹${finalPrice}*\n`;
+            if(i.contrast) msg += `   (+ Contrast: ₹3000)\n`;
+        });
+        msg += `------------------\n`;
     }); 
-    msg += `\n💰 Total Amount: ₹${amt}`; 
+    msg += `💰 Total MRP: ₹${tempSelection.reduce((s,i)=>s+i.price,0)}\n`;
+    msg += `✅ *Final Payable: ₹${amt}*`;
     
-    // Log to Google Sheet (Optional)
-    logNotification(mobile, `WhatsApp Booking Initiated\nAmount: ${amt}`, "WhatsApp"); 
-    
-    // Open WhatsApp
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank"); 
+    logNotification(document.getElementById("mobile").value, `Booking Confirmed: ${id}\nAmount: ${amt}`, "Booking"); 
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,"_blank"); 
     closeAllPopups(); 
     clearMainCart(); 
 }
 
-/* 🔥 PARTNER VERIFICATION USING GOOGLE SHEET */
-function verifyPartner() { 
-    const id = document.getElementById("partnerId").value.toUpperCase().trim(); 
-    const pass = document.getElementById("partnerPass").value.trim(); 
-    
-    if (partnersDB[id] && partnersDB[id].pass === pass) { 
-        document.getElementById("partnerLoginForm").style.display = "none"; 
-        document.getElementById("partnerCancelBtn").style.display = "none"; 
-        document.getElementById("partnerDashboard").style.display = "block"; 
-        document.getElementById("partnerWelcomeMsg").innerHTML = `Welcome, <b>${partnersDB[id].name}</b>`; 
-    } else { 
-        showAlert("❌ Wrong ID or Password!"); 
-    } 
-}
-
+function verifyPartner() { const id = document.getElementById("partnerId").value.toUpperCase().trim(); const pass = document.getElementById("partnerPass").value.trim(); if (partnersDB[id] && partnersDB[id].pass === pass) { document.getElementById("partnerLoginForm").style.display = "none"; document.getElementById("partnerCancelBtn").style.display = "none"; document.getElementById("partnerDashboard").style.display = "block"; document.getElementById("partnerWelcomeMsg").innerHTML = `Welcome, <b>${partnersDB[id].name}</b>`; } else { showAlert("❌ Wrong ID or Password!"); } }
 function shareReferral() { const code = document.getElementById("dashRef").innerText; const msg = `Hey! Use my code *${code}* on Bhavya Diagnostics to get discounts on Blood Tests.`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank"); }
 function toggleAddress(show) { const b = document.getElementById("qAddressBox"); if(b) b.style.display = show?"block":"none"; }
 function selectOpt(btn, grp, val) { btn.parentElement.querySelectorAll('.option-btn').forEach(s => s.classList.remove('selected')); btn.classList.add('selected'); }
