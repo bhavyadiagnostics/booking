@@ -10,15 +10,18 @@
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#f0f2f5;padding-bottom:120px;}
 
+/* HEADER */
 .summary{position:sticky;top:0;background:#fff;padding:12px 15px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:900;border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; width: 100%; height: 60px;}
 .header-left { display: flex; align-items: center; gap: 10px; }
 .menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; color: #333; line-height: 1; }
 .summary-info { font-size:12px; color:#666; margin-bottom: 2px; }
 .summary-total { font-size:18px; font-weight:800; color:#0a73c0; }
 
+/* TOP PROCEED BUTTON */
 .top-proceed-btn { background: #ccc; color: white; padding: 8px 15px; border-radius: 25px; font-weight: bold; font-size: 13px; border: none; cursor: not-allowed; transition: 0.3s; white-space: nowrap; flex-shrink: 0; }
 .top-proceed-btn.active { background: linear-gradient(135deg, #2e7d32, #1b5e20); cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); }
 
+/* ACTION BUTTONS */
 .action-buttons { display:flex; gap:8px; padding:10px; background:#fff; position: relative; z-index: 950; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 .action-buttons button { flex:1; border:none; padding:12px 5px; border-radius:8px; color:#fff; font-size:12px; cursor:pointer; font-weight:700; letter-spacing:0.3px; white-space:nowrap; transition: 0.2s; }
 .upload-rx { background:linear-gradient(45deg, #9c27b0, #673ab7); }
@@ -89,10 +92,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .book-btn { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; margin-left:auto;}
 .contrast-box { font-size: 11px; font-weight: bold; color: #d32f2f; margin-bottom: 5px; display: block; background: #ffebee; padding: 5px; border-radius: 5px; border: 1px dashed #d32f2f; cursor: pointer; }
 
-/* POPUPS */
-.popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:5000;backdrop-filter:blur(5px)}
-.popup-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%; max-width:350px; background:#fff; border-radius:20px; padding:20px; z-index:5100; max-height:85vh; overflow-y:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box}
-
+/* MODERN BOTTOM SHEETS (60-70% Height) */
 #mainCartBox, #stepModal { 
     top: auto; bottom: 0; left: 0; transform: none; 
     width: 100%; max-width: 100%; 
@@ -102,6 +102,10 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
     z-index: 5200 !important; box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
 }
+.popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:5000;backdrop-filter:blur(5px)}
+.popup-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%; max-width:350px; background:#fff; border-radius:20px; padding:20px; z-index:5100; max-height:85vh; overflow-y:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box}
+
+/* FULL SCREEN FORM POPUP */
 #universalFormModal {
     width: 100% !important; max-width: 100% !important; height: 85vh !important;
     top: auto !important; bottom: 0 !important; left: 0 !important; transform: none !important;
@@ -128,6 +132,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .option-btn { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
 .option-btn.selected { background: #e3f2fd; color: #0a73c0; border-color: #0a73c0; box-shadow: 0 2px 5px rgba(10,115,192,0.2); }
 
+/* BUTTONS */
 .whatsapp-btn { background: linear-gradient(45deg, #25D366, #128C7E); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .pay-btn { background: linear-gradient(135deg, #673ab7, #512da8); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
 .next-btn { background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s; }
@@ -302,6 +307,8 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 </div>
 <div id="hospital" class="section"><div style="background:#fff; padding:20px; border-radius:12px; border-left:5px solid #e91e63;"><h3 style="margin-top:0">🏥 Hospital Admission</h3><button class="confirm-btn" onclick="sendHospRequest()" style="background:#e91e63; color:white; border:none; padding:10px; border-radius:20px; width:100%;">Send Enquiry</button></div></div>
 
+<div class="partner-link" onclick="openPartnerModal()">🏥 Partner/Lab Login (Secure Area)</div>
+
 <div class="popup-box" id="stepModal">
     <div class="sheet-header">
         <div class="sheet-handle"></div>
@@ -349,13 +356,13 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 <div class="popup-box" id="termsModal"><h3 style="margin-top:0; color:#0a73c0">Terms & Conditions</h3><div style="max-height:60vh; overflow-y:auto; font-size:12px; color:#555;"><p><b>1. General Role:</b> Bhavya Diagnostics connects patients with NABL Labs.</p><p><b>2. Booking:</b> Confirmation via WhatsApp.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 <div class="popup-box" id="privacyModal"><h3 style="margin-top:0; color:#0a73c0">Privacy Policy</h3><div style="font-size:12px; color:#555;"><p>We collect your Name, Mobile, and Health Data only for services.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 <div class="popup-box" id="helpModal"><h3 style="margin-top:0; color:#0a73c0">Help & Contact</h3><div style="text-align:center;"><p>📞 +91 83979 85922</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
+<div class="popup-box" id="detailsModal"><h3 id="detailsTitle" style="margin-top:0;color:#0a73c0;"></h3><ul id="detailsList" style="padding-left:20px;font-size:13px;color:#555;line-height:1.6"></ul><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
 
 <script>
 /* 🔴 CONFIGURATION */
 const RAW_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
 const RATE_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_SHEET_URL)}`;
 
-/* REST OF CONFIG */
 const RAW_PATIENT_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
 const PATIENT_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PATIENT_URL)}`;
 
@@ -581,15 +588,6 @@ function renderQueueStep() {
         patientInputHtml = `<input id="qName" class="med-input" placeholder="Patient Name" value="${prefillName}">`;
     }
 
-    // 🔥 ADDRESS LOGIC: Auto-fill only for Home Collection tests
-    let addressFieldVal = currentSessionAddress;
-    if(!addressFieldVal && currentUser) addressFieldVal = currentUser.address; // Default to login address
-    
-    let addressSectionHtml = '';
-    if(type === 'test' || type === 'package') {
-        addressSectionHtml = `<div id="qAddressBox"><span class="booking-label">Address (Home Collection)</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Enter Full Address">${addressFieldVal}</textarea></div>`;
-    }
-
     // 🔥 UPDATED LABS
     if(type === 'test' || type === 'package') {
         html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
@@ -601,35 +599,23 @@ function renderQueueStep() {
         html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Ved Hospital')">Ved</div></div>`;
     }
     
-    html += `<span class="booking-label">Patient</span>${patientInputHtml} ${addressSectionHtml} <span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots">${timeHtml}</div>`;
-    
+    html += `<span class="booking-label">Patient</span>${patientInputHtml}<div id="qAddressBox"><span class="booking-label">Address</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Address">${currentSessionAddress}</textarea></div><span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots">${timeHtml}</div>`;
     document.getElementById("dynamicFormBody").innerHTML = html;
     document.getElementById("stepModal").dataset.currentType = type;
 }
 
 function nextQueueStep() {
     const type = document.getElementById("stepModal").dataset.currentType;
-    
-    // Handle Input or Select
-    let nameEl = document.getElementById("qName");
-    const name = nameEl.value;
-    
+    const name = document.getElementById("qName").value;
     const date = document.getElementById("qDate").value;
     const timeEl = document.querySelector(".time-slot.selected");
-    
     if(!name || !date || !timeEl) { showAlert("Fill Name & Time"); return; }
     
-    // CAPTURE ADDRESS CHANGE ONLY FOR HOME COLLECTION
-    let finalAddr = "N/A";
-    if(type === 'test' || type === 'package') {
-        const addrInput = document.getElementById("qAddr");
-        if(addrInput && addrInput.value) { 
-            currentSessionAddress = addrInput.value; // Update session address
-            finalAddr = addrInput.value;
-        }
-    }
+    // CAPTURE ADDRESS CHANGE
+    const addrInput = document.getElementById("qAddr");
+    if(addrInput && addrInput.value) { currentSessionAddress = addrInput.value; }
 
-    let details = { name, date, time: timeEl.innerText, city: document.getElementById("qCity")?.value || "N/A", address: finalAddr };
+    let details = { name, date, time: timeEl.innerText, city: document.getElementById("qCity")?.value || "N/A", address: currentSessionAddress || "N/A" };
     
     if(type === 'test' || type === 'package') {
         details.lab = document.querySelector(".option-btn[onclick*='lab'].selected")?.innerText || "Wellness";
@@ -718,6 +704,59 @@ function handleMyInfoClick(){
         document.getElementById("overlay").style.display="block"; 
         document.getElementById("loginModal").style.display="block";
     } 
+}
+
+function checkLogin() { 
+    const u = patientsDB[document.getElementById("loginMob").value]; 
+    if(u && u.password === document.getElementById("loginPass").value) { 
+        currentUser=u; 
+        document.getElementById("btnMyInfo").innerText="👤 "+u.name.split(" ")[0]; 
+        document.getElementById("btnMyInfo").classList.add("logged-in"); 
+        document.getElementById("dashPoints").innerText = u.points; 
+        document.getElementById("dashPlan").innerText = u.plan; 
+        document.getElementById("dashRef").innerText = u.referral; 
+        document.getElementById("dashPlan").className = "dash-val highlight-plan"; 
+        document.getElementById("dashboardSection").style.display = "block"; 
+        
+        // 🔥 FIX: DO NOT HIDE MOBILE INPUT - JUST FILL IT
+        const mobInput = document.getElementById("mobile");
+        mobInput.value = u.mobile; 
+        
+        selectedPatientName = u.name;
+        
+        // 🔥 FIX: UPDATE FAMILY LIST + ADD BUTTON
+        const famCon = document.getElementById("dashFamilyContainer");
+        let html = `<div class="dash-fam-btn active" onclick="selectedPatientName='${u.name}'">${u.name.split(" ")[0]}</div>`;
+        
+        if(u.family && u.family.length > 0) { 
+            u.family.forEach(f => { 
+                if(f) html += `<div class="dash-fam-btn" onclick="selectedPatientName='${f}'">${f}</div>`; 
+            }); 
+        }
+        // ALWAYS SHOW ADD BUTTON
+        html += `<div class="dash-fam-btn dash-fam-add" onclick="openFormModal(SIGNUP_FORM_URL, 'Add Member')">+ Add</div>`;
+        famCon.innerHTML = html;
+
+        const reportDiv = document.getElementById("reportContainer"); 
+        reportDiv.innerHTML = ""; 
+        if(u.reports && u.reports.length > 0) { 
+            u.reports.forEach(rep => { 
+                reportDiv.innerHTML += `<div class="list-item"><div><div class="list-title">📄 Lab Report</div><div class="list-date">${rep.date}</div></div><a href="${rep.link}" target="_blank" class="action-icon icon-green">⬇ Download</a></div>`; 
+            }); 
+        } else { reportDiv.innerHTML = `<div style="font-size:12px; color:#999; text-align:center; padding:10px;">No reports available yet.</div>`; } 
+        
+        const p = u.plan ? u.plan.toLowerCase() : 'basic'; 
+        const bG = document.getElementById("topBannerGold"), bP = document.getElementById("topBannerPlat"), vB = document.getElementById("topVipBadge"); 
+        const dG = document.getElementById("dashCardGold"), dP = document.getElementById("dashCardPlat"); 
+        bG.style.display="flex"; bP.style.display="flex"; vB.style.display="none"; 
+        dG.style.display="block"; dP.style.display="block"; 
+        if(p==='gold'){ bG.style.display="none"; dG.style.display="none"; } 
+        else if(p==='platinum'){ bG.style.display="none"; bP.style.display="none"; dG.style.display="none"; dP.style.display="none"; vB.style.display="block"; } 
+        
+        fetchHistory(u.mobile); 
+        closeAllPopups(); 
+        applyPlanByMobile(); // Trigger plan update
+    } else showAlert("Invalid Credentials"); 
 }
 
 /* 🔥 AUTO-LOCK LOGIC */
@@ -813,16 +852,12 @@ function bookWithPayment(){
     const id="B-"+Math.floor(10000+Math.random()*90000); 
     const amt = document.getElementById("payAmount").innerText; 
     let msg = `🌟 *New Booking Request*\n`; 
-    // 🔥 FIXED: GET PATIENT NAME FROM DROPDOWN OR INPUT
-    let pName = document.getElementById("qName").value; 
-    // IF DROPDOWN EXISTS AND HAS VALUE, IT IS ALREADY THE VALUE. 
-    // IF INPUT, IT IS VALUE.
-    
-    msg += `👤 Patient: ${pName} \n`;
+    msg += `👤 Patient: ${document.getElementById("qName").value} \n`;
     msg += `📱 Mobile: ${document.getElementById("mobile").value}\n`;
     msg += `------------------\n`;
     
-    const currentPlan = document.querySelector('.plan.active') ? document.querySelector('.plan.active').dataset.plan : 'basic';
+    // Use currently active plan for final price calc logic in message
+    const currentPlan = document.querySelector('.plan.active').dataset.plan;
     const testDisc = discountMap[currentPlan];
     const centerDisc = (currentPlan === 'platinum') ? 0.20 : (currentPlan === 'gold' ? 0.10 : 0.05);
 
