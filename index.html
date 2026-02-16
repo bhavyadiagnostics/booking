@@ -364,7 +364,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 </div>
 
 <div class="popup-box" id="loginModal"><h3 style="text-align:center; color:#0a73c0">Login</h3><input type="tel" id="loginMob" class="login-input" placeholder="Mobile"><input type="password" id="loginPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="checkLogin()">Login</button><div class="signup-section"><button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button></div>
-<div class="popup-box" id="infoModal"><h3 style="margin-top:0; color:#0a73c0;">My Profile</h3><div id="patientDataList" style="margin-bottom:10px"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div><div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4><button class="clear-btn" onclick="clearHistory()">Clear</button></div><div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button></div>
+<div class="popup-box" id="infoModal"><h3 style="margin-top:0; color:#0a73c0;">My Profile</h3><div id="patientDataList" style="margin-bottom:10px"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div><div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4></div><div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button></div>
 
 <div class="popup-box" id="universalFormModal">
     <div class="form-header">
@@ -395,18 +395,19 @@ const PATIENT_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURICompone
 const RAW_PARTNER_DB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=988786822&single=true&output=csv";
 const PARTNER_DB_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PARTNER_DB_URL)}`;
 
+const RAW_HISTORY_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1140710592&single=true&output=csv";
+const HISTORY_DATA_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_HISTORY_URL)}`;
+
 const PARTNER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSOZbFl-dKDA4jy5cBCQav3zpMXjgtsUReIS9itHDRdHBEMg/viewform?embedded=true";
 const SIGNUP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdix2-jvF-Fr7OK0S7A514oTVXjQgmgWp4CvPUm9pEg8Y_x6w/viewform?embedded=true";
-const NOTIFY_API_URL = "https://script.google.com/macros/s/AKfycbwVykNZTm3wE--gF2qDPQsR25vUK2K_bFOTxx2aRT8hVw4rsM51bseKL-eREahIzBg2/exec";
+
 const WA_NUMBER = "918397985922"; 
 const UPI_ID = "8397985922@ptsbi"; 
 
 let tempSelection = [], bookingQueue = [], currentQueueIndex = 0, masterBookingData = {}, currentUser = null, patientsDB = {}, partnersDB = {}, usePoints = false, activeCoupon = null, selectedPatientName = "", currentSessionAddress = ""; 
-// Added specific Partner ID
 partnersDB['8397985922'] = { pass: '8397985922', name: 'Master Partner' };
 const discountMap = { basic: 0.20, gold: 0.35, platinum: 0.50, pkg_basic: 0.10, pkg_gold: 0.20, pkg_platinum: 0.30 };
 
-// Center Address Database
 const centerAddressDB = {
     "SS Care": "Metro pillar no 878, Delhi rohtak road, opposite Civil Hospital, Mahavir Park, Bahadurgarh, Haryana 124507",
     "Shree Diagnostic": "Metro Pillar No, Khasra no. 2444, venus plaza nehru Enclave, 862, Rohtak Rd, Bahadurgarh, Haryana 124507",
@@ -684,7 +685,6 @@ function toggleMainCart() {
                 let total = finalPrice * i.qty;
                 
                 grandTotal += total;
-                // Add to discountable total only if it's test or package
                 if(cat === 'test' || cat === 'package') {
                    discountableTotal += total;
                 }
@@ -713,17 +713,12 @@ function toggleMainCart() {
         }
     });
 
-    // Calculate Discounts
     let totalDiscount = 0;
-    
-    // Referral Discount: ₹50 only on Test/Package total value
     if(activeCoupon && discountableTotal > 50) {
         totalDiscount += 50;
         document.getElementById("couponMsg").innerText = "Referral Discount Applied: ₹50 OFF";
         document.getElementById("couponMsg").style.color = "green";
     }
-
-    // Wallet Points: 10 points = 1 rs (Applied on remaining discountable total)
     if(currentUser && usePoints) {
         let pointValue = Math.floor(currentUser.points / 10);
         let maxPointDiscount = Math.min(pointValue, (discountableTotal - totalDiscount));
@@ -737,7 +732,6 @@ function toggleMainCart() {
     document.getElementById("finalCartItems").innerHTML = html;
     let finalPay = grandTotal - totalDiscount;
     document.getElementById("payAmount").innerText = finalPay > 0 ? finalPay : 0;
-    
     document.getElementById("redeemBox").style.display = (currentUser && currentUser.points >= 10) ? "flex" : "none";
 }
 
@@ -785,15 +779,11 @@ function checkLogin() {
         document.getElementById("dashPlan").className = "dash-val highlight-plan"; 
         document.getElementById("dashboardSection").style.display = "block"; 
         document.getElementById("availPoints").innerText = u.points;
-        
         const mobInput = document.getElementById("mobile");
         mobInput.value = u.mobile; 
-        
         selectedPatientName = u.name;
-        
         const famCon = document.getElementById("dashFamilyContainer");
         let html = `<div class="dash-fam-btn active" onclick="selectedPatientName='${u.name}'">${u.name.split(" ")[0]}</div>`;
-        
         if(u.family && u.family.length > 0) { 
             u.family.forEach(f => { 
                 if(f) html += `<div class="dash-fam-btn" onclick="selectedPatientName='${f}'">${f}</div>`; 
@@ -801,7 +791,6 @@ function checkLogin() {
         }
         html += `<div class="dash-fam-btn dash-fam-add" onclick="openFormModal(SIGNUP_FORM_URL, 'Add Member')">+ Add</div>`;
         famCon.innerHTML = html;
-
         const reportDiv = document.getElementById("reportContainer"); 
         reportDiv.innerHTML = ""; 
         if(u.reports && u.reports.length > 0) { 
@@ -809,13 +798,11 @@ function checkLogin() {
                 reportDiv.innerHTML += `<div class="list-item"><div><div class="list-title">📄 Lab Report</div><div class="list-date">${rep.date}</div></div><a href="${rep.link}" target="_blank" class="action-icon icon-green">⬇ Download</a></div>`; 
             }); 
         } else { reportDiv.innerHTML = `<div style="font-size:12px; color:#999; text-align:center; padding:10px;">No reports available yet.</div>`; } 
-        
         const p = u.plan ? u.plan.toLowerCase() : 'basic'; 
         const bG = document.getElementById("topBannerGold"), bP = document.getElementById("topBannerPlat"), vB = document.getElementById("topVipBadge"); 
         bG.style.display="flex"; bP.style.display="flex"; vB.style.display="none"; 
         if(p==='gold'){ bG.style.display="none"; } 
         else if(p==='platinum'){ bG.style.display="none"; bP.style.display="none"; vB.style.display="block"; } 
-        
         fetchHistory(u.mobile); 
         closeAllPopups(); 
         applyPlanByMobile(); 
@@ -825,14 +812,12 @@ function checkLogin() {
 function applyPlanByMobile() {
     const m = document.getElementById("mobile").value;
     const status = document.getElementById("planStatus");
-    
     if (m.length === 10) {
         if (patientsDB[m]) {
             let plan = patientsDB[m].plan.toLowerCase();
             status.innerText = "✅ " + plan.toUpperCase() + " APPLIED";
             status.className = "plan-badge-status active";
             refreshPrices(plan);
-            
             document.querySelectorAll('.plan').forEach(p => {
                 if (p.dataset.plan !== plan) p.classList.add('locked');
                 else p.classList.remove('locked');
@@ -865,7 +850,6 @@ function refreshPrices(plan){
     document.querySelectorAll('.plan').forEach(p=>{p.classList.remove('active');if(p.dataset.plan===plan)p.classList.add('active');}); 
     const testDisc = discountMap[plan];
     const centerDisc = (plan==='platinum')?0.20 : (plan==='gold'?0.10:0.05);
-
     document.querySelectorAll('.card,.pkg-card').forEach(c=>{
         const op = parseInt(c.dataset.price); 
         const t = c.dataset.type; 
@@ -880,7 +864,6 @@ function refreshPrices(plan){
         let final = Math.round(op - (op*d));
         c.querySelector('.doc-fee').innerHTML = `<span style="text-decoration:line-through;color:#999;font-size:11px;">₹${op}</span> ₹<span class="final-price"><b>${final}</b></span>`;
     }); 
-    
     if(document.getElementById("mainCartBox").style.display === 'flex') {
         toggleMainCart();
     }
@@ -915,51 +898,35 @@ function bookWithPayment(){
     const id = "B-" + Math.floor(10000 + Math.random() * 90000); 
     const amt = document.getElementById("payAmount").innerText; 
     const couponInput = document.getElementById("couponCode").value; 
-    
     let msg = `🌟 *New Booking Request*\n`; 
     msg += `🆔 ID: ${id}\n`;
     msg += `👤 Patient: ${document.getElementById("qName").value}\n`;
     msg += `📱 Mobile: ${document.getElementById("mobile").value}\n`;
     msg += `------------------\n`;
-    
     const currentPlan = document.querySelector('.plan.active').dataset.plan;
     const testDisc = discountMap[currentPlan];
     const centerDisc = (currentPlan === 'platinum') ? 0.20 : (currentPlan === 'gold' ? 0.10 : 0.05);
-
     Object.keys(masterBookingData).forEach(cat => { 
         let d = masterBookingData[cat]; 
         let items = tempSelection.filter(i => i.type === cat); 
-        
         let locationName = d.lab || d.center || "Bhavya Diagnostics";
-        let finalAddress = "";
-
-        if ((cat === 'test' || cat === 'package')) {
-            finalAddress = d.mode === 'Home' ? `${d.address}, ${d.city}` : centerAddressDB["Ved"];
-        } else {
-            finalAddress = centerAddressDB[locationName] || centerAddressDB["Default"];
-        }
-        
+        let finalAddress = (cat === 'test' || cat === 'package') ? (d.mode === 'Home' ? `${d.address}, ${d.city}` : centerAddressDB["Ved"]) : (centerAddressDB[locationName] || centerAddressDB["Default"]);
         msg += `📌 *${cat.toUpperCase()}*\n`;
         msg += `🏢 Center: ${locationName} (${d.mode})\n`;
         msg += `📅 Schedule: ${d.date} | 🕒 ${d.time}\n`;
         msg += `📍 Addr: ${finalAddress}\n`;
-        
         items.forEach((i, idx) => { 
             let discount = (cat === 'test' || cat === 'package') ? testDisc : centerDisc;
             if(cat === 'package') discount = discountMap['pkg_' + currentPlan];
             let finalPrice = Math.round(i.price - (i.price * discount));
-
             msg += `${idx + 1}. ${i.name} - *₹${finalPrice}*\n`;
-            if(i.contrast) msg += `   (+ Contrast: ₹3000)\n`;
+            if(i.contrast) msg += `    (+ Contrast: ₹3000)\n`;
         });
         msg += `------------------\n`;
     }); 
-
     if(couponInput && activeCoupon) msg += `🎟️ Referral Used: *${couponInput}* (-₹50)\n`;
     if(usePoints) msg += `💰 Wallet Points Used: Yes\n`;
-
     msg += `✅ *Final Payable: ₹${amt}*`;
-    
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank"); 
     closeAllPopups(); 
     clearMainCart(); 
@@ -973,8 +940,42 @@ function selectTime(el){ document.querySelectorAll('.time-slot').forEach(t=>t.cl
 function closeAllPopups(){ document.querySelectorAll('.popup-box').forEach(b=>b.style.display="none"); document.getElementById("overlay").style.display="none"; document.getElementById("customAlert").style.display="none"; }
 function showAlert(msg) { document.getElementById("customAlertMsg").innerText = msg; document.getElementById("overlay").style.display = "block"; document.getElementById("customAlert").style.display = "block"; }
 function closeCustomAlert() { document.getElementById("customAlert").style.display = "none"; if(document.querySelectorAll('.popup-box[style*="display: block"], .popup-box[style*="display: flex"]').length === 0) document.getElementById("overlay").style.display = "none"; }
-async function fetchHistory(mob) { const con = document.getElementById("notifyContainer"); con.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Loading...</div>'; try { const res = await fetch(`${NOTIFY_API_URL}?action=getHistory&mobile=${mob}`); const data = await res.json(); con.innerHTML = ""; if(data && data.length > 0) { data.forEach(item => { con.innerHTML += `<div class="list-item"><div><div class="list-title">${item.msg.split('\n')[0]}</div><div class="list-date">${item.date}</div></div></div>`; }); } else { con.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">No notifications yet.</div>'; } } catch(e) { con.innerHTML = '<div style="text-align:center;padding:10px;color:red;">Error loading history.</div>'; } }
-async function clearHistory() { if(!currentUser) return; if(confirm("Delete all notification history?")) { await fetch(NOTIFY_API_URL, { method: 'POST', mode: 'no-cors', body: new URLSearchParams({ action: 'clear', mobile: currentUser.mobile }) }); document.getElementById("notifyContainer").innerHTML = '<div style="text-align:center;padding:10px;color:#999;">History Clear.</div>'; } }
+
+/* 📜 UPDATED HISTORY LOGIC FOR MANUAL GOOGLE SHEET */
+async function fetchHistory(mob) {
+    const con = document.getElementById("notifyContainer");
+    con.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Loading...</div>';
+    try {
+        let res = await fetch(RAW_HISTORY_URL);
+        if(!res.ok) res = await fetch(HISTORY_DATA_URL);
+        const csvText = await res.text();
+        const rows = csvText.split('\n').slice(1); 
+        let html = "";
+        let found = false;
+
+        rows.forEach(row => {
+            const cols = row.split(',').map(c => c.replace(/"/g, '').trim());
+            // Column A=Date, B=Message, C=Mobile, D=Type
+            if (cols[2] === mob) {
+                found = true;
+                const rowType = cols[3] || "TEST";
+                html += `
+                    <div class="list-item" style="display:flex; justify-content:space-between; align-items:center; padding:12px 10px; border-bottom:1px solid #eee; background:#fff; margin-bottom:5px; border-radius:8px;">
+                        <div style="flex:1;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                                <span style="background:#e3f2fd; color:#0a73c0; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;">${rowType}</span>
+                                <span style="font-size:10px; color:#999;">${cols[0]}</span>
+                            </div>
+                            <div style="font-weight:700; font-size:13px; color:#333;">${cols[1]}</div>
+                        </div>
+                    </div>`;
+            }
+        });
+        con.innerHTML = found ? html : '<div style="text-align:center;padding:10px;color:#999;">No bookings found.</div>';
+    } catch(e) {
+        con.innerHTML = '<div style="text-align:center;padding:10px;color:red;">Error loading history.</div>';
+    }
+}
 </script>
 </body>
 </html>
