@@ -714,11 +714,15 @@ function toggleMainCart() {
     });
 
     let totalDiscount = 0;
+    // activeCoupon check modified for system logic
     if(activeCoupon && discountableTotal > 50) {
         totalDiscount += 50;
-        document.getElementById("couponMsg").innerText = "Referral Discount Applied: ₹50 OFF";
+        document.getElementById("couponMsg").innerText = `Referral Applied (${activeCoupon}): ₹50 OFF`;
         document.getElementById("couponMsg").style.color = "green";
+    } else if (!activeCoupon) {
+        document.getElementById("couponMsg").innerText = "";
     }
+
     if(currentUser && usePoints) {
         let pointValue = Math.floor(currentUser.points / 10);
         let maxPointDiscount = Math.min(pointValue, (discountableTotal - totalDiscount));
@@ -871,17 +875,62 @@ function refreshPrices(plan){
 
 function filter(i,id){ let v=i.value.toLowerCase(); document.querySelectorAll(`#${id} .card`).forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
 function filterDocs(i){ let v=i.value.toLowerCase(); document.querySelectorAll('.doc-card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
+
+/* 🌟 UPDATED: SYSTEM-ONLY REFERRAL VALIDATION & REMOVE LOGIC */
 function applyCoupon(){ 
-    if(document.getElementById("couponCode").value.length > 2){ 
-        activeCoupon = true;
+    const input = document.getElementById("couponCode");
+    const btn = document.querySelector(".coupon-section button");
+    const msg = document.getElementById("couponMsg");
+
+    // Case 1: If Coupon is already applied, REMOVE IT
+    if(activeCoupon) {
+        activeCoupon = null;
+        input.value = "";
+        input.disabled = false;
+        btn.innerText = "APPLY";
+        btn.style.background = "#333";
+        msg.innerText = "Referral Code Removed";
+        msg.style.color = "orange";
+        toggleMainCart();
+        return;
+    }
+
+    // Case 2: Apply Logic
+    const val = input.value.trim().toUpperCase();
+    if(val === "") { showAlert("Enter a referral code"); return; }
+
+    let isValidCode = false;
+
+    // Check against patientsDB referral codes
+    for (let mob in patientsDB) {
+        if (patientsDB[mob].referral === val) {
+            // Block self-referral
+            if (currentUser && currentUser.referral === val) {
+                msg.innerText = "Cannot use your own code!";
+                msg.style.color = "red";
+                return;
+            }
+            isValidCode = true;
+            break;
+        }
+    }
+
+    if(isValidCode){ 
+        activeCoupon = val;
+        input.disabled = true;
+        btn.innerText = "REMOVE";
+        btn.style.background = "#d32f2f"; // Red color for Remove action
+        msg.innerText = `Referral Applied: ₹50 OFF`;
+        msg.style.color = "green";
         toggleMainCart(); 
     } else {
         activeCoupon = null;
-        document.getElementById("couponMsg").innerText = "Invalid Referral Code";
-        document.getElementById("couponMsg").style.color = "red";
+        msg.innerText = "Invalid referral code!";
+        msg.style.color = "red";
         toggleMainCart();
     }
 }
+
 function togglePointUsage(){ usePoints=document.getElementById("pointCheck").checked; toggleMainCart(); }
 function logoutUser(){ location.reload(); }
 function bookDoctor(n,p,btn){ const c=btn.closest('.doc-card'); const dp=parseInt(c.querySelector('.final-price b').innerText.replace('₹','')); if(confirm(`Book ${n} for ₹${dp}?`)) window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Doctor: ${n}, Fee: ${dp}`)}`,"_blank"); }
@@ -897,7 +946,7 @@ function payOnline() { const amt = document.getElementById("payAmount").innerTex
 function bookWithPayment(){ 
     const id = "B-" + Math.floor(10000 + Math.random() * 90000); 
     const amt = document.getElementById("payAmount").innerText; 
-    const couponInput = document.getElementById("couponCode").value; 
+    
     let msg = `🌟 *New Booking Request*\n`; 
     msg += `🆔 ID: ${id}\n`;
     msg += `👤 Patient: ${document.getElementById("qName").value}\n`;
@@ -924,7 +973,7 @@ function bookWithPayment(){
         });
         msg += `------------------\n`;
     }); 
-    if(couponInput && activeCoupon) msg += `🎟️ Referral Used: *${couponInput}* (-₹50)\n`;
+    if(activeCoupon) msg += `🎟️ Referral Used: *${activeCoupon}* (-₹50)\n`;
     if(usePoints) msg += `💰 Wallet Points Used: Yes\n`;
     msg += `✅ *Final Payable: ₹${amt}*`;
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank"); 
@@ -955,7 +1004,6 @@ async function fetchHistory(mob) {
 
         rows.forEach(row => {
             const cols = row.split(',').map(c => c.replace(/"/g, '').trim());
-            // Column A=Date, B=Message, C=Mobile, D=Type
             if (cols[2] === mob) {
                 found = true;
                 const rowType = cols[3] || "TEST";
