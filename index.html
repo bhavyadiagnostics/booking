@@ -392,18 +392,10 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 <div class="popup-box" id="helpModal"><h3 style="margin-top:0; color:#0a73c0">Help & Contact</h3><div style="text-align:center;"><p>📞 +91 83979 85922</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 
 <script>
-/* 🔴 CONFIGURATION */
-const RAW_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
-const RATE_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_SHEET_URL)}`;
-
-const RAW_PATIENT_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
-const PATIENT_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PATIENT_URL)}`;
-
-const RAW_PARTNER_DB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=988786822&single=true&output=csv";
-const PARTNER_DB_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PARTNER_DB_URL)}`;
-
-const RAW_HISTORY_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1140710592&single=true&output=csv";
-const HISTORY_DATA_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_HISTORY_URL)}`;
+/* 🔴 SECURE CONFIGURATION */
+const RAW_SHEET_URL = "/api/getTests";
+const RAW_PATIENT_URL = "/api/getPatients";
+const RAW_HISTORY_URL = "/api/getHistory";
 
 const PARTNER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSOZbFl-dKDA4jy5cBCQav3zpMXjgtsUReIS9itHDRdHBEMg/viewform?embedded=true";
 const SIGNUP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdix2-jvF-Fr7OK0S7A514oTVXjQgmgWp4CvPUm9pEg8Y_x6w/viewform?embedded=true";
