@@ -392,19 +392,13 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 <div class="popup-box" id="helpModal"><h3 style="margin-top:0; color:#0a73c0">Help & Contact</h3><div style="text-align:center;"><p>📞 +91 83979 85922</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
 
 <script>
-/* ==========================================
-   SECURE CONFIGURATION (Vercel API Version)
-   ========================================== */
-
-// Ab hum link nahi, sirf API ka rasta (Path) likhenge
+/* 🔴 SECURE CONFIGURATION */
 const RAW_SHEET_URL = "/api/getTests";
 const RAW_PATIENT_URL = "/api/getPatients";
 const RAW_HISTORY_URL = "/api/getHistory";
 
-// Baki ki settings
 const WA_NUMBER = "918397985922";
 const UPI_ID = "8397985922@ptsbi";
-
 /* --- Data Load karne ka naya aur safe tarika --- */
 async function loadGoogleSheetData() {
     try {
