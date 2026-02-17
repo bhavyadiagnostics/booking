@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-    const url = process.env.FORM_RESPONSES1_SHEET_URL; 
+    const url = process.env.HISTORY_SHEET_URL; 
     try {
         const response = await fetch(url);
         const data = await response.text();
