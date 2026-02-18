@@ -11,7 +11,7 @@
 body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#f0f2f5;padding-bottom:120px;}
 
 /* HEADER */
-.summary{position:sticky;top:0;background:#fff;padding:12px 15px;box-shadow:0 2px 10 rgba(0,0,0,0.1);z-index:900;border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; width: 100%; height: 60px;}
+.summary{position:sticky;top:0;background:#fff;padding:12px 15px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:900;border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; width: 100%; height: 60px;}
 .header-left { display: flex; align-items: center; gap: 10px; }
 .menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; color: #333; line-height: 1; }
 .summary-info { font-size:12px; color:#666; margin-bottom: 2px; }
@@ -416,12 +416,11 @@ partnersDB['8397985922'] = { pass: '8397985922', name: 'Master Partner' };
 const discountMap = { basic: 0.20, gold: 0.35, platinum: 0.50, pkg_basic: 0.10, pkg_gold: 0.20, pkg_platinum: 0.30 };
 
 const centerAddressDB = {
-    "SS Care": "Metro pillar no 878, Delhi rohtak road, opposite Civil Hospital, Mahavir Park, Bahadurgarh, Haryana 124507",
-    "Shree Diagnostic": "Metro Pillar No, Khasra no. 2444, venus plaza nehru Enclave, 862, Rohtak Rd, Bahadurgarh, Haryana 124507",
-    "Shree": "Metro Pillar No, Khasra no. 2444, venus plaza nehru Enclave, 862, Rohtak Rd, Bahadurgarh, Haryana 124507",
+    "Shree Diagnostic": "Metro Pillar No-862, Khasra no. 2444,venus plaza nehru Enclave, Rohtak Rd, Bahadurgarh, Haryana 124507",
+    "Shree": "Metro Pillar No-862, Khasra no. 2444,venus plaza nehru Enclave, Rohtak Rd, Bahadurgarh, Haryana 124507",
     "Ved Hospital": "MWM8+9XR, Main, Jhajjar Rd, Huda Nahar, Bahadurgarh, Haryana 124507",
     "Ved": "MWM8+9XR, Main, Jhajjar Rd, Huda Nahar, Bahadurgarh, Haryana 124507",
-    "Default": "MWM8+9XR, Main, Jhajjar Rd, Huda Nahar, Bahadurgarh, Haryana 124507" 
+    "Default": "Metro Pillar No-862, Khasra no. 2444,venus plaza nehru Enclave, Rohtak Rd, Bahadurgarh, Haryana 124507" 
 };
 
 window.onload = function(){ loadGoogleSheetData(); loadPatientData(); loadPartnerData(); };
@@ -466,7 +465,6 @@ function parsePartners(csv) {
     });
 }
 
-/* 🌟 UPDATED: Form responses1 Structure for Plan, Points & Family */
 function parsePatients(csvText) { 
     const rows = csvText.split('\n'); 
     rows.slice(1).forEach(row => { 
@@ -484,12 +482,12 @@ function parsePatients(csvText) {
         if(cols.length < 3) return; 
         const mob = cols[2]; 
         if(mob && mob.length >= 10) { 
-            let plan = cols[5] && cols[5].length > 2 ? cols[5] : 'Basic'; // Column F (Plan)
-            let points = parseInt(cols[6]) || 0; // Column G (Points)
+            let plan = cols[5] && cols[5].length > 2 ? cols[5] : 'Basic'; 
+            let points = parseInt(cols[6]) || 0; 
             let familyMembers = [];
-            if(cols[7] && cols[7].trim()) familyMembers.push(cols[7].trim()); // Column H
-            if(cols[8] && cols[8].trim()) familyMembers.push(cols[8].trim()); // Column I
-            if(cols[9] && cols[9].trim()) familyMembers.push(cols[9].trim()); // Column J
+            if(cols[7] && cols[7].trim()) familyMembers.push(cols[7].trim());
+            if(cols[8] && cols[8].trim()) familyMembers.push(cols[8].trim());
+            if(cols[9] && cols[9].trim()) familyMembers.push(cols[9].trim());
 
             patientsDB[mob] = { 
                 mobile: mob, 
@@ -498,7 +496,7 @@ function parsePatients(csvText) {
                 address: cols[4]||"", 
                 plan: plan, 
                 points: points, 
-                reports: [], // Ab yeh fetchHistory se bharega
+                reports: [], 
                 referral: cols[1].split(" ")[0].toUpperCase()+mob.slice(-3), 
                 family: familyMembers 
             }; 
@@ -637,12 +635,10 @@ function renderQueueStep() {
 
     if(type === 'test' || type === 'package') {
         html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
-    } else if (['usg', 'xray'].includes(type)) {
-        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
-    } else if (['ct', 'mri', 'echo'].includes(type)) {
-        html += `<span class="booking-label">Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')">Shree Diagnostic</div></div>`;
+    } else if (['usg', 'xray', 'ct', 'mri', 'echo'].includes(type)) {
+        html += `<span class="booking-label">Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')"><div style="font-size:8px; color:#d32f2f; font-weight:bold; letter-spacing:0.5px;">NABH ACCREDITED</div>Shree Diagnostic</div></div>`;
     } else if (type === 'ecg') {
-        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree')">Shree</div><div class="option-btn" onclick="selectOpt(this,'center','SS Care')">SS Care</div><div class="option-btn" onclick="selectOpt(this,'center','Ved Hospital')">Ved</div></div>`;
+        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')"><div style="font-size:8px; color:#d32f2f; font-weight:bold; letter-spacing:0.5px;">NABH ACCREDITED</div>Shree Diagnostic</div><div class="option-btn" onclick="selectOpt(this,'center','Ved Hospital')">Ved Hospital</div></div>`;
     }
     
     html += `<span class="booking-label">Patient</span>${patientInputHtml}<div id="qAddressBox"><span class="booking-label">Address</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Address">${currentSessionAddress}</textarea></div><span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots">${timeHtml}</div>`;
@@ -665,11 +661,8 @@ function nextQueueStep() {
     if(type === 'test' || type === 'package') {
         details.lab = document.querySelector(".option-btn[onclick*='lab'].selected")?.innerText || "Wellness";
         details.mode = document.querySelector(".option-btn[onclick*='mode'].selected")?.innerText || "Home";
-    } else if (['usg', 'xray', 'ecg'].includes(type)) {
-        details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText || "Shree Diagnostic";
-        details.mode = "Center";
-    } else if (['ct', 'mri', 'echo'].includes(type)) {
-        details.center = "Shree Diagnostic";
+    } else if (['usg', 'xray', 'ct', 'mri', 'echo', 'ecg'].includes(type)) {
+        details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText.replace("NABH ACCREDITED", "").trim() || "Shree Diagnostic";
         details.mode = "Center";
     }
     
@@ -808,14 +801,7 @@ function checkLogin() {
         }
         html += `<div class="dash-fam-btn dash-fam-add" onclick="openFormModal(SIGNUP_FORM_URL, 'Add Member')">+ Add</div>`;
         famCon.innerHTML = html;
-        
-        const p = u.plan ? u.plan.toLowerCase() : 'basic'; 
-        const bG = document.getElementById("topBannerGold"), bP = document.getElementById("topBannerPlat"), vB = document.getElementById("topVipBadge"); 
-        bG.style.display="flex"; bP.style.display="flex"; vB.style.display="none"; 
-        if(p==='gold'){ bG.style.display="none"; } 
-        else if(p==='platinum'){ bG.style.display="none"; bP.style.display="none"; vB.style.display="block"; } 
-        
-        fetchHistory(u.mobile); // Ab yeh reports bhi fetch karega manual sheet se
+        fetchHistory(u.mobile);
         closeAllPopups(); 
         applyPlanByMobile(); 
     } else showAlert("Invalid Credentials"); 
@@ -888,7 +874,6 @@ function applyCoupon(){
     const input = document.getElementById("couponCode");
     const btn = document.querySelector(".coupon-section button");
     const msg = document.getElementById("couponMsg");
-
     if(activeCoupon) {
         activeCoupon = null;
         input.value = "";
@@ -900,11 +885,9 @@ function applyCoupon(){
         toggleMainCart();
         return;
     }
-
     const val = input.value.trim().toUpperCase();
     if(val === "") { showAlert("Enter a referral code"); return; }
     let isValidCode = false;
-
     for (let mob in patientsDB) {
         if (patientsDB[mob].referral === val) {
             if (currentUser && currentUser.referral === val) {
@@ -916,7 +899,6 @@ function applyCoupon(){
             break;
         }
     }
-
     if(isValidCode){ 
         activeCoupon = val;
         input.disabled = true;
@@ -991,65 +973,32 @@ function closeAllPopups(){ document.querySelectorAll('.popup-box').forEach(b=>b.
 function showAlert(msg) { document.getElementById("customAlertMsg").innerText = msg; document.getElementById("overlay").style.display = "block"; document.getElementById("customAlert").style.display = "block"; }
 function closeCustomAlert() { document.getElementById("customAlert").style.display = "none"; if(document.querySelectorAll('.popup-box[style*="display: block"], .popup-box[style*="display: flex"]').length === 0) document.getElementById("overlay").style.display = "none"; }
 
-/* 📜 UPDATED HISTORY & REPORT LOGIC (Manual Sheet Column E Support) */
+/* 📜 HISTORY & REPORT LOGIC (Manual Sheet Support) */
 async function fetchHistory(mob) {
     const histCon = document.getElementById("notifyContainer");
     const repCon = document.getElementById("reportContainer");
-    
     histCon.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Loading...</div>';
     repCon.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Checking...</div>';
-    
     try {
         let res = await fetch(RAW_HISTORY_URL);
         if(!res.ok) res = await fetch(HISTORY_DATA_URL);
         const csvText = await res.text();
         const rows = csvText.split('\n').slice(1); 
-        
-        let histHtml = "";
-        let repHtml = "";
-        let foundHist = false;
-        let foundRep = false;
-
+        let histHtml = "", repHtml = "", foundHist = false, foundRep = false;
         rows.forEach(row => {
             const cols = row.split(',').map(c => c.replace(/"/g, '').trim());
-            // A=Timestamp(0), B=Msg(1), C=Mobile(2), D=Type(3), E=Link(4)
             if (cols[2] === mob) {
                 foundHist = true;
-                const rowDate = cols[0];
-                const rowMsg = cols[1];
-                const rowType = cols[3] || "TEST";
-                const rowLink = cols[4] || "";
-
-                // Add to History
-                histHtml += `
-                    <div class="list-item">
-                        <div style="flex:1;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
-                                <span style="background:#e3f2fd; color:#0a73c0; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;">${rowType}</span>
-                                <span style="font-size:10px; color:#999;">${rowDate}</span>
-                            </div>
-                            <div class="list-title">${rowMsg}</div>
-                        </div>
-                    </div>`;
-
-                // If link exists, add to My Reports section
+                const rowDate = cols[0], rowMsg = cols[1], rowType = cols[3] || "TEST", rowLink = cols[4] || "";
+                histHtml += `<div class="list-item"><div style="flex:1;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="background:#e3f2fd; color:#0a73c0; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;">${rowType}</span><span style="font-size:10px; color:#999;">${rowDate}</span></div><div class="list-title">${rowMsg}</div></div></div>`;
                 if(rowLink && rowLink.length > 5) {
                     foundRep = true;
-                    repHtml += `
-                        <div class="list-item">
-                            <div>
-                                <div class="list-title">📄 ${rowType} Report</div>
-                                <div class="list-date">${rowDate}</div>
-                            </div>
-                            <a href="${rowLink}" target="_blank" class="action-icon icon-green">⬇ Download</a>
-                        </div>`;
+                    repHtml += `<div class="list-item"><div><div class="list-title">📄 ${rowType} Report</div><div class="list-date">${rowDate}</div></div><a href="${rowLink}" target="_blank" class="action-icon icon-green">⬇ Download</a></div>`;
                 }
             }
         });
-        
         histCon.innerHTML = foundHist ? histHtml : '<div style="text-align:center;padding:10px;color:#999;">No bookings found.</div>';
         repCon.innerHTML = foundRep ? repHtml : '<div style="text-align:center;padding:10px;color:#999;">No reports available yet.</div>';
-        
     } catch(e) {
         histCon.innerHTML = '<div style="text-align:center;padding:10px;color:red;">Error loading history.</div>';
         repCon.innerHTML = '<div style="text-align:center;padding:10px;color:red;">Error loading reports.</div>';
