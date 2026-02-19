@@ -98,7 +98,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     width: 100%; max-width: 100%; 
     border-radius: 25px 25px 0 0; padding: 0; 
     display: none; flex-direction: column; 
-    height: auto; max-height: 70vh; 
+    height: auto; max-height: 80vh; 
     animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
     z-index: 5200 !important; box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
 }
@@ -118,8 +118,9 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 @keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
 
 .sheet-handle { width: 40px; height: 5px; background: #e0e0e0; border-radius: 5px; margin: 0 auto 15px auto; }
-.sheet-header { padding: 15px 20px; background: #fff; border-bottom: 1px solid #f0f0f0; text-align: center; border-radius: 25px 25px 0 0; }
+.sheet-header { padding: 15px 20px; background: #fff; border-bottom: 1px solid #f0f0f0; text-align: center; border-radius: 25px 25px 0 0; position: relative; }
 .sheet-header h3 { margin: 0; color: #333; font-size: 18px; font-weight: 800; }
+.clear-cart-btn { position: absolute; right: 15px; top: 15px; background: #ffebee; color: #d32f2f; border: 1px solid #ef9a9a; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
 .sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 100px; }
 .sheet-footer { position: sticky; bottom: 0; left: 0; width: 100%; padding: 15px 20px; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -5px 15px rgba(0,0,0,0.03); }
 
@@ -142,7 +143,8 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
 .login-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
 .login-btn { width: 100%; padding: 12px; background: #0a73c0; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
 .cart-group-header { background: #f0f2f5; padding: 8px 15px; font-size: 12px; font-weight: bold; color: #666; margin-top: 10px; border-radius: 4px; }
-.cart-item-row { display: flex; justify-content: space-between; padding: 8px 15px; font-size: 13px; border-bottom: 1px solid #eee; }
+.cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; font-size: 13px; border-bottom: 1px solid #eee; }
+.remove-item-btn { color: #f44336; font-size: 16px; cursor: pointer; margin-right: 10px; padding: 5px; }
 .cart-details-row { padding: 5px 15px; font-size: 11px; color: #2e7d32; background: #f9f9f9; border-bottom: 1px solid #eee; font-style: italic; }
 .share-btn { background: #25D366; color: white; border: none; padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; margin-left: 5px; }
 .signup-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
@@ -358,6 +360,7 @@ body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     <div class="sheet-header">
         <div class="sheet-handle"></div>
         <h3 style="margin:0;color:#0a73c0">Final Cart</h3>
+        <button class="clear-cart-btn" onclick="clearMainCart()">Clear Cart</button>
     </div>
     <div class="sheet-body" id="finalCartItems"></div>
     <div class="sheet-footer">
@@ -672,7 +675,7 @@ function nextQueueStep() {
 function toggleMainCart() {
     document.getElementById("overlay").style.display="block"; 
     document.getElementById("mainCartBox").style.display="flex";
-    let html = "", grandTotal = 0, discountableTotal = 0;
+    let html = "", grandTotal = 0, discountableTotal = 0, totalMRP = 0;
     
     const currentPlan = document.querySelector('.plan.active') ? document.querySelector('.plan.active').dataset.plan : 'basic';
     const testDisc = discountMap[currentPlan];
@@ -687,22 +690,26 @@ function toggleMainCart() {
                 let discount = (cat==='test' || cat==='package') ? testDisc : centerDisc;
                 if(cat==='package') discount = discountMap['pkg_'+currentPlan];
                 let finalPrice = Math.round(i.price - (i.price * discount));
-                let total = finalPrice * i.qty;
-                
-                grandTotal += total;
+                let totalFinal = finalPrice * i.qty;
+                let totalOriginal = i.price * i.qty;
+              
+                grandTotal += totalFinal;
+                totalMRP += totalOriginal;
                 if(cat === 'test' || cat === 'package') {
-                   discountableTotal += total;
+                   discountableTotal += totalFinal;
                 }
 
                 html += `<div class="cart-item-row">
-                    <span>${i.name} x${i.qty}</span>
-                    <span><s style="font-size:10px;color:#999;margin-right:5px">₹${i.price*i.qty}</s> <b>₹${total}</b></span>
+                    <span class="remove-item-btn" onclick="removeItemFromCart('${i.name}')">❌</span>
+                    <span style="flex:1">${i.name} x${i.qty}</span>
+                    <span><s style="font-size:10px;color:#999;margin-right:5px">₹${totalOriginal}</s> <b>₹${totalFinal}</b></span>
                 </div>`;
-                
+              
                 if(i.contrast) { 
                     let cp = 3000 * i.qty; 
                     grandTotal += cp; 
-                    html += `<div class="cart-item-row" style="color:#d32f2f; font-size:11px;"><span>+ Contrast</span><span>₹${cp}</span></div>`; 
+                    totalMRP += cp;
+                    html += `<div class="cart-item-row" style="color:#d32f2f; font-size:11px;"><span></span><span>+ Contrast</span><span>₹${cp}</span></div>`; 
                 }
             });
             if(booking) {
@@ -718,9 +725,10 @@ function toggleMainCart() {
         }
     });
 
-    let totalDiscount = 0;
+    let walletPointsUsed = 0;
+    let extraDiscount = 0;
     if(activeCoupon && discountableTotal > 50) {
-        totalDiscount += 50;
+        extraDiscount += 50;
         document.getElementById("couponMsg").innerText = `Referral Applied (${activeCoupon}): ₹50 OFF`;
         document.getElementById("couponMsg").style.color = "green";
     } else if (!activeCoupon) {
@@ -729,18 +737,45 @@ function toggleMainCart() {
 
     if(currentUser && usePoints) {
         let pointValue = Math.floor(currentUser.points / 10);
-        let maxPointDiscount = Math.min(pointValue, (discountableTotal - totalDiscount));
-        totalDiscount += maxPointDiscount;
-        document.getElementById("discountVal").innerText = totalDiscount;
+        walletPointsUsed = Math.min(pointValue, (discountableTotal - extraDiscount));
+        extraDiscount += walletPointsUsed;
+        document.getElementById("discountVal").innerText = extraDiscount;
         document.getElementById("availPoints").innerText = currentUser.points;
     } else {
-        document.getElementById("discountVal").innerText = totalDiscount;
+        document.getElementById("discountVal").innerText = extraDiscount;
     }
 
     document.getElementById("finalCartItems").innerHTML = html;
-    let finalPay = grandTotal - totalDiscount;
+    let finalPay = grandTotal - extraDiscount;
     document.getElementById("payAmount").innerText = finalPay > 0 ? finalPay : 0;
     document.getElementById("redeemBox").style.display = (currentUser && currentUser.points >= 10) ? "flex" : "none";
+}
+
+function removeItemFromCart(name) {
+    tempSelection = tempSelection.filter(i => i.name !== name);
+    // UI mein bhi card ko reset karna padega
+    document.querySelectorAll('.card, .pkg-card').forEach(c => {
+        if(c.dataset.name === name) {
+            const w = c.querySelector('.qty-wrapper');
+            w.querySelector('.add-btn').style.display = 'block';
+            w.querySelector('.qty-control').style.display = 'none';
+            c.classList.remove('selected');
+        }
+    });
+    updateGlobalCount();
+    if(tempSelection.length === 0) {
+        closeAllPopups();
+    } else {
+        toggleMainCart();
+    }
+}
+
+function updateGlobalCount() {
+    let count = tempSelection.reduce((s,i) => s + i.qty, 0); 
+    document.getElementById("finalCount").innerText = count; 
+    const tBtn = document.getElementById("topProceedBtn"); 
+    if(count > 0) { tBtn.innerText = `Proceed (${count}) ➔`; tBtn.classList.add("active"); tBtn.disabled = false; } 
+    else { tBtn.innerText = "Cart Empty"; tBtn.classList.remove("active"); tBtn.disabled = true; } 
 }
 
 function updateQty(btn, change) { 
@@ -758,11 +793,7 @@ function updateQty(btn, change) {
     const w = card.querySelector('.qty-wrapper'); 
     if(change > 0 || (item && item.qty > 0)) { w.querySelector('.add-btn').style.display = 'none'; w.querySelector('.qty-control').style.display = 'flex'; w.querySelector('span').innerText = item ? item.qty : 1; card.classList.add('selected'); } 
     else { w.querySelector('.add-btn').style.display = 'block'; w.querySelector('.qty-control').style.display = 'none'; card.classList.remove('selected'); if(contrastChk) contrastChk.checked = false; } 
-    let count = tempSelection.reduce((s,i) => s + i.qty, 0); 
-    document.getElementById("finalCount").innerText = count; 
-    const tBtn = document.getElementById("topProceedBtn"); 
-    if(count > 0) { tBtn.innerText = `Proceed (${count}) ➔`; tBtn.classList.add("active"); tBtn.disabled = false; } 
-    else { tBtn.innerText = "Cart Empty"; tBtn.classList.remove("active"); tBtn.disabled = true; } 
+    updateGlobalCount();
 }
 
 function handleMyInfoClick(){ 
@@ -943,7 +974,22 @@ function sendMedRequest(){
 
 function sendHospRequest(){ window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`🏥 *Hospital Lead*\nMobile: ${document.getElementById("mobile").value}\nReason: ${document.getElementById("admReason").value}\nPay: ${document.getElementById("admPay").value}`)}`,"_blank"); }
 function sendForgotPassReq(){ const m=document.getElementById("loginMob").value; const p=document.getElementById("newPassInput").value; if(m.length<10){showAlert("Enter Mobile first");return;} if(!p){showAlert("Enter New Pass");return;} window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hey Bhavya Diagnostics, Reset Pass\nMob: ${m}\nNew Pass: ${p}`)}`,"_blank"); closeAllPopups(); }
-function clearMainCart(){ tempSelection=[]; toggleMainCart(); document.getElementById("topProceedBtn").innerText="Cart Empty"; document.getElementById("topProceedBtn").classList.remove("active"); document.getElementById("finalCount").innerText="0"; }
+
+function clearMainCart(){ 
+    tempSelection=[]; 
+    // UI cards reset
+    document.querySelectorAll('.card, .pkg-card').forEach(c => {
+        const w = c.querySelector('.qty-wrapper');
+        if(w) {
+            w.querySelector('.add-btn').style.display = 'block';
+            w.querySelector('.qty-control').style.display = 'none';
+            c.classList.remove('selected');
+        }
+    });
+    updateGlobalCount();
+    closeAllPopups();
+}
+
 function payOnline() { const amt = document.getElementById("payAmount").innerText; if(amt == 0) return; window.location.href = `upi://pay?pa=${UPI_ID}&pn=BhavyaDiagnostics&am=${amt}&cu=INR`; }
 
 function bookWithPayment(){ 
@@ -954,30 +1000,58 @@ function bookWithPayment(){
     msg += `👤 Patient: ${document.getElementById("qName").value}\n`;
     msg += `📱 Mobile: ${document.getElementById("mobile").value}\n`;
     msg += `------------------\n`;
+    
+    let totalMRP = 0;
+    let totalDiscount = 0;
     const currentPlan = document.querySelector('.plan.active').dataset.plan;
     const testDisc = discountMap[currentPlan];
     const centerDisc = (currentPlan === 'platinum') ? 0.20 : (currentPlan === 'gold' ? 0.10 : 0.05);
+
     Object.keys(masterBookingData).forEach(cat => { 
         let d = masterBookingData[cat]; 
         let items = tempSelection.filter(i => i.type === cat); 
         let locationName = d.lab || d.center || "Bhavya Diagnostics";
         let finalAddress = (cat === 'test' || cat === 'package') ? (d.mode === 'Home' ? `${d.address}, ${d.city}` : centerAddressDB["Ved"]) : (centerAddressDB[locationName] || centerAddressDB["Default"]);
+        
         msg += `📌 *${cat.toUpperCase()}*\n`;
         msg += `🏢 Center: ${locationName} (${d.mode})\n`;
         msg += `📅 Schedule: ${d.date} | 🕒 ${d.time}\n`;
         msg += `📍 Addr: ${finalAddress}\n`;
+        
         items.forEach((i, idx) => { 
             let discount = (cat === 'test' || cat === 'package') ? testDisc : centerDisc;
             if(cat === 'package') discount = discountMap['pkg_' + currentPlan];
             let finalPrice = Math.round(i.price - (i.price * discount));
-            msg += `${idx + 1}. ${i.name} - *₹${finalPrice}*\n`;
-            if(i.contrast) msg += `    (+ Contrast: ₹3000)\n`;
+            let itemMRP = i.price;
+            
+            totalMRP += (itemMRP * i.qty);
+            msg += `${idx + 1}. ${i.name} x${i.qty}\n`;
+            msg += `   Rate: ₹${finalPrice} (MRP: ₹${itemMRP})\n`;
+            
+            if(i.contrast) {
+                msg += `   (+ Contrast: ₹3000)\n`;
+                totalMRP += 3000;
+            }
         });
         msg += `------------------\n`;
     }); 
-    if(activeCoupon) msg += `🎟️ Referral Used: *${activeCoupon}* (-₹50)\n`;
-    if(usePoints) msg += `💰 Wallet Points Used: Yes\n`;
-    msg += `✅ *Final Payable: ₹${amt}*`;
+
+    // Final calculations for message
+    let walletUsed = 0;
+    let couponOff = activeCoupon ? 50 : 0;
+    
+    if(usePoints && currentUser) {
+        let pointVal = Math.floor(currentUser.points / 10);
+        walletUsed = Math.min(pointVal, (amt - couponOff)); // Approximate
+    }
+
+    msg += `💰 *Bill Summary:*\n`;
+    msg += `Total MRP: ₹${totalMRP}\n`;
+    if(totalMRP - amt > 0) msg += `Total Discount: ₹${Math.round(totalMRP - amt)}\n`;
+    if(activeCoupon) msg += `🎟️ Referral (${activeCoupon}): -₹50\n`;
+    if(usePoints) msg += `Points Redeemed: Yes\n`;
+    msg += `\n✅ *Final Payable: ₹${amt}*`;
+    
     window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank"); 
     closeAllPopups(); 
     clearMainCart(); 
