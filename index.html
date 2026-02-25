@@ -12,7 +12,7 @@ body{font-family:Arial;background:#f2f2f2;padding:10px;}
 input,textarea,select{width:100%;padding:8px;margin:5px 0;}
 button{padding:10px;background:green;color:white;border:none;margin-top:10px;width:100%;}
 #prescription{background:white;padding:20px;margin-top:20px;}
-canvas{border:1px solid black;}
+canvas{border:1px solid black;touch-action:none;}
 </style>
 </head>
 
@@ -33,7 +33,7 @@ Clinic Address
 <input id="clinic">
 
 Doctor Mobile
-<input id="doctor_mobile">
+<input id="doctor_mobile" value="+918950112467">
 
 Date
 <input id="date" type="date">
@@ -81,7 +81,7 @@ Followup Date
 <input id="followup" type="date">
 
 <h3>Doctor Signature</h3>
-<canvas id="signature" width="300" height="100"></canvas>
+<canvas id="signature" width="300" height="150"></canvas>
 <button onclick="clearSign()">Clear Signature</button>
 
 <button onclick="generate()">Generate PDF</button>
@@ -92,6 +92,7 @@ Followup Date
 <p id="dqua"></p>
 <p id="dreg"></p>
 <p id="dclinic"></p>
+<p id="dmobile"></p>
 <p id="rxid"></p>
 <p id="ddate"></p>
 
@@ -126,38 +127,35 @@ Followup Date
 
 <script>
 
-// AUTO ID
+// AUTO RX ID
 function createPrescriptionID(){
-
 let lastID=localStorage.getItem("rx");
-
 if(lastID==null){lastID=0;}
-
 lastID++;
-
 localStorage.setItem("rx",lastID);
-
 let today=new Date();
 let m=String(today.getMonth()+1).padStart(2,'0');
 let y=String(today.getFullYear()).slice(-2);
-
 let id="RX-"+y+m+"-"+String(lastID).padStart(4,'0');
-
 document.getElementById("prescription_id").value=id;
-
 }
-
 window.onload=createPrescriptionID;
 
 
-// SIGNATURE PAD
+// SIGNATURE MOUSE + TOUCH
 let canvas=document.getElementById("signature");
 let ctx=canvas.getContext("2d");
 let drawing=false;
 
-canvas.onmousedown=()=>drawing=true;
-canvas.onmouseup=()=>drawing=false;
-canvas.onmousemove=(e)=>{
+canvas.addEventListener("mousedown",()=>drawing=true);
+canvas.addEventListener("mouseup",()=>{drawing=false;ctx.beginPath();});
+canvas.addEventListener("mousemove",drawMouse);
+
+canvas.addEventListener("touchstart",(e)=>{drawing=true;drawTouch(e);});
+canvas.addEventListener("touchend",()=>{drawing=false;ctx.beginPath();});
+canvas.addEventListener("touchmove",drawTouch);
+
+function drawMouse(e){
 if(!drawing)return;
 ctx.lineWidth=2;
 ctx.lineCap="round";
@@ -166,6 +164,22 @@ ctx.lineTo(e.offsetX,e.offsetY);
 ctx.stroke();
 ctx.beginPath();
 ctx.moveTo(e.offsetX,e.offsetY);
+}
+
+function drawTouch(e){
+if(!drawing)return;
+e.preventDefault();
+let rect=canvas.getBoundingClientRect();
+let touch=e.touches[0];
+let x=touch.clientX-rect.left;
+let y=touch.clientY-rect.top;
+ctx.lineWidth=2;
+ctx.lineCap="round";
+ctx.strokeStyle="black";
+ctx.lineTo(x,y);
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(x,y);
 }
 
 function clearSign(){
@@ -180,6 +194,7 @@ document.getElementById("dname").innerHTML=document.getElementById("doctor_name"
 document.getElementById("dqua").innerHTML=document.getElementById("doctor_qualification").value;
 document.getElementById("dreg").innerHTML=document.getElementById("reg").value;
 document.getElementById("dclinic").innerHTML=document.getElementById("clinic").value;
+document.getElementById("dmobile").innerHTML="Mobile : "+document.getElementById("doctor_mobile").value;
 document.getElementById("rxid").innerHTML="Prescription ID : "+document.getElementById("prescription_id").value;
 document.getElementById("ddate").innerHTML=document.getElementById("date").value;
 
@@ -193,30 +208,23 @@ let sign=canvas.toDataURL();
 document.getElementById("signimg").src=sign;
 
 html2canvas(document.getElementById("prescription")).then(canvas=>{
-
 const img=canvas.toDataURL("image/png");
 const {jsPDF}=window.jspdf;
 const pdf=new jsPDF();
 pdf.addImage(img,'PNG',0,0,210,297);
 pdf.save("Prescription.pdf");
-
 sendWhatsapp();
-
 createPrescriptionID();
-
 })
 
 }
 
-
 // WHATSAPP
 function sendWhatsapp(){
-
 let number=document.getElementById("pmobile").value;
 let msg="Your Prescription is Ready";
 let url="https://wa.me/91"+number+"?text="+msg;
 window.open(url);
-
 }
 
 </script>
