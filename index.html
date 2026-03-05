@@ -6,38 +6,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <style>
-    /* FOOTER */
-.site-footer{
-background:#111;
+   /* RAZORPAY FOOTER */
+.razor-footer{
+background:#0f172a;
 color:#fff;
-padding:25px 15px;
+padding:25px 10px;
 text-align:center;
 margin-top:40px;
 }
 
-.footer-links{
+.razor-footer-links{
 display:flex;
 flex-wrap:wrap;
 justify-content:center;
-gap:15px;
+gap:12px;
 margin-bottom:10px;
 }
 
-.footer-links a{
+.razor-footer-links a{
 color:#fff;
 text-decoration:none;
 font-size:13px;
 font-weight:600;
 }
 
-.footer-links a:hover{
+.razor-footer-links a:hover{
 text-decoration:underline;
+}
+
+.footer-contact{
+font-size:12px;
+color:#ccc;
+margin-top:10px;
 }
 
 .footer-copy{
 font-size:11px;
-color:#aaa;
-margin-top:5px;
+color:#999;
+margin-top:10px;
 }
 /* ================= CSS STYLES (SAME MODERN DESIGN) ================= */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -1136,9 +1142,19 @@ async function fetchHistory(mob) {
 }
 
 </script>
-      <footer class="site-footer">
+    <!-- RAZORPAY FOOTER -->
 
-<div class="footer-links">
+<footer class="razor-footer">
+
+<div class="razor-footer-links">
+
+<a href="https://www.bhavyadiagnostics.com/about" target="_blank">
+About Us
+</a>
+
+<a href="https://www.bhavyadiagnostics.com/contact-5" target="_blank">
+Contact
+</a>
 
 <a href="https://www.bhavyadiagnostics.com/privacy-policy" target="_blank">
 Privacy Policy
@@ -1152,14 +1168,22 @@ Terms & Conditions
 Refund & Cancellation Policy
 </a>
 
-<a href="https://www.bhavyadiagnostics.com/contact-5" target="_blank">
-Contact
-</a>
+</div>
+
+<div class="footer-contact">
+
+📍 Sakti Nagar, Gali Number 4, Bahadurgarh Haryana  
+<br>
+📞 +91 83979 85922  
+<br>
+✉️ support@bhavyadiagnostics.com
 
 </div>
 
 <div class="footer-copy">
-© 2026 Bhavya Diagnostics | Bahadurgarh Haryana
+
+© 2026 Bhavya Diagnostics. All Rights Reserved.
+
 </div>
 
 </footer>
