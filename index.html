@@ -1,1190 +1,1007 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Bhavya Diagnostics</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<style>
-   /* RAZORPAY FOOTER */
-.razor-footer{
-background:#0f172a;
-color:#fff;
-padding:25px 10px;
-text-align:center;
-margin-top:40px;
-}
+    <script>
+        // ✨ STRICT SESSION PROTECTION LOGIC ✨
+        document.addEventListener("DOMContentLoaded", () => {
+            const userId = localStorage.getItem("bhavya_user_id");
+            const role = localStorage.getItem("bhavya_role");
 
-.razor-footer-links{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:12px;
-margin-bottom:10px;
-}
+            // Yeh block strictly check karega ki user genuinely logged in hai ya nahi (Blocks null/empty string bugs)
+            const isValidUser = userId && userId !== "null" && userId !== "undefined" && userId.trim() !== "" &&
+                                role && role !== "null" && role !== "undefined" && role.trim() !== "";
 
-.razor-footer-links a{
-color:#fff;
-text-decoration:none;
-font-size:13px;
-font-weight:600;
-}
+            if (isValidUser) {
+                if (role === "lab") window.location.replace("Lab/lab_dashboard.html"); 
+                else if (role === "patient") window.location.replace("patient_dashboard/patient_dashboard.html");
+                else if (role === "admin") window.location.replace("admin/admin_dashboard.html"); 
+            }
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BhavyaCare - Your Premium Healthcare Aggregator</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
-.razor-footer-links a:hover{
-text-decoration:underline;
-}
+    <style>
+        /* === PREMIUM MODERN UI CSS === */
+        :root {
+            --primary: #2563eb; --primary-light: #eff6ff;
+            --secondary: #10b981; --secondary-light: #d1fae5;
+            --warning: #f59e0b; --danger: #ef4444;
+            --bg-color: #f8fafc; --text-main: #0f172a; --text-muted: #64748b;
+        }
+        
+        /* 🛠️ PREVENT HORIZONTAL SCROLL 🛠️ */
+        html, body { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-color); color: var(--text-main); overflow-x: clip; width: 100vw; max-width: 100%; -webkit-tap-highlight-color: transparent; }
+        *, *::before, *::after { box-sizing: inherit; }
 
-.footer-contact{
-font-size:12px;
-color:#ccc;
-margin-top:10px;
-}
+        /* 🌟 HEADER CSS 🌟 */
+        .navbar { display: flex; justify-content: space-between; align-items: center; background-color: #ffffff; padding: 10px 40px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #f1f5f9;}
+        .logo { display: flex; align-items: center; gap: 10px; } 
+        .logo img { height: 45px; object-fit: contain; display: block;}
+        
+        .nav-actions { display: flex; align-items: center; gap: 15px; }
+        .nav-btn { border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; color: white; display: inline-block; text-align: center;}
+        .login-btn { background-color: var(--primary); }
+        .login-btn:hover { background-color: #1d4ed8; }
 
-.footer-copy{
-font-size:11px;
-color:#999;
-margin-top:10px;
-}
-/* ================= CSS STYLES (SAME MODERN DESIGN) ================= */
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body{margin:0;font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;background:#f0f2f5;padding-bottom:120px;}
+        #user-menu-container { display: none; }
+        .user-profile-btn { background: #f4f7f6; color: var(--primary); border: 1px solid #cce5ff; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .user-profile-btn:hover { background: #e6f0fa; }
+        
+        .dropdown { position: relative; display: inline-block; }
+        .dropbtn { background-color: transparent; color: #333; font-size: 24px; border: none; cursor: pointer; padding: 0 5px; font-weight: bold; }
+        .dropbtn:hover { color: var(--primary); }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: #ffffff; min-width: 240px; box-shadow: 0px 10px 25px rgba(0,0,0,0.15); z-index: 1001; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; margin-top: 10px;}
+        .dropdown-content a { color: #334155; padding: 12px 16px; text-decoration: none; display: flex; align-items: center; gap: 10px; font-size: 14px; border-bottom: 1px solid #f1f5f9; font-weight: 600; cursor: pointer;}
+        .dropdown-content a:hover { background-color: #f8fafc; color: var(--primary); padding-left: 20px; transition: 0.2s;}
+        .dropdown-content hr { border: 0; border-top: 4px solid #f1f5f9; margin: 0; }
+        .show-menu { display: block; }
 
-/* HEADER */
-.summary{position:sticky;top:0;background:#fff;padding:12px 15px;box-shadow:0 2px 10px rgba(0,0,0,0.1);z-index:900;border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; width: 100%; height: 60px;}
-.header-left { display: flex; align-items: center; gap: 10px; }
-.menu-btn { background: none; border: none; font-size: 24px; cursor: pointer; padding: 0; color: #333; line-height: 1; }
-.summary-info { font-size:12px; color:#666; margin-bottom: 2px; }
-.summary-total { font-size:18px; font-weight:800; color:#0a73c0; }
+        /* Login Popup Section CSS */
+        #login-section { width: 90%; max-width: 400px; margin: 40px auto; padding: 30px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-radius: 16px; text-align: center; display: none; position: fixed; top: 70px; right: 40px; z-index: 999; }
+        #login-section h3 { color: #333; margin-bottom: 20px; font-size: 22px; font-weight: 800;}
+        .input-box { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; outline: none; transition: 0.3s; box-sizing: border-box;}
+        .input-box:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .action-btn { width: 100%; background-color: var(--secondary); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.3s; }
+        .action-btn:hover { background-color: #059669; }
 
-/* TOP PROCEED BUTTON */
-.top-proceed-btn { background: #ccc; color: white; padding: 8px 15px; border-radius: 25px; font-weight: bold; font-size: 13px; border: none; cursor: not-allowed; transition: 0.3s; white-space: nowrap; flex-shrink: 0; }
-.top-proceed-btn.active { background: linear-gradient(135deg, #2e7d32, #1b5e20); cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); }
+        /* 🌟 SECTIONS CSS 🌟 */
+        .section-hero { background: linear-gradient(180deg, #e0f2fe 0%, #eff6ff 100%); padding: 30px 20px 40px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        .section-diagnostics { background: #ffffff; padding: 50px 20px; border-bottom: 1px solid #e2e8f0; } 
+        .section-trust { background: #f8fafc; padding: 30px 20px; border-bottom: 1px solid #e2e8f0; }
+        .section-packages { background: #f1f5f9; padding: 60px 20px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+        .section-hiw { background: #ffffff; padding: 60px 20px; border-bottom: 1px solid #e2e8f0;}
 
-/* ACTION BUTTONS */
-.action-buttons { display:flex; gap:8px; padding:10px; background:#fff; position: relative; z-index: 950; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.action-buttons button { flex:1; border:none; padding:12px 5px; border-radius:8px; color:#fff; font-size:12px; cursor:pointer; font-weight:700; letter-spacing:0.3px; white-space:nowrap; transition: 0.2s; }
-.upload-rx { background:linear-gradient(45deg, #9c27b0, #673ab7); }
-.view-cart { background:#333; }
-.my-info-btn { background: #0a73c0; }
-.my-info-btn.logged-in { background: #4caf50; }
+        /* 🌟 TEXT STYLES 🌟 */
+        .hero-title { font-size: 42px; font-weight: 800; color: #1e293b; margin-bottom: 12px; letter-spacing: -1px; line-height: 1.2;}
+        .hero-title span { color: var(--primary); }
+        .hero-subtitle { font-size: 16px; color: var(--text-muted); max-width: 600px; margin: 0 auto; font-weight: 500; line-height: 1.6;}
+        
+        /* ✨ FAKE LIVE TICKER CSS ✨ */
+        @keyframes pulse-red { 
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 
+            70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } 
+        }
+        .live-ticker { display: inline-flex; align-items: center; gap: 8px; background: white; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: 700; color: #ef4444; border: 1px solid #fca5a5; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.1); }
+        .pulse-dot { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; animation: pulse-red 1.5s infinite; }
 
-/* PROFESSIONAL MOBILE INPUT UI */
-.mobile-input-container { background: #fff; padding: 15px 20px; margin: 10px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #fff; display: flex; align-items: center; gap: 15px; transition: 0.3s; }
-.mobile-input-container:focus-within { border-color: #0a73c0; }
-.mobile-icon-box { width: 40px; height: 40px; background: #e3f2fd; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-.mobile-text-group { flex: 1; display: flex; flex-direction: column; }
-.mobile-label { font-size: 11px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 2px; }
-.mobile-real-input { border: none; background: transparent; font-size: 18px; font-weight: 800; color: #333; outline: none; width: 100%; letter-spacing: 1px; }
-.plan-badge-status { font-size: 10px; padding: 3px 8px; border-radius: 6px; background: #f5f5f5; color: #999; font-weight: bold; white-space: nowrap; }
-.plan-badge-status.active { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        /* ✨ TRUST STATS BAR ✨ */
+        .trust-stats-bar { display: flex; justify-content: center; gap: 40px; margin-top: 30px; padding-top: 25px; border-top: 1px dashed #cbd5e1; flex-wrap: wrap;}
+        .stat-item { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .stat-num { font-size: 24px; font-weight: 800; color: #0f172a; }
+        .stat-text { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;}
 
-/* BANNERS */
-.top-banner { display: none; margin: 10px; padding: 15px; border-radius: 12px; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-.tb-gold { background: linear-gradient(to right, #fff8e1, #fff); border-left: 5px solid #ffb300; }
-.tb-plat { background: linear-gradient(to right, #eceff1, #fff); border-left: 5px solid #607d8b; }
-.tb-title { font-weight: 800; font-size: 14px; color: #333; }
-.tb-desc { font-size: 11px; color: #666; }
-.tb-btn { background: #333; color: white; border: none; padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; }
-.vip-badge { display:none; margin:10px; background:linear-gradient(45deg, #333, #000); color:gold; padding:15px; border-radius:12px; text-align:center; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+        .search-container { max-width: 800px; margin: 0 auto; background: white; padding: 8px; border-radius: 20px; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15); display: flex; align-items: center; border: 1px solid #cbd5e1; position: relative; margin-bottom: 25px;}
+        .search-container i.fa-search { color: #94a3b8; font-size: 20px; margin-left: 15px;}
+        .search-container input { flex: 1; border: none; padding: 15px; font-size: 16px; outline: none; font-weight: 500; color: var(--text-main); background: transparent;}
+        .search-btn { background: var(--primary); color: white; border: none; padding: 14px 28px; border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 15px;}
 
-/* SIDEBAR */
-.sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 4000; display: none; backdrop-filter: blur(2px); }
-.sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background: #fff; z-index: 4100; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.1); display: flex; flex-direction: column; }
-.sidebar.open { left: 0; }
-.sidebar-header { background: #0a73c0; color: white; padding: 20px; font-size: 18px; font-weight: bold; }
-.sidebar-menu { padding: 10px; overflow-y: auto; flex: 1; }
-.menu-item { display: flex; align-items: center; gap: 15px; padding: 15px; border-bottom: 1px solid #f0f0f0; color: #333; font-size: 14px; cursor: pointer; }
-.sidebar-footer { padding: 20px; font-size: 11px; color: #999; text-align: center; border-top: 1px solid #eee; }
+        /* ✨ PROMINENT QUICK ACTIONS ✨ */
+        .hero-quick-actions { display: flex; justify-content: center; gap: 15px; margin: 0 auto; max-width: 800px; flex-wrap: wrap;}
+        .btn-quick { display: flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 14px; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.05); cursor: pointer; }
+        .btn-quick:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+        .call-btn { background: white; color: #0f172a; border: 1px solid #cbd5e1; }
+        .wa-btn { background: #10b981; color: white; border: 1px solid #059669; }
+        .rx-btn { background: #8b5cf6; color: white; border: 1px solid #7c3aed; }
 
-/* NAVIGATION */
-.nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 10px; background: #fff; margin-bottom: 10px; }
-.nav-btn { padding: 10px 5px; border: 1px solid #eee; border-radius: 12px; background: #f8f9fa; font-weight: 600; cursor: pointer; font-size: 11px; color: #444; transition: 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 55px; }
-.nav-btn.active { background: #e3f2fd; color: #0a73c0; border-color: #0a73c0; transform: translateY(-1px); box-shadow: 0 4px 8px rgba(10, 115, 192, 0.2); }
+        /* ✨ COMPACT SERVICES & DISCOUNTS GRID ✨ */
+        .compact-diag-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1050px; margin: 0 auto 25px; text-align: left;}
+        .compact-diag-card { display: flex; align-items: center; gap: 15px; background: white; padding: 20px; border-radius: 20px; border: 1px solid #e2e8f0; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.03);}
+        .compact-diag-card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(37,99,235,0.1); border-color: #93c5fd;}
+        .cd-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 30px; flex-shrink: 0;}
+        .cd-info { display: flex; flex-direction: column; gap: 4px; }
+        .cd-title { font-size: 16px; font-weight: 800; color: #1e293b; margin: 0;}
+        
+        .cd-tag { font-size: 11px; font-weight: 700; color: #64748b; display: flex; align-items: center; gap: 5px; }
+        .cd-tag i { font-size: 12px; }
+        .cd-discount { font-size: 11px; font-weight: 800; color: #059669; background: #d1fae5; padding: 4px 10px; border-radius: 8px; width: max-content; margin-top: 4px;}
+        
+        .btn-more-services { display: inline-flex; align-items: center; gap: 8px; background: var(--text-main); color: white; padding: 14px 35px; border-radius: 12px; font-weight: 800; font-size: 15px; text-decoration: none; transition: 0.3s; margin-top: 15px; box-shadow: 0 4px 15px rgba(15,23,42,0.2);}
+        .btn-more-services:hover { background: var(--primary); box-shadow: 0 8px 25px rgba(37,99,235,0.3);}
 
-/* SECTIONS & CARDS */
-.section{display:none;padding:10px}
-.section.active{display:block !important;}
-.search{width:100%;padding:12px;border-radius:8px;border:1px solid #ddd;font-size:15px;box-sizing:border-box;outline:none;transition:0.3s; margin-bottom:15px; background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>') no-repeat 95% center; }
+        /* 🛡️ TRUST BADGES */
+        .trust-grid { max-width: 1000px; margin: 0 auto; display: flex; justify-content: center; flex-wrap: wrap; gap: 30px;}
+        .trust-item { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: #334155;}
+        .trust-item i { color: var(--secondary); font-size: 22px;}
 
-.plan-row{display:flex;gap:10px;margin-bottom:20px;background:#fff;padding:10px;border-radius:12px;}
-.plan{flex:1;background:#f8f9fa;border:2px solid transparent;border-radius:10px;padding:12px 5px;text-align:center;font-size:12px;cursor:pointer;position:relative;font-weight:600;color:#555;transition:0.2s}
-.plan.active{border-color:#0a73c0;background:#e8f3ff;color:#0a73c0;}
-.plan.locked { opacity: 0.4; pointer-events: none; filter: grayscale(1); position: relative; background: #eee; }
-.plan.locked::after { content: "🔒"; position: absolute; top: 5px; right: 5px; font-size: 14px; }
+        /* VIP BANNER */
+        .vip-banner { max-width: 1000px; margin: 0 auto 40px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); border-radius: 24px; color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 15px 30px rgba(15, 23, 42, 0.15); position: relative; overflow: hidden;}
+        .vip-banner::before { content: '👑'; position: absolute; right: -20px; top: -30px; font-size: 150px; opacity: 0.05; transform: rotate(15deg);}
+        .vip-content { flex: 1; padding: 40px; z-index: 2; position: relative;}
+        .vip-content h2 { font-size: 26px; font-weight: 800; color: #facc15; margin: 0 0 10px 0;}
+        .vip-content p { font-size: 15px; color: #cbd5e1; margin: 0 0 20px 0; line-height: 1.6; font-weight: 500;}
+        .btn-vip { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 15px 35px; border-radius: 12px; font-size: 16px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; cursor: pointer; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);}
 
-.tag{position:absolute;top:-10px;right:-5px;background:linear-gradient(45deg, #ff9800, #ff5722);color:#fff;font-size:9px;padding:3px 8px;border-radius:10px;font-weight:bold;}
-.tag.green{background:linear-gradient(45deg, #43a047, #1b5e20); color:#fff;}
+        /* 🎁 TRENDING PACKAGES & SCROLL */
+        .home-cat-nav { display: flex; gap: 10px; overflow-x: auto; max-width: 1000px; margin: 0 auto 25px; padding: 10px 0; justify-content: center; cursor: grab; -webkit-overflow-scrolling: touch; white-space: nowrap;}
+        .home-cat-nav::-webkit-scrollbar { display: none; }
+        .home-cat-btn { background: white; border: 1px solid #cbd5e1; color: #475569; padding: 10px 22px; border-radius: 25px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: 0.2s; user-select: none; flex: 0 0 auto;}
+        .home-cat-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 6px 15px rgba(37,99,235,0.25);}
 
-.card, .pkg-card { background: #fff; border-radius: 16px; padding: 12px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: grid; grid-template-columns: 1fr 90px; gap: 10px; align-items: center; border: 1px solid #f0f0f0; transition: transform 0.2s; position: relative; }
-.card.selected, .pkg-card.selected { border-color: #0a73c0; background: #fbfdff; transform: scale(1.01); }
-.card-info, .pkg-name { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 4px; line-height: 1.3; }
-.mrp-price { font-size: 12px; color: #999; text-decoration: line-through; margin-right: 5px; }
-.final-price, .pkg-rate { font-size: 16px; color: #2e7d32; font-weight: 800; }
-.unlock-badge { font-size:10px; font-weight:bold; background:#fff8e1; color:#ff8f00; padding:2px 5px; border-radius:4px; display:inline-block; margin-bottom:5px; border:1px solid #ffb300; }
-.platinum-badge { background:#eceff1; color:#455a64; border-color:#607d8b; }
+        .slider-wrapper { max-width: 1020px; margin: 0 auto; overflow-x: auto; display: flex; gap: 20px; padding: 15px 10px 30px; cursor: grab; -webkit-overflow-scrolling: touch;}
+        .slider-wrapper::-webkit-scrollbar { display: none; }
+        
+        .pkg-card { min-width: 330px; background: #ffffff; border-radius: 20px; padding: 22px; box-shadow: 0 8px 25px rgba(0,0,0,0.06); border: 1px solid #cbd5e1; display: flex; flex-direction: column; gap: 15px; transition: 0.3s; user-select: none;}
+        .pkg-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(37,99,235,0.12); border-color: #93c5fd;}
+        .pkg-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+        .pkg-cat-badge { background: #e0f2fe; color: #0284c7; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
+        .pkg-test-count { background: #fef3c7; color: #d97706; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 8px; }
+        .pkg-title { font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 8px; line-height: 1.3;}
+        .pkg-desc { background: #f8fafc; border-radius: 12px; padding: 15px; border: 1px solid #e2e8f0; }
+        .pkg-desc ul { margin: 0; padding-left: 16px; font-size: 12px; color: #475569; font-weight: 600; line-height: 1.6;}
+        .pkg-param-pill { background: #e0f2fe; color: #0284c7; font-size: 11px; font-weight: 800; padding: 5px 12px; border-radius: 12px; display: inline-block; margin-top: 10px; cursor: pointer; border: 1px solid #bae6fd;}
+        .pkg-footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; padding-top: 10px;}
+        .pkg-price-area { display: flex; flex-direction: column; gap: 2px;}
+        .pkg-total-mrp { font-size: 12px; color: #94a3b8; font-weight: 600;}
+        .pkg-basic-price { font-size: 24px; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 8px; line-height: 1.1;}
+        .pkg-basic-badge { font-size: 10px; font-weight: 800; background: #e0f2fe; color: #0284c7; padding: 3px 8px; border-radius: 6px; }
+        .pkg-vip-pill { background: #ffffff; color: #475569; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 12px; display: inline-flex; align-items: center; gap: 5px; margin-top: 6px; border: 1px solid #cbd5e1; width: max-content; cursor: pointer; transition: 0.3s; text-decoration: none;}
+        .pkg-vip-pill:hover { background: #fef3c7; border-color: #f59e0b; color: #d97706;}
+        
+        .btn-add-cart { background: white; color: var(--primary); border: 2px solid var(--primary); padding: 10px 25px; border-radius: 10px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.2s; height: max-content;}
+        .btn-add-cart:hover { background: var(--primary-light); }
+        .qty-control { display: flex; align-items: center; background: white; border: 2px solid var(--primary); border-radius: 10px; overflow: hidden; height: max-content;}
+        .qty-control button { background: var(--primary-light); color: var(--primary); border: none; padding: 10px 14px; font-weight: bold; cursor: pointer; font-size: 15px; transition: 0.2s;}
+        .qty-control button:hover { background: var(--primary); color: white;}
+        .qty-text { font-size: 15px; font-weight: 800; width: 35px; text-align: center; color: var(--text-main);}
 
-.add-btn { background: linear-gradient(135deg, #0a73c0, #005b9f); color: white; border: none; padding: 8px 0; width:100%; border-radius: 25px; cursor: pointer; font-weight: bold; font-size: 13px; }
-.qty-control { display: none; align-items: center; background: #e3f2fd; border-radius: 25px; padding: 2px; border: 1px solid #0a73c0; width:100%; justify-content: space-between; }
-.qty-control button { background: transparent; border: none; color: #0a73c0; font-weight: bold; font-size: 18px; width: 30px; }
-.doc-card { display:flex; flex-direction: row; gap: 15px; align-items: center; background:#fff; padding:10px; border-radius:12px; margin-bottom:10px; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
-.doc-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: #eee; border: 2px solid #fff; }
-.book-btn { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; margin-left:auto;}
-.contrast-box { font-size: 11px; font-weight: bold; color: #d32f2f; margin-bottom: 5px; display: block; background: #ffebee; padding: 5px; border-radius: 5px; border: 1px dashed #d32f2f; cursor: pointer; }
+        /* 🛠️ HOW IT WORKS */
+        .hiw-grid { max-width: 900px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .hiw-step { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 15px; padding: 40px 20px; background: #ffffff; border-radius: 24px; border: 1px solid #e2e8f0; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .hiw-step:hover { box-shadow: 0 10px 30px rgba(0,0,0,0.08); transform: translateY(-5px);}
+        .hiw-icon { width: 80px; height: 80px; border-radius: 20px; background: #f8fafc; color: var(--primary); font-size: 32px; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 0 0 1px #e2e8f0;}
+        .hiw-step h4 { font-size: 20px; font-weight: 800; margin: 0; color: #1e293b;}
+        .hiw-step p { font-size: 15px; color: #64748b; margin: 0; line-height: 1.6; font-weight: 500;}
 
-/* MODERN BOTTOM SHEETS (60-70% Height) */
-#mainCartBox, #stepModal { 
-    top: auto; bottom: 0; left: 0; transform: none; 
-    width: 100%; max-width: 100%; 
-    border-radius: 25px 25px 0 0; padding: 0; 
-    display: none; flex-direction: column; 
-    height: auto; max-height: 80vh; 
-    animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); 
-    z-index: 5200 !important; box-shadow: 0 -5px 25px rgba(0,0,0,0.1);
-}
-.popup-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:5000;backdrop-filter:blur(5px)}
-.popup-box{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:90%; max-width:350px; background:#fff; border-radius:20px; padding:20px; z-index:5100; max-height:85vh; overflow-y:auto; box-shadow: 0 10px 30px rgba(0,0,0,0.2); box-sizing:border-box}
+        /* 💬 PATIENT REVIEWS SECTION 💬 */
+        .section-reviews { background: #f8fafc; padding: 60px 20px; border-bottom: 1px solid #e2e8f0; }
+        .reviews-wrapper { max-width: 1050px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; cursor: grab; }
+        .reviews-wrapper:active { cursor: grabbing; }
+        .review-card { background: #ffffff; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; transition: 0.3s; user-select: none; }
+        .review-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(37,99,235,0.08); border-color: #cbd5e1; }
+        .review-stars { color: #f59e0b; font-size: 14px; margin-bottom: 12px; }
+        .review-text { font-size: 14px; color: #475569; line-height: 1.6; font-style: italic; margin-bottom: 20px; }
+        .review-user { display: flex; align-items: center; gap: 12px; }
+        .review-avatar { width: 45px; height: 45px; border-radius: 50%; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .review-info h4 { margin: 0 0 3px 0; font-size: 15px; color: #1e293b; font-weight: 800; }
+        .review-info p { margin: 0; font-size: 12px; color: #94a3b8; font-weight: 600; }
 
-/* FULL SCREEN FORM POPUP */
-#universalFormModal {
-    width: 100% !important; max-width: 100% !important; height: 85vh !important;
-    top: auto !important; bottom: 0 !important; left: 0 !important; transform: none !important;
-    border-radius: 25px 25px 0 0 !important; padding: 0 !important;
-    display: none; flex-direction: column; z-index: 6000 !important; background: #fff;
-    animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.form-header { padding: 15px 20px; background: #fff; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; border-radius: 25px 25px 0 0; }
-.form-iframe { width: 100%; flex: 1; border: none; background: #fff; }
-@keyframes slideUp { from{transform:translateY(100%);} to{transform:translateY(0);} }
+        /* ✨ AGGREGATOR SECTION ✨ */
+        .section-about { background: #ffffff; padding: 60px 20px; text-align: center; }
+        .about-box { max-width: 800px; margin: 0 auto; background: #f8fafc; padding: 40px; border-radius: 24px; box-shadow: inset 0 0 0 1px #e2e8f0;}
+        .about-box h2 { font-size: 26px; color: #1e293b; margin-bottom: 15px; font-weight: 800;}
+        .about-box p { font-size: 15px; color: #475569; line-height: 1.7; margin-bottom: 25px; font-weight: 500;}
+        .badge-wrap { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;}
+        .badge-wrap span { background: #ffffff; color: #2563eb; padding: 8px 15px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid #bfdbfe; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
 
-.sheet-handle { width: 40px; height: 5px; background: #e0e0e0; border-radius: 5px; margin: 0 auto 15px auto; }
-.sheet-header { padding: 15px 20px; background: #fff; border-bottom: 1px solid #f0f0f0; text-align: center; border-radius: 25px 25px 0 0; position: relative; }
-.sheet-header h3 { margin: 0; color: #333; font-size: 18px; font-weight: 800; }
-.clear-cart-btn { position: absolute; right: 15px; top: 15px; background: #ffebee; color: #d32f2f; border: 1px solid #ef9a9a; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
-.sheet-body { flex-grow: 1; overflow-y: auto; padding: 20px; min-height: 200px; padding-bottom: 100px; }
-.sheet-footer { position: sticky; bottom: 0; left: 0; width: 100%; padding: 15px 20px; background: #fff; border-top: 1px solid #eee; box-shadow: 0 -5px 15px rgba(0,0,0,0.03); }
+        /* ✨ MEGA FOOTER ✨ */
+        .footer { background: #0f172a; color: #94a3b8; padding: 60px 40px 20px; font-size: 14px;}
+        .footer-grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; border-bottom: 1px solid #334155; padding-bottom: 40px; margin-bottom: 20px;}
+        .footer-col h3 { color: white; font-size: 18px; margin-bottom: 20px; font-weight: 700;}
+        .footer-col p { margin: 0 0 15px; line-height: 1.6;}
+        .footer-col a { color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 8px; margin-bottom: 12px; transition: 0.2s; font-weight: 500;}
+        .footer-col a:hover { color: var(--primary-light); transform: translateX(5px);}
+        .footer-bottom { text-align: center; font-size: 13px; color: #64748b;}
 
-.booking-label { font-size: 12px; font-weight: 700; color: #888; margin: 15px 0 8px 0; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
-.med-input { width: 100%; padding: 12px; margin-bottom: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #fafafa; font-size: 14px; }
-.time-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
-.time-slot { padding: 10px 2px; border: 1px solid #ddd; text-align: center; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; color: #555; background: #fff; }
-.time-slot.selected { background: #0a73c0; color: white; border-color: #0a73c0; }
-.option-group { display: flex; gap: 10px; margin-bottom: 10px; }
-.option-btn { flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; color: #555; font-weight: bold; cursor: pointer; text-align: center; font-size: 13px; transition: 0.2s; }
-.option-btn.selected { background: #e3f2fd; color: #0a73c0; border-color: #0a73c0; box-shadow: 0 2px 5px rgba(10,115,192,0.2); }
+        @keyframes slideUpToast { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* 📱 100% PERFECT MOBILE OPTIMIZATION 📱 */
+        @media (max-width: 768px) {
+            .navbar { padding: 12px 15px; }
+            .logo img { height: 32px; } 
+            .logo h2 { font-size: 18px !important; }
 
-/* BUTTONS */
-.whatsapp-btn { background: linear-gradient(45deg, #25D366, #128C7E); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.pay-btn { background: linear-gradient(135deg, #673ab7, #512da8); color: white; font-size: 15px; font-weight: bold; padding: 14px; border-radius: 30px; border: none; width: 100%; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; }
-.next-btn { background: linear-gradient(135deg, #43a047, #1b5e20); color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 15px rgba(27, 94, 32, 0.4); transition: 0.3s; }
-.next-btn:active { transform: scale(0.98); }
+            .section-hero { padding: 25px 15px 25px; }
+            .section-diagnostics { padding: 30px 15px; }
+            
+            /* ✨ Live Ticker & Trust Stats Mobile Fix ✨ */
+            .live-ticker { font-size: 11px; padding: 5px 12px; margin-bottom: 15px;}
+            .trust-stats-bar { gap: 15px; margin-top: 20px; padding-top: 20px; justify-content: space-between; }
+            .stat-num { font-size: 18px; }
+            .stat-text { font-size: 9px; }
 
-.custom-alert-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:80%; background:#fff; border-radius:15px; padding:20px; z-index:9999; text-align:center; }
-.login-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; }
-.login-btn { width: 100%; padding: 12px; background: #0a73c0; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; }
-.cart-group-header { background: #f0f2f5; padding: 8px 15px; font-size: 12px; font-weight: bold; color: #666; margin-top: 10px; border-radius: 4px; }
-.cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; font-size: 13px; border-bottom: 1px solid #eee; }
-.remove-item-btn { color: #f44336; font-size: 16px; cursor: pointer; margin-right: 10px; padding: 5px; }
-.cart-details-row { padding: 5px 15px; font-size: 11px; color: #2e7d32; background: #f9f9f9; border-bottom: 1px solid #eee; font-style: italic; }
-.share-btn { background: #25D366; color: white; border: none; padding: 5px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; cursor: pointer; margin-left: 5px; }
-.signup-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee; text-align: center; }
-.signup-btn-large { width: 100%; padding: 12px; background: #ff9800; color: white; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; text-decoration: none; display: inline-block; box-sizing: border-box; }
+            .search-container { padding: 6px; border-radius: 16px; margin: 0 auto 15px;}
+            .search-container input { padding: 10px 10px 10px 35px; font-size: 13px; }
+            .search-container i.fa-search { font-size: 15px; left: 14px;}
+            .search-btn { padding: 10px 18px; font-size: 12px; border-radius: 12px;}
 
-.dashboard-container { display: none; padding: 10px; background: #fff; margin-bottom: 10px; border-bottom: 1px solid #eee; }
-.dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.dash-points { background: linear-gradient(45deg, #FFD700, #FFA500); color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; flex: 1; margin-right: 10px; box-shadow: 0 4px 10px rgba(255, 165, 0, 0.3); }
-.dash-details { flex: 1; display: flex; flex-direction: column; justify-content: center; font-size: 12px; color: #555; }
-.dash-label { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; }
-.dash-val { font-weight: bold; color: #333; font-size: 13px; margin-bottom: 5px; }
-.highlight-plan { color: #0a73c0; background: #e3f2fd; padding: 2px 6px; border-radius: 4px; display: inline-block; }
-.dash-fam-btn { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; background: #fff; font-size: 12px; font-weight: bold; color: #555; cursor: pointer; display: inline-block; white-space: nowrap; margin-right: 5px;}
-.dash-fam-btn.active { background: #0a73c0; color: white; border-color: #0a73c0; }
-.dash-fam-add { color: #0a73c0; border: 1px dashed #0a73c0; }
+            .hero-quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 0; width: 100%;}
+            .btn-quick { flex-direction: column; text-align: center; padding: 12px 5px; font-size: 10px; gap: 6px; border-radius: 12px;}
+            .btn-quick i { font-size: 20px; }
 
-/* NEW PROFESSIONAL HISTORY BUTTONS */
-.dash-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px; }
-.dash-pro-btn { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 14px; border: none; cursor: pointer; transition: 0.3s; position: relative; overflow: hidden; }
-.btn-reports { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); border: 1px solid #a5d6a7; }
-.btn-history { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 1px solid #90caf9; }
-.dash-pro-btn .icon-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; background: rgba(255,255,255,0.8); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-.dash-pro-btn .btn-text { text-align: left; }
-.btn-text .main-t { display: block; font-weight: 800; font-size: 12px; color: #2c3e50; }
-.btn-text .sub-t { display: block; font-size: 9px; color: #546e7a; text-transform: uppercase; letter-spacing: 0.5px; }
-.dash-pro-btn:active { transform: scale(0.96); opacity: 0.8; }
+            .hero-title { font-size: 20px; line-height: 1.3; margin-bottom: 10px;}
+            .hero-subtitle { font-size: 13px; line-height: 1.5; margin-top: 5px; margin-bottom: 20px;}
 
-.partner-link { text-align: center; padding: 20px; color: #999; font-size: 12px; margin-top: 30px; cursor: pointer; text-decoration: underline; }
-.admin-row { padding: 10px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-.status-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: white; }
-.status-pending { background: #ff9800; }
+            .compact-diag-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 0;}
+            .compact-diag-card { padding: 15px 10px; border-radius: 12px; flex-direction: column; text-align: center; gap: 8px;}
+            .cd-icon { width: 45px; height: 45px; font-size: 22px; margin: 0;}
+            .cd-info { align-items: center; }
+            .cd-title { font-size: 13px; line-height: 1.2;}
+            .cd-tag { font-size: 9px; justify-content: center; text-align: center;}
+            .cd-tag i { font-size: 10px; }
+            .cd-discount { font-size: 10px; padding: 3px 8px; margin-top: 2px;}
+            
+            /* ✨ COMPACT & PREMIUM STICKY PACKAGES ✨ */
+            .section-packages { 
+                position: -webkit-sticky; 
+                position: sticky; 
+                top: 55px; 
+                z-index: 90; 
+                padding: 15px 10px; 
+                background: linear-gradient(to bottom, #ffffff, #f8fafc);
+                border-top: 1px solid #e2e8f0;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .section-packages .section-heading { margin-bottom: 10px; }
+            .section-packages .section-heading h2 { font-size: 20px; margin-bottom: 2px; }
+            .section-packages .section-heading p { display: none; } 
+            
+            /* Categories Scroll Fix */
+            .home-cat-nav { margin: 0 auto 10px; padding: 5px 0; gap: 8px; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start;}
+            .home-cat-btn { padding: 6px 16px; font-size: 12px; border-radius: 20px; background: #f1f5f9; border: 1px solid #e2e8f0; flex: 0 0 auto;}
+            .home-cat-btn.active { background: var(--primary); color: white; border: none; box-shadow: 0 4px 10px rgba(37,99,235,0.3);}
+            
+            /* Package Scroll Fix */
+            .slider-wrapper { 
+                margin-left: -10px; margin-right: -10px; padding-left: 10px; padding-right: 10px; width: calc(100% + 20px);
+                scroll-snap-type: x mandatory; padding-bottom: 15px; gap: 15px; overflow-x: auto; flex-wrap: nowrap;
+            }
+            .pkg-card { min-width: 260px; max-width: 280px; padding: 15px; border-radius: 16px; scroll-snap-align: start; background: #ffffff; flex: 0 0 auto;}
+            .pkg-title { font-size: 15px; margin-bottom: 8px;}
+            .pkg-desc { padding: 10px; border-radius: 10px; background: #f8fafc; margin-bottom: 10px;}
+            .pkg-desc ul { font-size: 11px; }
+            .pkg-basic-price { font-size: 18px; }
+            .btn-add-cart { padding: 6px 14px; font-size: 12px; border-radius: 8px;}
+            .qty-control { height: 30px; }
+            .qty-control button { padding: 0 10px; font-size: 14px;}
+            .qty-text { font-size: 13px; width: 25px; }
+            .pkg-vip-pill { margin-top: 4px; padding: 4px 8px; font-size: 10px; }
 
-/* Styles for List items in Profile */
-.list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 10px; border-bottom: 1px solid #eee; background: #fff; margin-bottom: 5px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-.list-title { font-weight: 700; font-size: 13px; color: #333; line-height: 1.2; }
-.list-date { font-size: 10px; color: #999; }
-.action-icon { font-size: 12px; text-decoration: none; font-weight: bold; }
-.icon-green { color: #2e7d32; }
-</style>
+            .section-trust { padding: 25px 10px; }
+            .trust-grid { gap: 10px; }
+            .trust-item { font-size: 11px; width: 45%; justify-content: center; padding: 8px; background: white; border: 1px solid #e2e8f0;}
+            
+            .vip-banner { flex-direction: column; text-align: center; border-radius: 20px; margin: 0 15px 30px;}
+            .vip-content { padding: 30px 20px;}
+            .btn-vip { width: 100%; justify-content: center;}
+
+            .section-hiw { padding: 40px 15px; }
+            .hiw-grid { grid-template-columns: 1fr; gap: 12px;}
+            .hiw-step { flex-direction: row; text-align: left; padding: 15px;}
+            .hiw-icon { margin-right: 15px; margin-bottom:0; flex-shrink: 0; width: 50px; height: 50px; font-size: 20px;}
+            .hiw-step h4 { font-size: 16px; }
+            .hiw-step p { font-size: 13px; }
+
+            .section-reviews { padding: 40px 15px; }
+            .reviews-wrapper { 
+                margin-left: -15px; margin-right: -15px; padding-left: 15px; padding-right: 15px; width: calc(100% + 30px);
+                display: flex; overflow-x: auto; justify-content: flex-start; gap: 15px; flex-wrap: nowrap;
+            }
+            .reviews-wrapper::-webkit-scrollbar { display: none; }
+            .review-card { min-width: 280px; flex: 0 0 auto; padding: 20px;}
+            
+            .about-box { padding: 25px 15px; border-radius: 16px; }
+            .about-box h2 { font-size: 20px; }
+            
+            .footer { padding: 40px 20px 20px; text-align: left;}
+            .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+            .footer-col h3 { font-size: 16px; margin-bottom: 12px; }
+            .footer-col a { justify-content: flex-start; margin-bottom: 10px;}
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeMenu()"></div>
-<div class="sidebar" id="sidebar">
-    <div class="sidebar-header"><span>Bhavya Diagnostics</span></div>
-    <div class="sidebar-menu">
-        <div class="menu-item" onclick="closeMenu()"><span class="menu-icon-span">🏠</span> Home</div>
-        <div class="menu-item" onclick="closeMenu(); handleMyInfoClick()"><span class="menu-icon-span">👤</span> My Profile</div>
-        <div class="menu-item" onclick="window.open('https://www.bhavyadiagnostics.com/services-3', '_blank')"><span class="menu-icon-span">🛠️</span> Services</div>
-        <div class="menu-item" onclick="window.open('https://www.bhavyadiagnostics.com/terms-conditions', '_blank')"><span class="menu-icon-span">📜</span> Terms & Conditions</div>
-        <div class="menu-item" onclick="window.open('https://www.bhavyadiagnostics.com/refund-cancellation-policy', '_blank')">
-        <span class="menu-icon-span">💰</span> Refund & Cancellation Policy</div>
-        <div class="menu-item" onclick="window.open('https://www.bhavyadiagnostics.com/privacy-policy', '_blank')"><span class="menu-icon-span">🔒</span> Privacy Policy</div>
-        <div class="menu-item" onclick="window.open('https://www.bhavyadiagnostics.com/contact-5', '_blank')"><span class="menu-icon-span">📞</span> Help & Contact</div>
-        <div class="menu-item" onclick="window.open('https://www.bhavyadiagnostics.com/about', '_blank')">
-    <span class="menu-icon-span">ℹ️</span> About Us</div>
-        <div class="menu-item" onclick="shareApp()"><span class="menu-icon-span">📢</span> Share App</div>
-        <div class="menu-item" onclick="openPartnerModal()"><span class="menu-icon-span">🏥</span> Partner Login</div>
+    <!-- 🌟 HEADER 🌟 -->
+    <header class="navbar">
+        <div class="logo">
+            <img src="image/bhavyacarelogo.jpeg" alt="BhavyaCare" onerror="this.onerror=null; this.src='image/bhavyacarelogo.png'; if(this.src.includes('png')) { this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block'; }">
+            <h2 style="color: #0056b3; font-size: 26px; font-weight: 800; margin: 0;">Bhavya<span style="color: #28a745;">Care</span></h2>
+        </div>
+        
+        <div class="nav-actions">
+            <button id="nav-login-btn" class="nav-btn login-btn" onclick="openPatientLogin()">Login</button>
+            
+            <div class="dropdown">
+                <button id="main-menu-btn" class="dropbtn" onclick="toggleMenu()">⋮</button>
+                <div id="user-menu-container">
+                    <button class="user-profile-btn" onclick="toggleMenu()">My Account</button>
+                </div>
+                <div id="myDropdown" class="dropdown-content">
+                    <!-- Dashboard link is strictly controlled by script now -->
+                    <a href="#" id="menu-dashboard" onclick="goToDashboard()" style="display: none;"><i class="fas fa-chart-line" style="color: var(--secondary); width: 20px;"></i> My Dashboard</a>
+                    <a href="prescription.html"><i class="fas fa-upload" style="color: #8b5cf6; width: 20px;"></i> Upload Prescription</a>
+                    <a href="terms.html"><i class="fas fa-file-contract" style="color: #64748b; width: 20px;"></i> Terms & Conditions</a>
+                    <a href="privacy.html"><i class="fas fa-user-shield" style="color: #64748b; width: 20px;"></i> Privacy Policy</a>
+                    <a href="refund.html"><i class="fas fa-undo" style="color: #64748b; width: 20px;"></i> Refund Policy</a>
+                    <a href="contact.html"><i class="fas fa-headset" style="color: #64748b; width: 20px;"></i> Help & Support</a>
+                    <hr>
+                    <a href="#" id="menu-logout" onclick="logoutUser()" style="display: none; color: #e74c3c;"><i class="fas fa-sign-out-alt" style="width: 20px;"></i> Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 🌟 LOGIN SECTION 🌟 -->
+    <div id="login-section">
+        <button onclick="closeLoginPopup()" style="position:absolute; top:15px; right:15px; background:#f1f5f9; border:none; width:32px; height:32px; border-radius:50%; font-size:16px; color:#64748b; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:0.2s;"><i class="fas fa-times"></i></button>
+        <h3 id="form-title">Login / Sign Up</h3>
+        <div id="phone-section">
+            <div id="partner-role-container" style="display: none; margin-bottom: 15px;">
+                <p style="text-align: left; font-size: 14px; color: #666; margin-bottom: 2px;">Select Partner Type:</p>
+                <!-- Dhyan dijiye yahan se Hospital aur Executive options hta diye hain -->
+                <select id="partnerRole" class="input-box" onchange="updateNameLabel()">
+                    <option value="lab" selected>Lab</option>
+                </select>
+            </div>
+            <p id="nameLabel" style="text-align: left; font-size: 14px; color: #666; margin-bottom: 2px;">Full Name:</p>
+            <input type="text" id="userName" class="input-box" placeholder="Enter your full name">
+            <p style="text-align: left; font-size: 14px; color: #666; margin-bottom: 2px;">Mobile Number:</p>
+            <input type="tel" id="phoneNumber" class="input-box" placeholder="e.g. 8950112467" maxlength="10">
+            <div id="recaptcha-container" style="margin-top: 10px;"></div>
+            <button id="send-otp-btn" class="action-btn" onclick="sendOTP()">Get OTP</button>
+        </div>
+        <div id="otp-section" style="display: none;">
+            <p style="text-align: left; font-size: 14px; color: #666; margin-bottom: 2px;">Enter OTP:</p>
+            <input type="tel" id="otpCode" class="input-box" placeholder="6-digit OTP" maxlength="6">
+            <button class="action-btn" style="background-color: #0056b3;" onclick="verifyOTP()">Verify Mobile</button>
+        </div>
+        <p class="support-text">Need help? Email us at bhavyacare1@gmail.com</p>
     </div>
-    <div class="sidebar-footer">Ver 1.0.0 | Bhavya Diagnostics</div>
-</div>
 
-<div class="popup-overlay" id="overlay" onclick="closeAllPopups()"></div>
-<div id="customAlert" class="custom-alert-box"><div class="alert-title">Notice</div><div id="customAlertMsg" class="alert-msg"></div><button class="alert-btn" onclick="closeCustomAlert()">OK</button></div>
-
-<div class="summary">
-    <div class="header-left">
-        <button class="menu-btn" onclick="openMenu()">☰</button>
-        <div>
-            <div class="summary-info">Your Cart</div>
-            <div class="summary-total">₹<span id="headerTotal">0</span> <span style="font-size:12px;color:#666;font-weight:normal">(<span id="finalCount">0</span>)</span></div>
+    <!-- ✨ ADMIN PASSWORD MODAL ✨ -->
+    <div id="adminPasswordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.8); z-index:3000; justify-content:center; align-items:center; backdrop-filter: blur(5px);">
+        <div style="background:white; padding:30px; border-radius:24px; width:90%; max-width:350px; position:relative; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.3); animation: slideUpToast 0.3s ease-out;">
+            <button onclick="closeAdminPasswordModal()" style="position:absolute; right:15px; top:15px; border:none; background:#f1f5f9; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px; color:#64748b; transition:0.2s;"><i class="fas fa-times"></i></button>
+            <div style="background:#e0f2fe; color:#0284c7; width:65px; height:65px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 15px;">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <h3 style="margin:0 0 15px 0; color:#0f172a; font-size:22px; font-weight:800;">Admin Area</h3>
+            <p style="color:#64748b; font-size:13px; margin:0 0 20px;">Enter security password to access the panel.</p>
+            <input type="password" id="adminPassInput" placeholder="Password" style="width:100%; padding:14px; border:2px solid #e2e8f0; border-radius:12px; font-size:16px; outline:none; text-align:center; margin-bottom:15px; font-weight:bold;">
+            <button onclick="verifyAdminPassword()" style="background:var(--primary); color:white; border:none; width:100%; padding:14px; border-radius:12px; font-weight:800; font-size:16px; cursor:pointer; transition:0.2s; box-shadow:0 4px 15px rgba(37,99,235,0.3);">Access Panel</button>
         </div>
     </div>
-    <button class="top-proceed-btn" id="topProceedBtn" onclick="startBookingQueue()">Cart Empty</button>
-</div>
 
-<div class="action-buttons">
-  <button class="view-cart" onclick="toggleMainCart()">🛒 Cart</button>
-  <button class="upload-rx" onclick="sendMedRequest()">📄 Prescription</button>
-  <button class="my-info-btn" id="btnMyInfo" onclick="handleMyInfoClick()">👤 Login</button> 
-</div>
-
-<div id="topBannerGold" class="top-banner tb-gold" onclick="show('package', document.querySelector('.nav-btn:nth-child(2)'))">
-    <div><div class="tb-title">🟡 Upgrade to Gold</div><div class="tb-desc">Get 35% OFF on Tests</div></div>
-    <button class="tb-btn">VIEW</button>
-</div>
-<div id="topBannerPlat" class="top-banner tb-plat" onclick="show('package', document.querySelector('.nav-btn:nth-child(2)'))">
-    <div><div class="tb-title">🔘 Go Platinum</div><div class="tb-desc">Get 50% OFF & VIP Service</div></div>
-    <button class="tb-btn">VIEW</button>
-</div>
-<div id="topVipBadge" class="vip-badge">👑 MEMBER</div>
-
-<div id="dashboardSection" class="dashboard-container">
-    <div class="dash-header">
-        <div class="dash-points">
-            <div style="font-size:10px; opacity:0.8;">WALLET</div>
-            <div style="font-size:24px;" id="dashPoints">0</div>
+    <!-- 🌟 SECTION 1: SEARCH BAR FIRST & QUICK ACTIONS 🌟 -->
+    <section class="section-hero">
+        
+        <!-- ✨ LIVE TICKER ✨ -->
+        <div class="live-ticker">
+            <div class="pulse-dot"></div>
+            🔥 <span id="dynamic-booking-count">124</span>+ patients are booking tests right now
         </div>
-        <div class="dash-details">
-            <div class="dash-label">Plan</div>
-            <div class="dash-val" id="dashPlan">Basic</div>
-            <div class="dash-label">Referral Code</div>
-            <div class="dash-val">
-                <span id="dashRef" style="color:#e91e63">---</span>
-                <button class="share-btn" onclick="shareReferral()">📢 Share</button>
+
+        <div class="search-container">
+            <i class="fas fa-search"></i>
+            <input type="text" id="globalSearchInput" placeholder="Search Lab Tests, Scans, or Profiles..." onkeyup="liveHomeSearch()" onfocus="liveHomeSearch()">
+            <button class="search-btn" onclick="executeHomeSearch()">Search</button>
+            <div id="homeSearchResults" style="display:none; position:absolute; top:110%; left:0; width:100%; background:white; border-radius:16px; box-shadow:0 15px 40px rgba(0,0,0,0.15); border:1px solid #e2e8f0; z-index:1000; max-height:350px; overflow-y:auto; text-align:left;"></div>
+        </div>
+
+        <div class="hero-quick-actions">
+            <a href="tel:8950112467" class="btn-quick call-btn"><i class="fas fa-phone-alt"></i> <span>Book by Call</span></a>
+            <a href="https://wa.me/918950112467" class="btn-quick wa-btn"><i class="fab fa-whatsapp"></i> <span>WhatsApp Booking</span></a>
+            <a href="prescription.html" class="btn-quick rx-btn"><i class="fas fa-file-prescription"></i> <span>Upload Prescription</span></a>
+        </div>
+
+        <!-- ✨ TRUST STATS BAR ✨ -->
+        <div class="trust-stats-bar">
+            <div class="stat-item">
+                <span class="stat-num" id="happy-patients-count">20,000+</span>
+                <span class="stat-text">Happy Patients</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">500+</span>
+                <span class="stat-text">NABL Labs</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-num">100%</span>
+                <span class="stat-text">Accurate</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ✨ COMPACT ALL-IN-ONE SERVICES GRID WITH TAGS ✨ -->
+    <section class="section-diagnostics">
+        <div class="section-heading" style="margin-bottom: 35px;">
+            <h2 class="hero-title" style="margin-bottom: 10px;">Complete Health Partner<br><span>Test, Scan & Heal.</span></h2>
+            <p class="hero-subtitle" style="margin-bottom: 0;">India's most trusted digital healthcare platform. Book lab tests, advanced scans, and profiles with assured discounts.</p>
+        </div>
+        
+        <div class="compact-diag-grid">
+            <a href="booking/booking.html" class="compact-diag-card">
+                <div class="cd-icon" style="background:#eff6ff; color:#2563eb;">🩸</div>
+                <div class="cd-info">
+                    <h3 class="cd-title">Blood Tests & Packages</h3>
+                    <div class="cd-tag"><i class="fas fa-check-circle" style="color: #10b981;"></i> NABL/NABH Certified</div>
+                    <div class="cd-discount">20-70% OFF</div>
+                </div>
+            </a>
+            <a href="booking/booking.html?search=ultrasound" class="compact-diag-card">
+                <div class="cd-icon" style="background:#f0fdf4; color:#10b981;">🖥️</div>
+                <div class="cd-info">
+                    <h3 class="cd-title">Ultrasound, X-Ray & ECG</h3>
+                    <div class="cd-tag"><i class="fas fa-check-circle" style="color: #10b981;"></i> NABL/NABH Certified</div>
+                    <div class="cd-discount">5-15% OFF</div>
+                </div>
+            </a>
+            <a href="booking/booking.html?search=ct" class="compact-diag-card">
+                <div class="cd-icon" style="background:#fffbeb; color:#f59e0b;">☢️</div>
+                <div class="cd-info">
+                    <h3 class="cd-title">CT Scan</h3>
+                    <div class="cd-tag"><i class="fas fa-check-circle" style="color: #10b981;"></i> NABL/NABH Certified</div>
+                    <div class="cd-discount">10-25% OFF</div>
+                </div>
+            </a>
+            <a href="booking/booking.html?search=mri" class="compact-diag-card">
+                <div class="cd-icon" style="background:#f5f3ff; color:#db2777;">🧠</div>
+                <div class="cd-info">
+                    <h3 class="cd-title">MRI Scans</h3>
+                    <div class="cd-tag"><i class="fas fa-check-circle" style="color: #10b981;"></i> NABL/NABH Certified</div>
+                    <div class="cd-discount">Flat ₹1000 - ₹2500 OFF</div>
+                </div>
+            </a>
+        </div>
+        <a href="booking/booking.html" class="btn-more-services">Explore All Services <i class="fas fa-arrow-right"></i></a>
+    </section>
+
+    <!-- VIP BANNER -->
+    <div class="vip-banner">
+        <div class="vip-content">
+            <h2>One VIP Plan = Maximum Savings!</h2>
+            <p>Get up to <b>50% OFF</b> on Lab Tests, <b>20% OFF</b> on Medicines, and exclusive discounts on Doctor Consultations for your entire family.</p>
+            <button onclick="openVipImageModal()" class="btn-vip"><i class="fas fa-crown"></i> Buy VIP Plan</button>
+        </div>
+    </div>
+
+    <!-- 🎁 SECTION 5: TRENDING PACKAGES (STICKY ON MOBILE) 🎁 -->
+    <section class="section-packages">
+        <div class="section-heading" id="packagesHeading" style="margin-top: 0;">
+            <h2>Trending Health Packages</h2>
+            <p>Our most popular preventive health checkups.</p>
+        </div>
+        <div id="homePackageCategories" class="home-cat-nav"></div>
+        <div class="slider-wrapper" id="homePackageSlider">
+            <div style="text-align:center; width:100%; padding:20px; color:#64748b;">Loading packages... <i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+    </section>
+
+    <!-- 🛡️ SECTION 3: TRUST BADGES 🛡️ -->
+    <section class="section-trust">
+        <div class="trust-grid">
+            <div class="trust-item"><i class="fas fa-award"></i> NABL Labs</div>
+            <div class="trust-item"><i class="fas fa-motorcycle"></i> Fast Delivery</div>
+            <div class="trust-item"><i class="fas fa-user-nurse"></i> Expert Staff</div>
+            <div class="trust-item"><i class="fas fa-shield-alt"></i> Safe Data</div>
+        </div>
+    </section>
+
+    <!-- 🛠️ SECTION 6: HOW IT WORKS 🛠️ -->
+    <section class="section-hiw">
+        <div class="section-heading" style="margin-top:0;">
+            <h2>How BhavyaCare Works</h2>
+            <p>3 simple steps to a healthier you.</p>
+        </div>
+        <div class="hiw-grid">
+            <div class="hiw-step">
+                <div class="hiw-icon"><i class="fas fa-mobile-alt"></i></div>
+                <div><h4>1. Book Online</h4><p>Select your required Lab Test, Profile, Ultrasound, or MRI.</p></div>
+            </div>
+            <div class="hiw-step">
+                <div class="hiw-icon"><i class="fas fa-home"></i></div>
+                <div><h4>2. Home Collection</h4><p>Sample collection directly at your doorstep.</p></div>
+            </div>
+            <div class="hiw-step">
+                <div class="hiw-icon"><i class="fas fa-file-medical-alt"></i></div>
+                <div><h4>3. Digital Records</h4><p>Access your reports and order history directly on your phone.</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 💬 SECTION: PATIENT REVIEWS 💬 -->
+    <section class="section-reviews">
+        <div class="section-heading" style="margin-top:0;">
+            <h2>What Our Patients Say</h2>
+            <p>Trusted by thousands of happy families across India.</p>
+        </div>
+        
+        <div class="reviews-wrapper" id="reviewsSlider">
+            <div class="review-card">
+                <div class="review-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"Bahut acchi service hai! Maine papa ke liye Full Body test book kiya tha. Sample lene wale bhaiya bahut polite the aur report phone par hi aa gayi 4 ghante mein."</p>
+                <div class="review-user">
+                    <div class="review-avatar">R</div>
+                    <div class="review-info"><h4>Rahul Sharma</h4><p><i class="fas fa-check-circle" style="color:var(--secondary);"></i> Verified Patient</p></div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="review-text">"The VIP plan is amazing! I saved around ₹1200 on my family's blood tests and scans. Highly recommended!"</p>
+                <div class="review-user">
+                    <div class="review-avatar" style="background:#fef3c7; color:#d97706;">S</div>
+                    <div class="review-info"><h4>Sneha Patel</h4><p><i class="fas fa-crown" style="color:var(--warning);"></i> VIP Member</p></div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                <p class="review-text">"Ultrasound book kiya tha, service bahut fast thi aur center par koi line nahi thi. Great aggregator platform."</p>
+                <div class="review-user">
+                    <div class="review-avatar" style="background:#fce7f3; color:#db2777;">V</div>
+                    <div class="review-info"><h4>Vikas Singh</h4><p><i class="fas fa-check-circle" style="color:var(--secondary);"></i> Verified Patient</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ✨ SECTION 7: AGGREGATOR DISCLAIMER ✨ -->
+    <section class="section-about">
+        <div class="about-box">
+            <h2>Your Trusted Healthcare Aggregator</h2>
+            <p>At BhavyaCare, we believe in bringing the best of healthcare directly to your fingertips. We are a premier healthcare aggregator platform. We do not own the laboratories or pharmacies, but we partner exclusively with strictly verified, <strong>NABL/NABH accredited institutions</strong> and top-rated medical professionals to ensure you receive 100% accurate, reliable, and premium healthcare services at your doorstep.</p>
+            <div class="badge-wrap">
+                <span><i class="fas fa-check-circle"></i> Verified Partners</span>
+                <span><i class="fas fa-award"></i> NABL/NABH Labs</span>
+                <span><i class="fas fa-shield-alt"></i> Quality Assured</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ✨ MEGA FOOTER ✨ -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-col">
+                <div class="logo" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <img src="image/bhavyacarelogo.jpeg" alt="BhavyaCare" style="height: 45px; border-radius: 8px;" onerror="this.onerror=null; this.src='image/bhavyacarelogo.png'; if(this.src.includes('png')) { this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block'; }">
+                    <h2 style="color: white; font-size: 24px; font-weight: 800; margin: 0;">Bhavya<span style="color: #28a745;">Care</span></h2>
+                </div>
+                <p>Making premium healthcare accessible, affordable, and accurate for everyone. Book tests, scans, and profiles with ease.</p>
+                <div style="display: flex; gap: 15px; margin-top: 15px;">
+                    <a href="https://wa.me/918950112467" style="color: white; font-size: 20px;"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" style="color: white; font-size: 20px;"><i class="fab fa-facebook"></i></a>
+                    <a href="#" style="color: white; font-size: 20px;"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-col">
+                <h3>Our Services</h3>
+                <a href="booking/booking.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Book Lab Tests</a>
+                <a href="vip/vip_member.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> VIP Membership</a>
+                <a href="prescription.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Upload Prescription</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Company</h3>
+                <a href="about.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> About Us</a>
+                <a href="#" onclick="openPartnerLogin()"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Join Us (Partner)</a>
+                <a href="#" onclick="openAdminPasswordModal(event)"><i class="fas fa-shield-alt" style="font-size:10px; color:#17a2b8;"></i> Admin Login</a>
+                <a href="contact.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Contact Support</a>
+                <a href="withdraw.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Partnership</a>
+            </div>
+
+            <div class="footer-col">
+                <h3>Legal & Policies</h3>
+                <a href="terms.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Terms & Conditions</a>
+                <a href="privacy.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Privacy Policy</a>
+                <a href="refund.html"><i class="fas fa-chevron-right" style="font-size:10px;"></i> Refund & Cancellation</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 BhavyaCare Healthcare Services. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ✨ FLOATING CART BUTTON ✨ -->
+    <div id="homeFloatingCart" onclick="window.location.href='booking/booking.html?view=cart'" style="display:none; position:fixed; bottom:30px; right:20px; background:var(--primary); color:white; width:60px; height:60px; border-radius:50%; align-items:center; justify-content:center; font-size:24px; box-shadow:0 10px 25px rgba(37,99,235,0.4); cursor:pointer; z-index:1000; transition:0.3s;">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="homeCartBadge" style="position:absolute; top:-5px; right:-5px; background:var(--danger); color:white; font-size:12px; font-weight:800; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white;">0</span>
+    </div>
+
+    <!-- ✨ VIP IMAGE MODAL WITH SKIP & REMOVE ✨ -->
+    <div id="vipImageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.85); z-index:3000; justify-content:center; align-items:center; backdrop-filter: blur(4px);">
+        <div style="background:white; padding:20px; border-radius:24px; width:90%; max-width:450px; position:relative; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.3); animation: slideUpToast 0.3s ease-out;">
+            <button onclick="closeVipImageModal()" style="position:absolute; right:15px; top:15px; border:none; background:#f1f5f9; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:16px; color:#64748b; transition:0.2s;"><i class="fas fa-times"></i></button>
+            <h3 style="margin:0 0 15px 0; color:#0f172a; font-size:20px; font-weight:800;">Basic vs <span style="color:var(--warning);">VIP Plan</span></h3>
+            <img src="image/BASIC AND VIP PLAN.jpg" alt="Basic vs VIP Plan Comparison" style="width:100%; border-radius:12px; margin-bottom:20px; border:1px solid #e2e8f0; display:block;">
+            <div style="display:flex; gap:10px; width:100%;">
+                <button onclick="closeVipImageModal()" style="flex:1; background:#f1f5f9; color:#64748b; border:none; padding:16px; border-radius:14px; font-weight:800; font-size:15px; cursor:pointer; transition:0.2s;">Skip</button>
+                <button onclick="handleVipBuyClick()" style="flex:2; background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:white; border:none; padding:16px; border-radius:14px; font-weight:800; font-size:15px; cursor:pointer; box-shadow:0 6px 20px rgba(245, 158, 11, 0.4); display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i class="fas fa-crown"></i> Buy VIP Plan
+                </button>
             </div>
         </div>
     </div>
-    
-    <div style="margin-top:10px;">
-        <div style="font-size:10px; font-weight:bold; color:#666; margin-bottom:5px; text-transform:uppercase;">Select Patient</div>
-        <div id="dashFamilyContainer" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:5px;"></div>
-    </div>
 
-    <div class="dash-action-grid">
-        <button class="dash-pro-btn btn-reports" onclick="handleMyInfoClick()">
-            <div class="icon-circle">📂</div>
-            <div class="btn-text">
-                <span class="main-t">My Reports</span>
-                <span class="sub-t">View Lab Results</span>
-            </div>
-        </button>
-        <button class="dash-pro-btn btn-history" onclick="handleMyInfoClick()">
-            <div class="icon-circle">📜</div>
-            <div class="btn-text">
-                <span class="main-t">Order History</span>
-                <span class="sub-t">Past Bookings</span>
-            </div>
-        </button>
-    </div>
-</div>
-
-<div class="mobile-input-container">
-    <div class="mobile-icon-box">📱</div>
-    <div class="mobile-text-group">
-        <div style="display:flex; justify-content:space-between; width:100%;">
-            <span class="mobile-label">Patient Mobile</span>
-            <span id="planStatus" class="plan-badge-status">Pending</span>
+    <!-- ✨ HOME INFO MODAL ✨ -->
+    <div id="homeInfoModal" style="display:none; position:fixed; z-index:9999; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; backdrop-filter: blur(4px);">
+        <div style="background:#fff; padding:20px; border-radius:16px; width:90%; max-width:400px; position:relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: slideUpToast 0.3s ease-out;">
+            <button onclick="closeHomeInfoModal()" style="position:absolute; right:15px; top:15px; border:none; background:#f1f5f9; color:#64748b; width:30px; height:30px; border-radius:50%; cursor:pointer; font-size:16px;"><i class="fas fa-times"></i></button>
+            <h3 id="homeModalTitle" style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid #e2e8f0; padding-bottom:10px; color:#1e293b;">Details</h3>
+            <div id="homeModalDesc" style="font-size:13px; line-height:1.6; max-height:60vh; overflow-y:auto; padding-top:10px; color:#64748b;"></div>
         </div>
-        <input id="mobile" class="mobile-real-input" type="tel" maxlength="10" placeholder="10 Digit Number" onkeyup="applyPlanByMobile()">
     </div>
-</div>
 
-<div class="nav-grid">
-    <button class="nav-btn active" onclick="show('test',this)">🩸 Blood Test</button>
-    <button class="nav-btn" onclick="show('package',this)">📦 Packages</button>
-    <button class="nav-btn" onclick="show('medicine',this)">💊 Medicine</button>
-    <button class="nav-btn" onclick="show('usg',this)">🖥️ USG</button>
-    <button class="nav-btn" onclick="show('xray',this)">🦴 X-Ray</button>
-    <button class="nav-btn" onclick="show('ct',this)">🧠 CT Scan</button>
-    <button class="nav-btn" onclick="show('mri',this)">🧲 MRI</button>
-    <button class="nav-btn" onclick="show('ecg',this)">💓 ECG</button>
-    <button class="nav-btn" onclick="show('echo',this)">🫀 ECHO</button>
-    <button class="nav-btn" onclick="show('doctor',this)">👨⚕️ Doctor</button>
-    <button class="nav-btn" onclick="show('hospital',this)" style="grid-column: span 2; background:#ffebee; color:#d32f2f">🏥 Hospital Admission</button>
-</div>
+    <div id="homeToastContainer" style="position:fixed; bottom:100px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; width: 90%; max-width: 400px;"></div>
 
-<div id="test" class="section active">
-    <input class="search" placeholder="Search Blood Tests..." onkeyup="filter(this,'test')">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>20%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>35%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>50%<div class="tag green">VIP</div></div></div>
-    <div id="loadingMsg" style="text-align:center;padding:20px;color:#999">Loading Tests...</div>
-</div>
-<div id="package" class="section">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>10%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>20%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>30%<div class="tag green">VIP</div></div></div>
-    <div class="pkg-grid" id="pkgGrid"></div>
-</div>
-<div id="medicine" class="section"><div class="med-box"><span class="med-icon">💊</span><h3>Upload Prescription</h3><input id="medName" class="med-input" placeholder="💊 Medicine Name"><input id="medDuration" class="med-input" placeholder="📅 Duration"><button class="confirm-btn" onclick="sendMedRequest()" style="background: linear-gradient(135deg, #43a047, #1b5e20); color:white; padding:10px; border:none; border-radius:20px; width:100%;">📷 Upload & Order</button></div></div>
-<div id="usg" class="section">
-    <input class="search" placeholder="Search USG..." onkeyup="filter(this,'usg')">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="usgContainer"></div>
-</div>
-<div id="xray" class="section">
-    <input class="search" placeholder="Search X-Ray..." onkeyup="filter(this,'xray')">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="xrayContainer"></div>
-</div>
-<div id="ct" class="section">
-    <input class="search" placeholder="Search CT Scan..." onkeyup="filter(this,'ct')">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="ctContainer"></div>
-</div>
-<div id="mri" class="section">
-    <input class="search" placeholder="Search MRI..." onkeyup="filter(this,'mri')">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="mriContainer"></div>
-</div>
-<div id="ecg" class="section">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="ecgContainer"></div>
-</div>
-<div id="echo" class="section">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="echoContainer"></div>
-</div>
-<div id="doctor" class="section">
-    <input class="search" placeholder="Search Doctors..." onkeyup="filterDocs(this)">
-    <div class="plan-row"><div class="plan active" data-plan="basic" onclick="manualPlan(this)">Basic<br>5%</div><div class="plan" data-plan="gold" onclick="manualPlan(this)">Gold<br>10%<div class="tag">POPULAR</div></div><div class="plan" data-plan="platinum" onclick="manualPlan(this)">Platinum<br>20%<div class="tag green">VIP</div></div></div>
-    <div id="docContainer"></div>
-</div>
-<div id="hospital" class="section"><div style="background:#fff; padding:20px; border-radius:12px; border-left:5px solid #e91e63;"><h3 style="margin-top:0">🏥 Hospital Admission</h3><button class="confirm-btn" onclick="sendHospRequest()" style="background:#e91e63; color:white; border:none; padding:10px; border-radius:20px; width:100%;">Send Enquiry</button></div></div>
+    <script src="app.js"></script>
 
-<div class="partner-link" onclick="openPartnerModal()">🏥 Partner/Lab Login (Secure Area)</div>
+    <script>
+        // ✨ STRICT DASHBOARD NAVIGATION BUTTON FIX ✨
+        function goToDashboard() {
+            const userId = localStorage.getItem("bhavya_user_id");
+            const role = localStorage.getItem("bhavya_role");
 
-<div class="popup-box" id="stepModal">
-    <div class="sheet-header">
-        <div class="sheet-handle"></div>
-        <h3 id="stepTitle" style="margin:0;color:#0a73c0">Booking</h3>
-        <div id="stepSubtitle" style="font-size:12px; color:#666;"></div>
-    </div>
-    <div class="sheet-body" id="dynamicFormBody"></div>
-    <div class="sheet-footer"><button class="next-btn" onclick="nextQueueStep()">Next ➔</button></div>
-</div>
+            // Strictly check if actual user data is present, otherwise block navigation
+            const isValidUser = userId && userId !== "null" && userId !== "undefined" && userId.trim() !== "" &&
+                                role && role !== "null" && role !== "undefined" && role.trim() !== "";
 
-<div class="popup-box" id="mainCartBox">
-    <div class="sheet-header">
-        <div class="sheet-handle"></div>
-        <h3 style="margin:0;color:#0a73c0">Final Cart</h3>
-        <button class="clear-cart-btn" onclick="clearMainCart()">Clear Cart</button>
-    </div>
-    <div class="sheet-body" id="finalCartItems"></div>
-    <div class="sheet-footer">
-        <div class="coupon-section"><input id="couponCode" style="flex:2;padding:10px;border:1px dashed #0a73c0;border-radius:8px;" placeholder="Referral Code"><button onclick="applyCoupon()" style="flex:1;background:#333;color:white;border:none;border-radius:8px;margin-left:5px;">APPLY</button></div>
-        <div id="couponMsg" style="font-size:11px;margin-top:5px;"></div>
-        <div id="redeemBox" style="background:#fff8e1;border:1px dashed #ffb300;padding:12px;border-radius:10px;margin-top:10px;display:none;justify-content:space-between;"><label style="font-weight:bold;color:#f57f17;"><input type="checkbox" id="pointCheck" onchange="togglePointUsage()"> Redeem <span id="availPoints">0</span> Points</label><div style="font-weight:bold;">- ₹<span id="discountVal">0</span></div></div>
-        <div style="display:flex; justify-content:space-between; margin:10px 0;"><span>Payable:</span> <b>₹<span id="payAmount">0</span></b></div>
-        <button onclick="payOnline()" class="pay-btn"><span>Pay Now (UPI)</span><span>💳</span></button>
-        <button onclick="bookWithPayment()" class="whatsapp-btn"><span>Book via WhatsApp</span><span>💬</span></button>
-        <button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; background:transparent; border:none; color:#666;">Close</button>
-    </div>
-</div>
-
-<div class="popup-box" id="loginModal"><h3 style="text-align:center; color:#0a73c0">Login</h3><input type="tel" id="loginMob" class="login-input" placeholder="Mobile"><input type="password" id="loginPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="checkLogin()">Login</button><div class="signup-section"><button onclick="openFormModal(SIGNUP_FORM_URL, 'New Patient Registration')" class="signup-btn-large">📝 Create Account</button></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; background:transparent; border:none;">Cancel</button></div>
-<div class="popup-box" id="infoModal"><h3 style="margin-top:0; color:#0a73c0;">My Profile</h3><div id="patientDataList" style="margin-bottom:10px"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">📑 My Reports</h4></div><div id="reportContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><div class="list-header"><h4 style="margin:0; color:#333; font-size:13px;">🔔 Order History</h4></div><div id="notifyContainer" style="max-height:120px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:8px;"></div><button onclick="logoutUser()" style="width:100%; padding:10px; background:#ffebee; color:red; border:none; margin-top:10px; border-radius:8px;">Logout</button></div>
-
-<div class="popup-box" id="universalFormModal">
-    <div class="form-header">
-        <div class="sheet-handle" style="margin:0"></div>
-        <b id="formTitle" style="color:#0a73c0">Form</b>
-        <button onclick="closeAllPopups()" style="background:transparent;border:none;font-size:24px;color:#333;">&times;</button>
-    </div>
-    <iframe id="formFrame" class="form-iframe" src=""></iframe>
-</div>
-
-<div class="popup-box" id="partnerModal"><h3 style="margin-top:0;color:#d32f2f;text-align:center">🔒 Partner Access</h3><div id="partnerLoginForm"><input id="partnerId" class="login-input" placeholder="Partner ID"><input type="password" id="partnerPass" class="login-input" placeholder="Password"><button class="login-btn" onclick="verifyPartner()" style="background:#333">Login to Dashboard</button></div><div id="partnerDashboard" style="display:none; text-align:center;"><div style="font-size:50px;">✅</div><h2 style="color:#2e7d32; margin:10px 0;">Login Successful!</h2><p id="partnerWelcomeMsg" style="color:#555;"></p><div style="margin-top:20px; padding:15px; background:#f9f9f9; border-radius:10px; border:1px dashed #ccc;"><button onclick="openFormModal(PARTNER_FORM_URL, 'Partner Portal')" style="background:#0a73c0; color:white; border:none; padding:12px 25px; border-radius:25px; font-weight:bold;">🚀 Open Portal</button></div><button onclick="location.reload()" style="margin-top:20px; background:transparent; border:none; color:#999; text-decoration:underline;">Logout</button></div><button id="partnerCancelBtn" onclick="closeAllPopups()" style="width:100%;padding:10px;background:transparent;border:none;color:#999;margin-top:5px">Cancel</button></div>
-<div class="popup-box" id="upgradeListModal"><h3 id="upgradeTitle" style="margin-top:0;color:#0a73c0;text-align:center;"></h3><div id="upgradeGrid" class="pkg-grid"></div><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
-<div class="popup-box" id="detailsModal"><h3 id="detailsTitle" style="margin-top:0;color:#0a73c0;"></h3><ul id="detailsList" style="padding-left:20px;font-size:13px;color:#555;line-height:1.6"></ul><button onclick="closeAllPopups()" style="width:100%;padding:10px;background:#ddd;border:none;border-radius:8px;margin-top:10px">Close</button></div>
-<div class="popup-box" id="compareModal"><h3 style="margin-top:0;color:#0a73c0;text-align:center">✨ Membership Benefits</h3><table class="comp-table"><thead><tr><th style="text-align:left; background:#eee; color:#333;">Feature</th><th style="background:#eee; color:#666;">Basic</th><th style="background:#fff8e1; color:#f57f17;">Gold</th><th style="background:#eceff1; color:#37474f;">Plat.</th></tr></thead><tbody><tr><td style="text-align:left; font-weight:bold;">🩸 Blood Test</td><td>20%</td><td style="font-weight:bold; color:#f57f17">35%</td><td style="font-weight:bold; color:#37474f">50%</td></tr><tr><td style="text-align:left; font-weight:bold;">🦴 X-Ray/USG</td><td>5%</td><td style="font-weight:bold; color:#f57f17">10%</td><td style="font-weight:bold; color:#37474f">20%</td></tr><tr><td style="text-align:left; font-weight:bold;">🏠 Home Coll.</td><td>Paid</td><td style="font-weight:bold; color:#f57f17">₹50</td><td style="font-weight:bold; color:#37474f">FREE</td></tr><tr><td style="text-align:left; font-weight:bold;">👨⚕️ Doctor Fees</td><td>Full</td><td style="font-weight:bold; color:#f57f17">10% Off</td><td style="font-weight:bold; color:#37474f">20% Off</td></tr></tbody></table><button onclick="closeAllPopups()" style="width:100%;padding:12px;background:#333;color:white;font-weight:bold;border:none;border-radius:8px;margin-top:10px">Close</button></div>
-<div class="popup-box" id="forgotPassModal"><h3 style="margin-top:0; color:#0a73c0;">Reset Password</h3><input type="text" id="newPassInput" class="login-input" placeholder="New Password"><button class="login-btn" onclick="sendForgotPassReq()" style="margin-top:10px;">Send Request</button><button onclick="closeAllPopups()" style="width:100%; padding:10px; background:transparent; border:none; color:#999;">Cancel</button></div>
-<div class="popup-box" id="termsModal"><h3 style="margin-top:0; color:#0a73c0">Terms & Conditions</h3><div style="max-height:60vh; overflow-y:auto; font-size:12px; color:#555;"><p><b>1. General Role:</b> Bhavya Diagnostics connects patients with NABL Labs.</p><p><b>2. Booking:</b> Confirmation via WhatsApp.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
-<div class="popup-box" id="privacyModal"><h3 style="margin-top:0; color:#0a73c0">Privacy Policy</h3><div style="font-size:12px; color:#555;"><p>We collect your Name, Mobile, and Health Data only for services.</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
-<div class="popup-box" id="helpModal"><h3 style="margin-top:0; color:#0a73c0">Help & Contact</h3><div style="text-align:center;"><p>📞 +91 83979 85922</p></div><button onclick="closeAllPopups()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee;">Close</button></div>
-
-<script>
-/* 🔴 CONFIGURATION */
-const RAW_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=0&single=true&output=csv";
-const RATE_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_SHEET_URL)}`;
-
-const RAW_PATIENT_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1566470488&single=true&output=csv";
-const PATIENT_SHEET_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PATIENT_URL)}`;
-
-const RAW_PARTNER_DB_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=988786822&single=true&output=csv";
-const PARTNER_DB_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_PARTNER_DB_URL)}`;
-
-const RAW_HISTORY_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSpcKVcbX9ZXEsSyka1rzNprfUjwlAShQLHFiPeaQETHaoYaxXXMQXT4dQ-zIu2hpn9feD-wGy_fjdW/pub?gid=1140710592&single=true&output=csv";
-const HISTORY_DATA_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(RAW_HISTORY_URL)}`;
-
-const PARTNER_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScSOZbFl-dKDA4jy5cBCQav3zpMXjgtsUReIS9itHDRdHBEMg/viewform?embedded=true";
-const SIGNUP_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdix2-jvF-Fr7OK0S7A514oTVXjQgmgWp4CvPUm9pEg8Y_x6w/viewform?embedded=true";
-
-const WA_NUMBER = "918950112467"; 
-const UPI_ID = "8397985922@ptsbi"; 
-
-let tempSelection = [], bookingQueue = [], currentQueueIndex = 0, masterBookingData = {}, currentUser = null, patientsDB = {}, partnersDB = {}, usePoints = false, activeCoupon = null, selectedPatientName = "", currentSessionAddress = ""; 
-partnersDB['8950112467'] = { pass: '8950112467', name: 'Master Partner' };
-const discountMap = { basic: 0.20, gold: 0.35, platinum: 0.50, pkg_basic: 0.10, pkg_gold: 0.20, pkg_platinum: 0.30 };
-
-const centerAddressDB = {
-    "Shree Diagnostic": "Metro Pillar No-862, Khasra no. 2444,venus plaza nehru Enclave, Rohtak Rd, Bahadurgarh, Haryana 124507",
-    "Shree": "Metro Pillar No-862, Khasra no. 2444,venus plaza nehru Enclave, Rohtak Rd, Bahadurgarh, Haryana 124507",
-    "Ved Hospital": "MWM8+9XR, Main, Jhajjar Rd, Huda Nahar, Bahadurgarh, Haryana 124507",
-    "Ved": "MWM8+9XR, Main, Jhajjar Rd, Huda Nahar, Bahadurgarh, Haryana 124507",
-    "Default": "Metro Pillar No-862, Khasra no. 2444,venus plaza nehru Enclave, Rohtak Rd, Bahadurgarh, Haryana 124507" 
-};
-
-window.onload = function(){ loadGoogleSheetData(); loadPatientData(); loadPartnerData(); };
-
-/* DATA LOADERS */
-async function loadGoogleSheetData() {
-    const msg = document.getElementById("loadingMsg");
-    try {
-        let res = await fetch(RAW_SHEET_URL);
-        if(!res.ok) res = await fetch(RATE_SHEET_URL); 
-        const text = await res.text();
-        parseProducts(text);
-        refreshPrices('basic'); 
-    } catch(e) { msg.innerHTML = "Error loading tests.<br>Check connection."; msg.style.color="red"; }
-}
-
-async function loadPatientData() {
-    try {
-        let res = await fetch(RAW_PATIENT_URL);
-        if(!res.ok) res = await fetch(PATIENT_SHEET_URL);
-        const text = await res.text();
-        parsePatients(text);
-    } catch(e) {}
-}
-
-async function loadPartnerData() {
-    try {
-        let res = await fetch(RAW_PARTNER_DB_URL);
-        if(!res.ok) res = await fetch(PARTNER_DB_URL);
-        const text = await res.text();
-        parsePartners(text);
-    } catch(e) {}
-}
-
-function parsePartners(csv) {
-    const rows = csv.split('\n').slice(1);
-    rows.forEach(row => {
-        const cols = row.split(',').map(c=>c.replace(/"/g,'').trim());
-        if(cols.length >= 2) {
-            partnersDB[cols[0].toUpperCase()] = { pass: cols[1], name: cols[2] || "Partner" };
-        }
-    });
-}
-
-function parsePatients(csvText) { 
-    const rows = csvText.split('\n'); 
-    rows.slice(1).forEach(row => { 
-        if(!row.trim()) return;
-        const cols = [];
-        let col = "";
-        let quotes = false;
-        for(let i=0; i<row.length; i++){
-            if(row[i] === '"') { quotes = !quotes; continue; }
-            if(row[i] === ',' && !quotes) { cols.push(col.trim()); col = ""; }
-            else { col += row[i]; }
-        }
-        cols.push(col.trim());
-
-        if(cols.length < 3) return; 
-        const mob = cols[2]; 
-        if(mob && mob.length >= 10) { 
-            let plan = cols[5] && cols[5].length > 2 ? cols[5] : 'Basic'; 
-            let points = parseInt(cols[6]) || 0; 
-            let familyMembers = [];
-            if(cols[7] && cols[7].trim()) familyMembers.push(cols[7].trim());
-            if(cols[8] && cols[8].trim()) familyMembers.push(cols[8].trim());
-            if(cols[9] && cols[9].trim()) familyMembers.push(cols[9].trim());
-
-            patientsDB[mob] = { 
-                mobile: mob, 
-                name: cols[1], 
-                password: cols[3], 
-                address: cols[4]||"", 
-                plan: plan, 
-                points: points, 
-                reports: [], 
-                referral: cols[1].split(" ")[0].toUpperCase()+mob.slice(-3), 
-                family: familyMembers 
-            }; 
-        } 
-    }); 
-}
-
-function parseProducts(csvText) { 
-    const rows = [];
-    let currentRow = "";
-    let insideQuotes = false;
-    for (let i = 0; i < csvText.length; i++) {
-        const char = csvText[i];
-        if (char === '"') insideQuotes = !insideQuotes;
-        if (char === '\n' && !insideQuotes) { rows.push(currentRow); currentRow = ""; } else { currentRow += char; }
-    }
-    if (currentRow) rows.push(currentRow);
-
-    rows.slice(1).forEach(row => { 
-        if(!row.trim()) return;
-        const cols = [];
-        let col = "";
-        let quotes = false;
-        for(let i=0; i<row.length; i++){
-            if(row[i] === '"') { quotes = !quotes; continue; }
-            if(row[i] === ',' && !quotes) { cols.push(col.trim()); col = ""; }
-            else { col += row[i]; }
-        }
-        cols.push(col.trim());
-
-        if(cols.length < 3) return; 
-        
-        let cat = cols[2].toLowerCase();
-        if(cat.includes('blood') || cat.includes('test') || cat.includes('pathology') || cat.includes('lab')) cat = 'test';
-        else if(cat.includes('sound') || cat.includes('usg')) cat = 'usg';
-        else if(cat.includes('x-ray') || cat.includes('x ray') || cat.includes('xray')) cat = 'xray';
-        else if(cat.includes('ct scan') || cat === 'scan' || cat === 'ct') cat = 'ct';
-        else if(cat.includes('mri')) cat = 'mri';
-        else if(cat.includes('doctor') || cat.includes('dr')) cat = 'doctor';
-        else if(cat.includes('package') || cat.includes('checkup')) cat = 'package';
-        else if(cat.includes('ecg')) cat = 'ecg';
-        else if(cat.includes('echo')) cat = 'echo';
-        
-        let cleanPrice = cols[1].replace(/[^0-9]/g, '');
-        createCard({ 
-            name: cols[0].replace(/"/g, ''), 
-            price: parseInt(cleanPrice) || 0, 
-            category: cat, 
-            discount: cols[3] && cols[3].toLowerCase() === 'yes', 
-            image: cols[4]||"", 
-            details: cols[5]||"" 
-        }); 
-    }); 
-    
-    if(document.querySelectorAll('.card, .doc-card, .pkg-card').length > 0) {
-        document.getElementById("loadingMsg").style.display = 'none';
-    } else {
-        document.getElementById("loadingMsg").innerHTML = "No tests found.<br>Check Sheet.";
-    }
-}
-
-/* UI FUNCTIONS */
-function openMenu() { document.getElementById("sidebar").classList.add("open"); document.getElementById("sidebarOverlay").style.display = "block"; }
-function closeMenu() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("sidebarOverlay").style.display = "none"; }
-function shareApp() { const msg = `Book Blood Tests & Doctors on Bhavya Diagnostics App! Link: https://dharmender.github.io/diagnostic-app`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank"); }
-
-function show(id, btn){ 
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); 
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active')); 
-    document.getElementById(id).classList.add('active'); 
-    if(btn) btn.classList.add('active'); 
-}
-
-function startBookingQueue() {
-    if(tempSelection.length === 0) return;
-    currentSessionAddress = currentUser ? currentUser.address : ""; 
-    const categories = [...new Set(tempSelection.map(item => item.type))];
-    bookingQueue = [];
-    if(categories.includes('test')) bookingQueue.push('test');
-    if(categories.includes('package')) bookingQueue.push('package');
-    const centerServices = ['usg', 'xray', 'ct', 'mri', 'ecg', 'echo', 'doctor'];
-    centerServices.forEach(s => { if(categories.includes(s)) bookingQueue.push(s); });
-    currentQueueIndex = 0;
-    masterBookingData = {}; 
-    renderQueueStep();
-}
-
-function renderQueueStep() {
-    const type = bookingQueue[currentQueueIndex];
-    if(!type) { closeAllPopups(); toggleMainCart(); return; }
-    document.getElementById("overlay").style.display = "block";
-    const modal = document.getElementById("stepModal");
-    modal.style.display = "flex";
-    document.getElementById("stepTitle").innerText = { 'test': '🩸 Blood Test', 'package': '📦 Package', 'usg': '🖥️ USG', 'xray': '🦴 X-Ray', 'ct': '🧠 CT Scan', 'ecg': '💓 ECG', 'echo': '🫀 ECHO', 'doctor': '👨⚕️ Doctor' }[type] || 'Booking Details';
-    document.getElementById("stepSubtitle").innerText = `Step ${currentQueueIndex + 1} of ${bookingQueue.length}`;
-    const prefillName = selectedPatientName || (currentUser ? currentUser.name : "");
-    const today = new Date().getDay(); 
-    let timeHtml = "";
-    
-    if(type === 'ecg') {
-        for(let i=0; i<24; i++) {
-            let hr = i > 12 ? i - 12 : (i===0 ? 12 : i);
-            let ampm = i >= 12 ? "PM" : "AM";
-            timeHtml += `<div class="time-slot" onclick="selectTime(this)">${hr}:00 ${ampm}</div>`;
-        }
-    } else {
-        let start = 7, end = 20; 
-        if(['usg','xray','ct','mri','echo'].includes(type)) {
-            start = 9; 
-            end = (today === 0) ? 14 : 18; 
-        }
-        for(let i=start; i<=end; i++) {
-            let hr = i > 12 ? i - 12 : i;
-            let ampm = i >= 12 ? "PM" : "AM";
-            timeHtml += `<div class="time-slot" onclick="selectTime(this)">${hr}:00 ${ampm}</div>`;
-        }
-    }
-
-    let html = '';
-    let patientInputHtml = '';
-    if(currentUser) {
-        patientInputHtml = `<select id="qName" class="med-input" style="font-weight:bold; background:#e3f2fd; color:#0a73c0; border:1px solid #0a73c0;">`;
-        patientInputHtml += `<option value="${currentUser.name}">👤 ${currentUser.name} (Self)</option>`;
-        if(currentUser.family && currentUser.family.length > 0) {
-            currentUser.family.forEach(f => {
-                if(f) patientInputHtml += `<option value="${f}">👥 ${f}</option>`;
-            });
-        }
-        patientInputHtml += `</select>`;
-    } else {
-        patientInputHtml = `<input id="qName" class="med-input" placeholder="Patient Name" value="${prefillName}">`;
-    }
-
-    if(type === 'test' || type === 'package') {
-        html += `<span class="booking-label">Select Lab</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'lab','Wellness')">Wellness</div><div class="option-btn" onclick="selectOpt(this,'lab','CRL')">CRL</div><div class="option-btn" onclick="selectOpt(this,'lab','Accuprobe')">Accuprobe</div></div><span class="booking-label">Location</span><div class="option-group"><div class="option-btn selected" onclick="toggleAddress(true); selectOpt(this,'mode','Home')">Home</div><div class="option-btn" onclick="toggleAddress(false); selectOpt(this,'mode','Center')">Center</div></div>`;
-    } else if (['usg', 'xray', 'ct', 'mri', 'echo'].includes(type)) {
-        html += `<span class="booking-label">Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')"><div style="font-size:8px; color:#d32f2f; font-weight:bold; letter-spacing:0.5px;">NABH ACCREDITED</div>Shree Diagnostic</div></div>`;
-    } else if (type === 'ecg') {
-        html += `<span class="booking-label">Select Center</span><div class="option-group"><div class="option-btn selected" onclick="selectOpt(this,'center','Shree Diagnostic')"><div style="font-size:8px; color:#d32f2f; font-weight:bold; letter-spacing:0.5px;">NABH ACCREDITED</div>Shree Diagnostic</div><div class="option-btn" onclick="selectOpt(this,'center','Ved Hospital')">Ved Hospital</div></div>`;
-    }
-    
-    html += `<span class="booking-label">Patient</span>${patientInputHtml}<div id="qAddressBox"><span class="booking-label">Address</span><select id="qCity" class="med-input"><option selected>Bahadurgarh</option><option>Jhajjar</option><option>Rohtak</option></select><textarea id="qAddr" class="med-input" rows="2" placeholder="Address">${currentSessionAddress}</textarea></div><span class="booking-label">Time</span><input type="date" id="qDate" class="med-input" value="${new Date().toISOString().split('T')[0]}"><div class="time-grid" id="qTimeSlots">${timeHtml}</div>`;
-    document.getElementById("dynamicFormBody").innerHTML = html;
-    document.getElementById("stepModal").dataset.currentType = type;
-}
-
-function nextQueueStep() {
-    const type = document.getElementById("stepModal").dataset.currentType;
-    const name = document.getElementById("qName").value;
-    const date = document.getElementById("qDate").value;
-    const timeEl = document.querySelector(".time-slot.selected");
-    if(!name || !date || !timeEl) { showAlert("Fill Name & Time"); return; }
-    
-    const addrInput = document.getElementById("qAddr");
-    if(addrInput && addrInput.value) { currentSessionAddress = addrInput.value; }
-
-    let details = { name, date, time: timeEl.innerText, city: document.getElementById("qCity")?.value || "N/A", address: currentSessionAddress || "N/A" };
-    
-    if(type === 'test' || type === 'package') {
-        details.lab = document.querySelector(".option-btn[onclick*='lab'].selected")?.innerText || "Wellness";
-        details.mode = document.querySelector(".option-btn[onclick*='mode'].selected")?.innerText || "Home";
-    } else if (['usg', 'xray', 'ct', 'mri', 'echo', 'ecg'].includes(type)) {
-        details.center = document.querySelector(".option-btn[onclick*='center'].selected")?.innerText.replace("NABH ACCREDITED", "").trim() || "Shree Diagnostic";
-        details.mode = "Center";
-    }
-    
-    masterBookingData[type] = details;
-    currentQueueIndex++;
-    renderQueueStep();
-}
-
-function toggleMainCart() {
-    document.getElementById("overlay").style.display="block"; 
-    document.getElementById("mainCartBox").style.display="flex";
-    let html = "", grandTotal = 0, discountableTotal = 0, totalMRP = 0;
-    
-    const currentPlan = document.querySelector('.plan.active') ? document.querySelector('.plan.active').dataset.plan : 'basic';
-    const testDisc = discountMap[currentPlan];
-    const centerDisc = (currentPlan === 'platinum') ? 0.20 : (currentPlan === 'gold' ? 0.10 : 0.05);
-
-    [...new Set(tempSelection.map(item => item.type))].forEach(cat => {
-        const items = tempSelection.filter(i => i.type === cat);
-        const booking = masterBookingData[cat];
-        if(items.length > 0) {
-            html += `<div class="cart-group-header">${cat.toUpperCase()} ${booking ? `(${booking.mode||booking.center||booking.lab})` : ''}</div>`;
-            items.forEach(i => {
-                let discount = (cat==='test' || cat==='package') ? testDisc : centerDisc;
-                if(cat==='package') discount = discountMap['pkg_'+currentPlan];
-                let finalPrice = Math.round(i.price - (i.price * discount));
-                let totalFinal = finalPrice * i.qty;
-                let totalOriginal = i.price * i.qty;
-              
-                grandTotal += totalFinal;
-                totalMRP += totalOriginal;
-                if(cat === 'test' || cat === 'package') {
-                   discountableTotal += totalFinal;
+            if (!isValidUser) {
+                showHomeToast("Please Login First to access Dashboard!", "error");
+                if (typeof openPatientLogin === "function") {
+                    openPatientLogin(); // Show login popup
                 }
-
-                html += `<div class="cart-item-row">
-                    <span class="remove-item-btn" onclick="removeItemFromCart('${i.name}')">❌</span>
-                    <span style="flex:1">${i.name} x${i.qty}</span>
-                    <span><s style="font-size:10px;color:#999;margin-right:5px">₹${totalOriginal}</s> <b>₹${totalFinal}</b></span>
-                </div>`;
-              
-                if(i.contrast) { 
-                    let cp = 3000 * i.qty; 
-                    grandTotal += cp; 
-                    totalMRP += cp;
-                    html += `<div class="cart-item-row" style="color:#d32f2f; font-size:11px;"><span></span><span>+ Contrast</span><span>₹${cp}</span></div>`; 
-                }
-            });
-            if(booking) {
-                let displayAddr = "";
-                if ((cat === 'test' || cat === 'package')) {
-                    displayAddr = booking.mode === 'Home' ? `${booking.address}, ${booking.city}` : centerAddressDB["Ved"];
-                } else {
-                    displayAddr = centerAddressDB[booking.center] || centerAddressDB["Default"];
-                }
-                html += `<div class="cart-details-row">👤 ${booking.name} | 📅 ${booking.date}, ${booking.time}</div>`;
-                html += `<div class="cart-details-row" style="color:#666;">📍 ${displayAddr}</div>`;
-            }
-        }
-    });
-
-    let walletPointsUsed = 0;
-    let extraDiscount = 0;
-    if(activeCoupon && discountableTotal > 50) {
-        extraDiscount += 50;
-        document.getElementById("couponMsg").innerText = `Referral Applied (${activeCoupon}): ₹50 OFF`;
-        document.getElementById("couponMsg").style.color = "green";
-    } else if (!activeCoupon) {
-        document.getElementById("couponMsg").innerText = "";
-    }
-
-    if(currentUser && usePoints) {
-        let pointValue = Math.floor(currentUser.points / 10);
-        walletPointsUsed = Math.min(pointValue, (discountableTotal - extraDiscount));
-        extraDiscount += walletPointsUsed;
-        document.getElementById("discountVal").innerText = extraDiscount;
-        document.getElementById("availPoints").innerText = currentUser.points;
-    } else {
-        document.getElementById("discountVal").innerText = extraDiscount;
-    }
-
-    document.getElementById("finalCartItems").innerHTML = html;
-    let finalPay = grandTotal - extraDiscount;
-    document.getElementById("payAmount").innerText = finalPay > 0 ? finalPay : 0;
-    document.getElementById("redeemBox").style.display = (currentUser && currentUser.points >= 10) ? "flex" : "none";
-}
-
-function removeItemFromCart(name) {
-    tempSelection = tempSelection.filter(i => i.name !== name);
-    // UI mein bhi card ko reset karna padega
-    document.querySelectorAll('.card, .pkg-card').forEach(c => {
-        if(c.dataset.name === name) {
-            const w = c.querySelector('.qty-wrapper');
-            w.querySelector('.add-btn').style.display = 'block';
-            w.querySelector('.qty-control').style.display = 'none';
-            c.classList.remove('selected');
-        }
-    });
-    updateGlobalCount();
-    if(tempSelection.length === 0) {
-        closeAllPopups();
-    } else {
-        toggleMainCart();
-    }
-}
-
-function updateGlobalCount() {
-    let count = tempSelection.reduce((s,i) => s + i.qty, 0); 
-    document.getElementById("finalCount").innerText = count; 
-    const tBtn = document.getElementById("topProceedBtn"); 
-    if(count > 0) { tBtn.innerText = `Proceed (${count}) ➔`; tBtn.classList.add("active"); tBtn.disabled = false; } 
-    else { tBtn.innerText = "Cart Empty"; tBtn.classList.remove("active"); tBtn.disabled = true; } 
-}
-
-function updateQty(btn, change) { 
-    const m = document.getElementById("mobile").value; 
-    if(m.length!==10){ showAlert("Enter Mobile"); return; } 
-    const card = btn.closest('.card') || btn.closest('.pkg-card'); 
-    const name = card.dataset.name; 
-    const type = card.dataset.type; 
-    const price = parseInt(card.dataset.price); 
-    const contrastChk = card.querySelector('.contrast-box input');
-    const hasContrast = contrastChk ? contrastChk.checked : false;
-    let item = tempSelection.find(i => i.name === name); 
-    if(item) { item.qty += change; if(change > 0 && hasContrast) item.contrast = true; if(item.qty <= 0) tempSelection = tempSelection.filter(i => i.name !== name); } 
-    else if(change > 0) { tempSelection.push({ name, price, type, qty: 1, contrast: hasContrast }); } 
-    const w = card.querySelector('.qty-wrapper'); 
-    if(change > 0 || (item && item.qty > 0)) { w.querySelector('.add-btn').style.display = 'none'; w.querySelector('.qty-control').style.display = 'flex'; w.querySelector('span').innerText = item ? item.qty : 1; card.classList.add('selected'); } 
-    else { w.querySelector('.add-btn').style.display = 'block'; w.querySelector('.qty-control').style.display = 'none'; card.classList.remove('selected'); if(contrastChk) contrastChk.checked = false; } 
-    updateGlobalCount();
-}
-
-function handleMyInfoClick(){ 
-    if(currentUser){ 
-        document.getElementById("overlay").style.display="block"; 
-        document.getElementById("infoModal").style.display="block";
-    } else { 
-        document.getElementById("overlay").style.display="block"; 
-        document.getElementById("loginModal").style.display="block";
-    } 
-}
-
-function checkLogin() { 
-    const u = patientsDB[document.getElementById("loginMob").value]; 
-    if(u && u.password === document.getElementById("loginPass").value) { 
-        currentUser=u; 
-        document.getElementById("btnMyInfo").innerText="👤 "+u.name.split(" ")[0]; 
-        document.getElementById("btnMyInfo").classList.add("logged-in"); 
-        document.getElementById("dashPoints").innerText = u.points; 
-        document.getElementById("dashPlan").innerText = u.plan; 
-        document.getElementById("dashRef").innerText = u.referral; 
-        document.getElementById("dashPlan").className = "dash-val highlight-plan"; 
-        document.getElementById("dashboardSection").style.display = "block"; 
-        document.getElementById("availPoints").innerText = u.points;
-        const mobInput = document.getElementById("mobile");
-        mobInput.value = u.mobile; 
-        selectedPatientName = u.name;
-        const famCon = document.getElementById("dashFamilyContainer");
-        let html = `<div class="dash-fam-btn active" onclick="selectedPatientName='${u.name}'">${u.name.split(" ")[0]}</div>`;
-        if(u.family && u.family.length > 0) { 
-            u.family.forEach(f => { 
-                if(f) html += `<div class="dash-fam-btn" onclick="selectedPatientName='${f}'">${f}</div>`; 
-            }); 
-        }
-        html += `<div class="dash-fam-btn dash-fam-add" onclick="openFormModal(SIGNUP_FORM_URL, 'Add Member')">+ Add</div>`;
-        famCon.innerHTML = html;
-        
-        const p = u.plan ? u.plan.toLowerCase() : 'basic'; 
-        const bG = document.getElementById("topBannerGold"), bP = document.getElementById("topBannerPlat"), vB = document.getElementById("topVipBadge"); 
-        bG.style.display="flex"; bP.style.display="flex"; vB.style.display="none"; 
-        if(p==='gold'){ 
-            bG.style.display="none"; 
-            vB.style.display="block"; 
-            vB.innerText = "👑 YOU ARE A GOLD MEMBER";
-        } else if(p==='platinum'){ 
-            bG.style.display="none"; 
-            bP.style.display="none"; 
-            vB.style.display="block"; 
-            vB.innerText = "👑 YOU ARE A PLATINUM MEMBER";
-        }
-        
-        fetchHistory(u.mobile);
-        closeAllPopups(); 
-        applyPlanByMobile(); 
-    } else showAlert("Invalid Credentials"); 
-}
-
-function applyPlanByMobile() {
-    const m = document.getElementById("mobile").value;
-    const status = document.getElementById("planStatus");
-    if (m.length === 10) {
-        if (patientsDB[m]) {
-            let plan = patientsDB[m].plan.toLowerCase();
-            status.innerText = "✅ " + plan.toUpperCase() + " APPLIED";
-            status.className = "plan-badge-status active";
-            refreshPrices(plan);
-            document.querySelectorAll('.plan').forEach(p => {
-                if (p.dataset.plan !== plan) p.classList.add('locked');
-                else p.classList.remove('locked');
-            });
-        } else {
-            status.innerText = "👤 New User (Basic)";
-            status.className = "plan-badge-status";
-            refreshPrices('basic');
-            document.querySelectorAll('.plan').forEach(p => p.classList.remove('locked'));
-        }
-    } else {
-        status.innerText = "Pending";
-        status.className = "plan-badge-status";
-    }
-}
-
-function createCard(item) { 
-    if (item.category === 'doctor') { const div = document.createElement('div'); div.className = 'doc-card'; div.dataset.price = item.price; div.dataset.type = 'doctor'; div.innerHTML = `<img src="${item.image || 'https://via.placeholder.com/60'}" class="doc-img"><div class="doc-info"><div class="doc-name">${item.name}</div><div class="doc-deg">${item.details}</div><div class="doc-fee">₹<span class="final-price"><b>${item.price}</b></span></div></div><button class="book-btn" onclick="bookDoctor('${item.name}', ${item.price}, this)">Book</button>`; document.getElementById("docContainer").appendChild(div); return; } 
-    if (item.category === 'package') { const div = document.createElement('div'); div.className = 'pkg-card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = 'package'; let badge = ""; if(item.details.toLowerCase().includes("gold")) badge = `<div class="unlock-badge">🏆 UNLOCKS GOLD</div>`; if(item.details.toLowerCase().includes("platinum")) badge = `<div class="unlock-badge platinum-badge">💎 UNLOCKS PLATINUM</div>`; div.innerHTML = `${badge}<div class="pkg-header"><div class="pkg-name">${item.name}</div></div><div class="pkg-body"><span class="mrp-price">₹${item.price}</span><span class="pkg-rate">₹<b>${item.price}</b></span><button class="view-details-btn" onclick="showIncludedTests('${item.name}', '${item.details.replace(/'/g, "\\'")}')">ℹ️ View Details</button></div><div class="pkg-footer"><div class="qty-wrapper"><button class="add-btn" onclick="updateQty(this, 1)">Add</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div></div>`; document.getElementById("pkgGrid").appendChild(div); return; } 
-    let container = document.getElementById(item.category); if (!container && item.category === 'test') container = document.getElementById("test"); if (!container && item.category === 'usg') container = document.getElementById("usgContainer"); if (!container && item.category === 'xray') container = document.getElementById("xrayContainer"); if (!container && item.category === 'ct') container = document.getElementById("ctContainer"); if (!container && item.category === 'mri') container = document.getElementById("mriContainer"); if (!container && item.category === 'ecg') container = document.getElementById("ecgContainer"); if (!container && item.category === 'echo') container = document.getElementById("echoContainer"); 
-    if (container) { 
-        if(container.id.includes('Container') === false && item.category !== 'test') { let innerCon = container.querySelector('[id$="Container"]'); if(innerCon) container = innerCon; } 
-        const div = document.createElement('div'); div.className = 'card'; div.dataset.name = item.name; div.dataset.price = item.price; div.dataset.type = item.category; 
-        let contrastHtml = ""; if(item.category === 'ct' || item.category === 'mri') contrastHtml = `<label class="contrast-box"><input type="checkbox"> 💊 + Contrast (₹3000)</label>`;
-        div.innerHTML = `<div><div class="card-info">${item.name}</div><div class="card-price-box"><span class="mrp-price">₹${item.price}</span><span class="final-price">₹<b>${item.price}</b></span></div></div><div class="qty-wrapper">${contrastHtml}<button class="add-btn" onclick="updateQty(this, 1)">ADD +</button><div class="qty-control"><button onclick="updateQty(this, -1)">-</button><span>0</span><button onclick="updateQty(this, 1)">+</button></div></div>`; container.appendChild(div); 
-    } 
-}
-
-function refreshPrices(plan){ 
-    document.querySelectorAll('.plan').forEach(p=>{p.classList.remove('active');if(p.dataset.plan===plan)p.classList.add('active');}); 
-    const testDisc = discountMap[plan];
-    const centerDisc = (plan==='platinum')?0.20 : (plan==='gold'?0.10:0.05);
-    document.querySelectorAll('.card,.pkg-card').forEach(c=>{
-        const op = parseInt(c.dataset.price); 
-        const t = c.dataset.type; 
-        let d = (t==='test' || t==='package') ? testDisc : centerDisc;
-        if(t==='package') d = discountMap['pkg_'+plan];
-        let final = Math.round(op - (op*d));
-        c.querySelector('.final-price b,.pkg-rate b').innerText="₹"+final;
-    }); 
-    document.querySelectorAll('.doc-card').forEach(c=>{ 
-        const op = parseInt(c.dataset.price); 
-        let d = (plan==='platinum'?0.20 : (plan==='gold'?0.10 : 0.05)); 
-        let final = Math.round(op - (op*d));
-        c.querySelector('.doc-fee').innerHTML = `<span style="text-decoration:line-through;color:#999;font-size:11px;">₹${op}</span> ₹<span class="final-price"><b>${final}</b></span>`;
-    }); 
-    if(document.getElementById("mainCartBox").style.display === 'flex') {
-        toggleMainCart();
-    }
-}
-
-function filter(i,id){ let v=i.value.toLowerCase(); document.querySelectorAll(`#${id} .card`).forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
-function filterDocs(i){ let v=i.value.toLowerCase(); document.querySelectorAll('.doc-card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'flex':'none'); }
-
-function applyCoupon(){ 
-    const input = document.getElementById("couponCode");
-    const btn = document.querySelector(".coupon-section button");
-    const msg = document.getElementById("couponMsg");
-    if(activeCoupon) {
-        activeCoupon = null;
-        input.value = "";
-        input.disabled = false;
-        btn.innerText = "APPLY";
-        btn.style.background = "#333";
-        msg.innerText = "Referral Code Removed";
-        msg.style.color = "orange";
-        toggleMainCart();
-        return;
-    }
-    const val = input.value.trim().toUpperCase();
-    if(val === "") { showAlert("Enter a referral code"); return; }
-    let isValidCode = false;
-    for (let mob in patientsDB) {
-        if (patientsDB[mob].referral === val) {
-            if (currentUser && currentUser.referral === val) {
-                msg.innerText = "Cannot use your own code!";
-                msg.style.color = "red";
                 return;
             }
-            isValidCode = true;
-            break;
+
+            // Route to correct dashboard only if valid
+            if (role === "lab") window.location.href = "Lab/lab_dashboard.html"; 
+            else if (role === "patient") window.location.href = "patient_dashboard/patient_dashboard.html";
+            else if (role === "admin") window.location.href = "admin/admin_dashboard.html"; 
         }
-    }
-    if(isValidCode){ 
-        activeCoupon = val;
-        input.disabled = true;
-        btn.innerText = "REMOVE";
-        btn.style.background = "#d32f2f"; 
-        msg.innerText = `Referral Applied: ₹50 OFF`;
-        msg.style.color = "green";
-        toggleMainCart(); 
-    } else {
-        activeCoupon = null;
-        msg.innerText = "Invalid referral code!";
-        msg.style.color = "red";
-        toggleMainCart();
-    }
-}
 
-function togglePointUsage(){ usePoints=document.getElementById("pointCheck").checked; toggleMainCart(); }
-function logoutUser(){ location.reload(); }
-function bookDoctor(n,p,btn){ const c=btn.closest('.doc-card'); const dp=parseInt(c.querySelector('.final-price b').innerText.replace('₹','')); if(confirm(`Book ${n} for ₹${dp}?`)) window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Doctor: ${n}, Fee: ${dp}`)}`,"_blank"); }
-function showIncludedTests(t,d){ document.getElementById("detailsTitle").innerText=t; const l=document.getElementById("detailsList"); l.innerHTML=""; d.split(',').forEach(i=>{if(i.trim()){const x=document.createElement("li"); x.innerText=i.trim(); l.appendChild(x);}}); document.getElementById("overlay").style.display="block"; document.getElementById("detailsModal").style.display="block"; }
-function openFormModal(url, title) { document.querySelectorAll('.popup-box').forEach(b => b.style.display = "none"); document.getElementById("overlay").style.display = "block"; const modal = document.getElementById("universalFormModal"); modal.style.display = "flex"; document.getElementById("formTitle").innerText = title; document.getElementById("formFrame").src = url; }
-function openPartnerModal() { document.getElementById("overlay").style.display = "block"; document.getElementById("partnerModal").style.display = "block"; }
-
-function sendMedRequest(){ 
-    const m=document.getElementById("mobile").value; 
-    if(m.length!==10){showAlert("Enter Mobile");return;} 
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`📋 *Prescription Upload*\nMobile: ${m}\n\n*upload your doctor prescription now...*`)}`,"_blank"); 
-}
-
-function sendHospRequest(){ window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`🏥 *Hospital Lead*\nMobile: ${document.getElementById("mobile").value}\nReason: ${document.getElementById("admReason").value}\nPay: ${document.getElementById("admPay").value}`)}`,"_blank"); }
-function sendForgotPassReq(){ const m=document.getElementById("loginMob").value; const p=document.getElementById("newPassInput").value; if(m.length<10){showAlert("Enter Mobile first");return;} if(!p){showAlert("Enter New Pass");return;} window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`Hey Bhavya Diagnostics, Reset Pass\nMob: ${m}\nNew Pass: ${p}`)}`,"_blank"); closeAllPopups(); }
-
-function clearMainCart(){ 
-    tempSelection=[]; 
-    // UI cards reset
-    document.querySelectorAll('.card, .pkg-card').forEach(c => {
-        const w = c.querySelector('.qty-wrapper');
-        if(w) {
-            w.querySelector('.add-btn').style.display = 'block';
-            w.querySelector('.qty-control').style.display = 'none';
-            c.classList.remove('selected');
-        }
-    });
-    updateGlobalCount();
-    closeAllPopups();
-}
-
-function payOnline() { const amt = document.getElementById("payAmount").innerText; if(amt == 0) return; window.location.href = `upi://pay?pa=${UPI_ID}&pn=BhavyaDiagnostics&am=${amt}&cu=INR`; }
-
-function bookWithPayment(){ 
-    const id = "B-" + Math.floor(10000 + Math.random() * 90000); 
-    const amt = document.getElementById("payAmount").innerText; 
-    let msg = `🌟 *New Booking Request*\n`; 
-    msg += `🆔 ID: ${id}\n`;
-    msg += `👤 Patient: ${document.getElementById("qName").value}\n`;
-    msg += `📱 Mobile: ${document.getElementById("mobile").value}\n`;
-    msg += `------------------\n`;
-    
-    let totalMRP = 0;
-    let totalDiscount = 0;
-    const currentPlan = document.querySelector('.plan.active').dataset.plan;
-    const testDisc = discountMap[currentPlan];
-    const centerDisc = (currentPlan === 'platinum') ? 0.20 : (currentPlan === 'gold' ? 0.10 : 0.05);
-
-    Object.keys(masterBookingData).forEach(cat => { 
-        let d = masterBookingData[cat]; 
-        let items = tempSelection.filter(i => i.type === cat); 
-        let locationName = d.lab || d.center || "Bhavya Diagnostics";
-        let finalAddress = (cat === 'test' || cat === 'package') ? (d.mode === 'Home' ? `${d.address}, ${d.city}` : centerAddressDB["Ved"]) : (centerAddressDB[locationName] || centerAddressDB["Default"]);
-        
-        msg += `📌 *${cat.toUpperCase()}*\n`;
-        msg += `🏢 Center: ${locationName} (${d.mode})\n`;
-        msg += `📅 Schedule: ${d.date} | 🕒 ${d.time}\n`;
-        msg += `📍 Addr: ${finalAddress}\n`;
-        
-        items.forEach((i, idx) => { 
-            let discount = (cat === 'test' || cat === 'package') ? testDisc : centerDisc;
-            if(cat === 'package') discount = discountMap['pkg_' + currentPlan];
-            let finalPrice = Math.round(i.price - (i.price * discount));
-            let itemMRP = i.price;
+        // ✨ AUTO OPEN VIP MODAL & DYNAMIC TICKER LOGIC ✨
+        document.addEventListener("DOMContentLoaded", () => {
             
-            totalMRP += (itemMRP * i.qty);
-            msg += `${idx + 1}. ${i.name} x${i.qty}\n`;
-            msg += `   Rate: ₹${finalPrice} (MRP: ₹${itemMRP})\n`;
-            
-            if(i.contrast) {
-                msg += `   (+ Contrast: ₹3000)\n`;
-                totalMRP += 3000;
+            // ✨ 1. DYNAMIC FOMO TICKER (Random between 85 and 145) ✨
+            const countElement = document.getElementById('dynamic-booking-count');
+            if (countElement) {
+                const randomCount = Math.floor(Math.random() * (145 - 85 + 1)) + 85;
+                countElement.innerText = randomCount;
             }
+
+            // ✨ 2. VIP POPUP LOGIC ✨
+            if (!sessionStorage.getItem('vipPopupShown')) {
+                setTimeout(() => {
+                    openVipImageModal();
+                    sessionStorage.setItem('vipPopupShown', 'true');
+                }, 800); 
+            }
+
+            // ✨ 3. DYNAMIC TIME-BASED HAPPY PATIENTS ✨
+            updateHappyPatients();
         });
-        msg += `------------------\n`;
-    }); 
 
-    // Final calculations for message
-    let walletUsed = 0;
-    let couponOff = activeCoupon ? 50 : 0;
-    
-    if(usePoints && currentUser) {
-        let pointVal = Math.floor(currentUser.points / 10);
-        walletUsed = Math.min(pointVal, (amt - couponOff)); // Approximate
-    }
+        function updateHappyPatients() {
+            // Base date set to May 1, 2026 (20,000 patients base line)
+            const baseDate = new Date("2026-05-01T00:00:00").getTime(); 
+            const now = new Date().getTime();
+            const diffInMinutes = Math.max(0, (now - baseDate) / (1000 * 60));
+            
+            // Har 15 minute mein 1 naya patient badhega automatically!
+            const extraPatients = Math.floor(diffInMinutes / 15);
+            const totalPatients = 20000 + extraPatients;
+            
+            const pCountElement = document.getElementById('happy-patients-count');
+            if (pCountElement) {
+                pCountElement.innerText = totalPatients.toLocaleString() + "+";
+            }
+        }
 
-    msg += `💰 *Bill Summary:*\n`;
-    msg += `Total MRP: ₹${totalMRP}\n`;
-    if(totalMRP - amt > 0) msg += `Total Discount: ₹${Math.round(totalMRP - amt)}\n`;
-    if(activeCoupon) msg += `🎟️ Referral (${activeCoupon}): -₹50\n`;
-    if(usePoints) msg += `Points Redeemed: Yes\n`;
-    msg += `\n✅ *Final Payable: ₹${amt}*`;
-    
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank"); 
-    closeAllPopups(); 
-    clearMainCart(); 
-}
+        // ✨ ADMIN PASSWORD VERIFICATION LOGIC ✨
+        function openAdminPasswordModal(e) {
+            e.preventDefault(); 
+            document.getElementById('adminPasswordModal').style.display = 'flex';
+            setTimeout(() => document.getElementById('adminPassInput').focus(), 100);
+        }
 
-function verifyPartner() { const id = document.getElementById("partnerId").value.toUpperCase().trim(); const pass = document.getElementById("partnerPass").value.trim(); if (partnersDB[id] && partnersDB[id].pass === pass) { document.getElementById("partnerLoginForm").style.display = "none"; document.getElementById("partnerCancelBtn").style.display = "none"; document.getElementById("partnerDashboard").style.display = "block"; document.getElementById("partnerWelcomeMsg").innerHTML = `Welcome, <b>${partnersDB[id].name}</b>`; } else { showAlert("❌ Wrong ID or Password!"); } }
-function shareReferral() { const code = document.getElementById("dashRef").innerText; const msg = `Hey! Use my code *${code}* on Bhavya Diagnostics to get discounts on Blood Tests.`; window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank"); }
-function toggleAddress(show) { const b = document.getElementById("qAddressBox"); if(b) b.style.display = show?"block":"none"; }
-function selectOpt(btn, grp, val) { btn.parentElement.querySelectorAll('.option-btn').forEach(s => s.classList.remove('selected')); btn.classList.add('selected'); }
-function selectTime(el){ document.querySelectorAll('.time-slot').forEach(t=>t.classList.remove('selected')); el.classList.add('selected'); }
-function closeAllPopups(){ document.querySelectorAll('.popup-box').forEach(b=>b.style.display="none"); document.getElementById("overlay").style.display="none"; document.getElementById("customAlert").style.display="none"; }
-function showAlert(msg) { document.getElementById("customAlertMsg").innerText = msg; document.getElementById("overlay").style.display = "block"; document.getElementById("customAlert").style.display = "block"; }
-function closeCustomAlert() { document.getElementById("customAlert").style.display = "none"; if(document.querySelectorAll('.popup-box[style*="display: block"], .popup-box[style*="display: flex"]').length === 0) document.getElementById("overlay").style.display = "none"; }
+        function closeAdminPasswordModal() {
+            document.getElementById('adminPasswordModal').style.display = 'none';
+            document.getElementById('adminPassInput').value = '';
+        }
 
-/* 📜 HISTORY & REPORT LOGIC (Manual Sheet Support) */
-async function fetchHistory(mob) {
-    const histCon = document.getElementById("notifyContainer");
-    const repCon = document.getElementById("reportContainer");
-    histCon.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Loading...</div>';
-    repCon.innerHTML = '<div style="text-align:center;padding:10px;color:#999;">Checking...</div>';
-    try {
-        let res = await fetch(RAW_HISTORY_URL);
-        if(!res.ok) res = await fetch(HISTORY_DATA_URL);
-        const csvText = await res.text();
-        const rows = csvText.split('\n').slice(1); 
-        let histHtml = "", repHtml = "", foundHist = false, foundRep = false;
-        rows.forEach(row => {
-            const cols = row.split(',').map(c => c.replace(/"/g, '').trim());
-            if (cols[2] === mob) {
-                foundHist = true;
-                const rowDate = cols[0], rowMsg = cols[1], rowType = cols[3] || "TEST", rowLink = cols[4] || "";
-                histHtml += `<div class="list-item"><div style="flex:1;"><div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><span style="background:#e3f2fd; color:#0a73c0; font-size:9px; font-weight:800; padding:2px 6px; border-radius:4px;">${rowType}</span><span style="font-size:10px; color:#999;">${rowDate}</span></div><div class="list-title">${rowMsg}</div></div></div>`;
-                if(rowLink && rowLink.length > 5) {
-                    foundRep = true;
-                    repHtml += `<div class="list-item"><div><div class="list-title">📄 ${rowType} Report</div><div class="list-date">${rowDate}</div></div><a href="${rowLink}" target="_blank" class="action-icon icon-green">⬇ Download</a></div>`;
+        function verifyAdminPassword() {
+            const passInput = document.getElementById('adminPassInput').value;
+            if (passInput === 'Bhavya@123') { window.location.href = 'admin.html'; } 
+            else { showHomeToast("Incorrect Password! Access Denied.", "error"); }
+        }
+
+        // ✨ VIP CLICK LOGIC WITH LOGIN CHECK ✨
+        function handleVipRateClick(event) {
+            if(event) event.stopPropagation(); // Prevents double clicking if clicked inside a card
+            const userId = localStorage.getItem("bhavya_user_id");
+            if (userId && userId !== "null" && userId !== "undefined" && userId.trim() !== "") { 
+                window.location.href = 'vip/vip_member.html'; 
+            } else {
+                showHomeToast("Please Login to view VIP details!", "error");
+                if (typeof openPatientLogin === "function") { setTimeout(() => openPatientLogin(), 800); } 
+                else { setTimeout(() => alert("Please Login First to proceed."), 800); }
+            }
+        }
+
+        function homeFormatText(text) {
+            if (!text) return "";
+            let cleanText = String(text).replace(/_/g, ' '); 
+            let formatted = cleanText.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            const acronyms = /\b(cbc|esr|usg|mri|ecg|echo|ct|lft|kft|hba1c|tsh|t3|t4|ana|psa|hiv|hcv|bun|aptt|sgpt|sgot|vdrl|rbc|wbc|bchg|aec|anc|amh|ada|hbsag|crp|abp|ncv|emg|ssep|dlco|eeg|pft)\b/gi;
+            return formatted.replace(acronyms, match => match.toUpperCase());
+        }
+
+        function homeFormatPrice(price) { return (!price || isNaN(price)) ? 0 : parseFloat(Number(price).toFixed(2)); }
+
+        function openVipImageModal() { document.getElementById('vipImageModal').style.display = 'flex'; }
+        function closeVipImageModal() { document.getElementById('vipImageModal').style.display = 'none'; }
+        
+        function openHomeInfoModal(serviceId) {
+            const service = homeAllServices.find(s => s.service_id === serviceId);
+            if (!service) return;
+            document.getElementById("homeModalTitle").innerText = homeFormatText(service.service_name);
+            let descRaw = String(service.description || '');
+            let formattedDesc = "<p style='text-align:center;'>No details available.</p>";
+            if (descRaw.trim() !== "") {
+                let items = descRaw.split(/<br>|\n/).filter(i => i.trim() !== '');
+                formattedDesc = "<ul>" + items.map(i => `<li style="margin-bottom:6px; border-bottom:1px dashed #eee; padding-bottom:4px;">${homeFormatText(i.trim())}</li>`).join('') + "</ul>";
+                if (service.number_of_test) {
+                    formattedDesc = `<div style="background:#e0f2fe; color:#0284c7; padding:8px 12px; border-radius:8px; font-weight:bold; font-size:12px; margin-bottom:15px; display:inline-block;"><i class="fas fa-microscope"></i> Includes ${service.number_of_test} Parameters</div>` + formattedDesc;
                 }
             }
+            document.getElementById("homeModalDesc").innerHTML = formattedDesc; 
+            document.getElementById("homeInfoModal").style.display = "flex";
+        }
+        function closeHomeInfoModal() { document.getElementById("homeInfoModal").style.display = "none"; }
+
+        function handleVipBuyClick() {
+            const userId = localStorage.getItem("bhavya_user_id");
+            if (userId && userId !== "null" && userId !== "undefined" && userId.trim() !== "") { 
+                window.location.href = "vip/vip_member.html"; 
+            } else {
+                closeVipImageModal();
+                showHomeToast("Login First to Buy VIP Plan!", "error");
+                if (typeof openPatientLogin === "function") { setTimeout(() => openPatientLogin(), 800); } 
+                else { setTimeout(() => alert("Please Login First to proceed."), 800); }
+            }
+        }
+
+        function searchAndGo(category) {
+            window.location.href = `booking/booking.html?search=${encodeURIComponent(category)}`;
+        }
+        
+        function executeHomeSearch() {
+            let query = document.getElementById("globalSearchInput").value.trim();
+            if (query) { window.location.href = `booking/booking.html?search=${encodeURIComponent(query)}`; }
+        }
+
+        function enableDragScroll(selector) {
+            const slider = document.querySelector(selector);
+            if(!slider) return;
+            let isDown = false; let startX; let scrollLeft;
+            slider.addEventListener('mousedown', (e) => { isDown = true; slider.classList.add('active'); startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
+            slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2; 
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        }
+
+        const HOME_GAS_URL = "https://script.google.com/macros/s/AKfycbz_leCWfb7HNhh4BLGLMqhM8dF9jCKpvmqIZkijnzEJl__E3dZftwl3z-hZ7mmzYtrHSA/exec";
+        let homeAllServices = [];
+        let homeCurrentSubCat = 'all';
+        let homePageCart = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            try {
+                let stored = localStorage.getItem('bhavyaCart');
+                if (stored) { homePageCart = JSON.parse(stored); }
+            } catch (e) { homePageCart = []; }
+
+            fetch(HOME_GAS_URL, { method: 'POST', body: JSON.stringify({ action: "getBookingData", user_id: "" }) })
+            .then(r => r.json()).then(res => {
+                if(res.status === "success") {
+                    homeAllServices = res.data.services || [];
+                    renderHomePackages(); 
+                    enableDragScroll('.slider-wrapper');
+                    enableDragScroll('.home-cat-nav');
+                    enableDragScroll('.compact-diag-grid'); 
+                    enableDragScroll('#reviewsSlider');
+                }
+            }).catch(e => console.log("Silent fetch error", e));
+            
+            updateHomeCartBadge(); 
         });
-        histCon.innerHTML = foundHist ? histHtml : '<div style="text-align:center;padding:10px;color:#999;">No bookings found.</div>';
-        repCon.innerHTML = foundRep ? repHtml : '<div style="text-align:center;padding:10px;color:#999;">No reports available yet.</div>';
-    } catch(e) {
-        histCon.innerHTML = '<div style="text-align:center;padding:10px;color:red;">Error loading history.</div>';
-        repCon.innerHTML = '<div style="text-align:center;padding:10px;color:red;">Error loading reports.</div>';
-    }
-}
 
-</script>
-    <!-- RAZORPAY FOOTER -->
+        function renderHomePackages(subCat = homeCurrentSubCat) {
+            homeCurrentSubCat = subCat;
+            const slider = document.getElementById("homePackageSlider");
+            const nav = document.getElementById("homePackageCategories");
+            if(!slider || !nav) return;
 
-<footer class="razor-footer">
+            // ✨ SLICE (0, 10) REMOVED - AB SAARE PACKAGES SHOW HONGE ✨
+            let packages = homeAllServices.filter(s => 
+                s.service_id !== "VIP-FREE-001" && 
+                (String(s.service_type).trim().toLowerCase() === 'profile' || 
+                 String(s.service_type).trim().toLowerCase() === 'package' || 
+                 String(s.service_type).trim().toLowerCase() === 'discount_profile')
+            );
 
-<div class="razor-footer-links">
+            let categories = ['all', ...new Set(packages.map(s => String(s.service_category || 'Other').trim()))];
+            let navHtml = "";
+            categories.forEach(c => {
+                if(c === "") return;
+                let activeClass = c === homeCurrentSubCat ? "active" : "";
+                let displayName = c === 'all' ? "All" : homeFormatText(c);
+                navHtml += `<button class="home-cat-btn ${activeClass}" onclick="renderHomePackages('${c}')">${displayName}</button>`;
+            });
+            nav.innerHTML = navHtml;
 
-<a href="https://www.bhavyadiagnostics.com/about" target="_blank">
-About Us
-</a>
+            let displayPkgs = packages;
+            if (homeCurrentSubCat !== 'all') { 
+                displayPkgs = packages.filter(s => String(s.service_category || 'Other').trim() === homeCurrentSubCat); 
+            }
 
-<a href="https://www.bhavyadiagnostics.com/contact-5" target="_blank">
-Contact
-</a>
+            if (displayPkgs.length === 0) {
+                slider.innerHTML = `<div style="padding:30px; width:100%; text-align:center; color:#64748b; font-weight:600;"><i class="fas fa-folder-open" style="font-size:24px; margin-bottom:10px; color:#cbd5e1;"></i><br>No packages found in this category.</div>`;
+                return;
+            }
 
-<a href="https://www.bhavyadiagnostics.com/privacy-policy" target="_blank">
-Privacy Policy
-</a>
+            let html = "";
+            displayPkgs.forEach(pkg => {
+                let price = homeFormatPrice(pkg.basic_price || pkg.service_price);
+                let totalMrp = homeFormatPrice(pkg.service_price);
+                let vipPrice = homeFormatPrice(pkg.vip_price || price);
+                let cleanName = homeFormatText(pkg.service_name);
+                let cleanType = String(pkg.service_type || '').replace(/'/g, "\\'");
+                let cleanCat = homeFormatText(pkg.service_category || 'Package');
+                let s_id = String(pkg.service_id).replace(/'/g, "\\'");
 
-<a href="https://www.bhavyadiagnostics.com/terms-conditions" target="_blank">
-Terms & Conditions
-</a>
+                const cartItem = homePageCart.find(item => String(item.service_id) === String(pkg.service_id));
+                const inCart = !!cartItem;
+                const currentQty = cartItem ? cartItem.qty : 0;
+                
+                let actionBtnHtml = "";
+                if (inCart) {
+                    actionBtnHtml = `<div class="qty-control"><button onclick="updateHomeQty('${s_id}', -1, ${price}, '${cleanName.replace(/'/g, "\\'")}', '${cleanType}')"><i class="fas fa-minus"></i></button><span class="qty-text">${currentQty}</span><button onclick="updateHomeQty('${s_id}', 1, ${price}, '${cleanName.replace(/'/g, "\\'")}', '${cleanType}')"><i class="fas fa-plus"></i></button></div>`;
+                } else {
+                    actionBtnHtml = `<button class="btn-add-cart" onclick="updateHomeQty('${s_id}', 1, ${price}, '${cleanName.replace(/'/g, "\\'")}', '${cleanType}')">ADD +</button>`;
+                }
 
-<a href="https://www.bhavyadiagnostics.com/refund-cancellation-policy" target="_blank">
-Refund & Cancellation Policy
-</a>
+                let descRaw = String(pkg.description || '');
+                let descPreviewHtml = "";
+                if (descRaw.trim() !== "") {
+                    let items = descRaw.split(/<br>|\n/).filter(i => i.trim() !== '');
+                    if (items.length > 0) {
+                        let previewItems = items.slice(0, 2).map(i => homeFormatText(i.trim())); 
+                        let moreText = pkg.number_of_test ? `+ ${pkg.number_of_test} Parameters` : (items.length > 2 ? "+ More Details" : "");
+                        descPreviewHtml = `<div class="pkg-desc"><ul>${previewItems.map(i => `<li>${i}</li>`).join('')}</ul>${moreText ? `<div class="pkg-param-pill" onclick="openHomeInfoModal('${s_id}')">${moreText}</div>` : ''}</div>`;
+                    }
+                }
 
-</div>
+                html += `
+                <div class="pkg-card">
+                    <div class="pkg-header-row"><span class="pkg-cat-badge">${cleanCat}</span>${pkg.number_of_test ? `<span class="pkg-test-count"><i class="fas fa-microscope"></i> ${pkg.number_of_test} Tests</span>` : ''}</div>
+                    <h3 class="pkg-title">${cleanName} <i class="fas fa-info-circle" style="color:var(--primary); font-size:14px; cursor:pointer;" onclick="openHomeInfoModal('${s_id}')" title="Click for details"></i></h3>
+                    ${descPreviewHtml}
+                    <div class="pkg-footer">
+                        <div class="pkg-price-area">
+                            <span class="pkg-total-mrp">Total: <del>₹${totalMrp}</del></span>
+                            <div class="pkg-basic-price">₹${price} <span class="pkg-basic-badge">BASIC</span></div>
+                            <div class="pkg-vip-pill" onclick="handleVipRateClick(event)"><i class="fas fa-crown"></i> VIP Rate: ₹${vipPrice}</div>
+                        </div>
+                        ${actionBtnHtml}
+                    </div>
+                </div>`;
+            });
+            slider.innerHTML = html;
+        }
 
-<div class="footer-contact">
+        function liveHomeSearch() {
+            let query = document.getElementById("globalSearchInput").value.toLowerCase().trim();
+            let resultsDiv = document.getElementById("homeSearchResults");
+            if(query.length < 2) { resultsDiv.style.display = "none"; return; }
+            
+            let filtered = homeAllServices.filter(s => s.service_id !== "VIP-FREE-001" && (String(s.service_name).toLowerCase().includes(query) || String(s.service_category).toLowerCase().includes(query))).slice(0, 6); 
+            if(filtered.length === 0) {
+                resultsDiv.innerHTML = "<div style='padding:15px; text-align:center; color:#64748b; font-weight:600;'><i class='fas fa-search' style='font-size:24px; color:#cbd5e1; margin-bottom:10px;'></i><br>No tests found</div>";
+                resultsDiv.style.display = "block"; return;
+            }
+            
+            let html = "";
+            filtered.forEach(s => {
+                let price = homeFormatPrice(s.basic_price || s.service_price); 
+                let totalMrp = homeFormatPrice(s.service_price);
+                let cleanName = homeFormatText(s.service_name);
+                let cleanType = String(s.service_type || '').replace(/'/g, "\\'");
+                let s_id = String(s.service_id).replace(/'/g, "\\'");
 
-📍 Sakti Nagar, Gali Number 4, Bahadurgarh Haryana  
-<br>
-📞 +91 8950112467 
-<br>
-✉️ support@bhavyadiagnostics.com
+                const cartItem = homePageCart.find(item => String(item.service_id) === String(s.service_id));
+                const inCart = !!cartItem;
+                const currentQty = cartItem ? cartItem.qty : 0;
+                
+                let actionBtnHtml = "";
+                if (inCart) {
+                    actionBtnHtml = `<div class="qty-control" style="border-width:1px;"><button style="padding:4px 8px;" onclick="updateHomeQty('${s_id}', -1, ${price}, '${cleanName.replace(/'/g, "\\'")}', '${cleanType}')"><i class="fas fa-minus"></i></button><span class="qty-text" style="width:20px;">${currentQty}</span><button style="padding:4px 8px;" onclick="updateHomeQty('${s_id}', 1, ${price}, '${cleanName.replace(/'/g, "\\'")}', '${cleanType}')"><i class="fas fa-plus"></i></button></div>`;
+                } else {
+                    actionBtnHtml = `<button onclick="updateHomeQty('${s_id}', 1, ${price}, '${cleanName.replace(/'/g, "\\'")}', '${cleanType}')" style="background:var(--primary-light); color:var(--primary); border:none; padding:8px 16px; border-radius:10px; font-weight:800; font-size:12px; cursor:pointer; transition:0.2s;">ADD +</button>`;
+                }
+                
+                html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:15px 20px; border-bottom:1px solid #f1f5f9; transition:0.2s;"><div style="flex:1; padding-right:10px;"><div style="font-weight:800; font-size:14px; color:#0f172a; margin-bottom:4px;">${cleanName}</div><div style="font-size:13px; color:#10b981; font-weight:800;">₹${price} <del style="color:#94a3b8; font-size:11px; font-weight:600; margin-left:5px;">₹${totalMrp}</del></div></div>${actionBtnHtml}</div>`;
+            });
+            html += `<div style="padding:12px; text-align:center; background:#f8fafc; border-bottom-left-radius:16px; border-bottom-right-radius:16px; cursor:pointer; color:var(--primary); font-size:13px; font-weight:800;" onclick="executeHomeSearch()">View all results <i class="fas fa-arrow-right"></i></div>`;
+            resultsDiv.innerHTML = html; resultsDiv.style.display = "block";
+        }
 
-</div>
+        function updateHomeQty(id, change, price, name, type) {
+            id = String(id);
+            let index = homePageCart.findIndex(item => String(item.service_id) === id);
+            if (index > -1) {
+                homePageCart[index].qty += change;
+                if (homePageCart[index].qty <= 0) { homePageCart.splice(index, 1); showHomeToast("Item removed from Cart.", "info"); }
+            } else if (change > 0) { 
+                homePageCart.push({ service_id: id, service_name: name, price: price, qty: 1, service_type: type }); 
+                showHomeToast("Item Added to Cart! 🛒", "success");
+            }
+            localStorage.setItem('bhavyaCart', JSON.stringify(homePageCart));
+            updateHomeCartBadge(); renderHomePackages(homeCurrentSubCat); 
+            let query = document.getElementById("globalSearchInput").value.trim();
+            if(query.length >= 2) { liveHomeSearch(); }
+        }
 
-<div class="footer-copy">
+        function updateHomeCartBadge() {
+            let totalItems = homePageCart.reduce((sum, item) => sum + (Number(item.qty) || 1), 0);
+            let floatingBtn = document.getElementById("homeFloatingCart");
+            let badge = document.getElementById("homeCartBadge");
+            if (totalItems > 0) { floatingBtn.style.display = "flex"; badge.innerText = totalItems; } 
+            else { floatingBtn.style.display = "none"; }
+        }
 
-© 2026 Bhavya Diagnostics. All Rights Reserved.
+        function showHomeToast(message, type) {
+            let container = document.getElementById('homeToastContainer');
+            let toast = document.createElement('div');
+            let bg = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : '#f59e0b');
+            toast.style.cssText = `background:${bg}; color:white; padding:12px 20px; border-radius:10px; font-weight:bold; font-size:13px; box-shadow:0 5px 15px rgba(0,0,0,0.2); animation:slideUpToast 0.4s ease forwards; display:flex; align-items:center; justify-content:space-between;`;
+            toast.innerHTML = `<span>${message}</span> <button onclick="window.location.href='booking/booking.html?view=cart'" style="background:white; color:${bg}; border:none; padding:4px 10px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">View Cart</button>`;
+            container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3000);
+        }
 
-</div>
-
-</footer>
+        document.addEventListener('click', function(event) {
+            let searchBox = document.querySelector('.search-container');
+            if (searchBox && !searchBox.contains(event.target)) {
+                let dropdown = document.getElementById('homeSearchResults');
+                if (dropdown) dropdown.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
